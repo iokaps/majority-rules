@@ -50,8 +50,6 @@ export const VotingView: React.FC<VotingViewProps> = ({
 		return <div className="text-center text-slate-600">No question loaded</div>;
 	}
 
-	const timeRemaining = votingEndTimestamp - serverTime;
-	const isTimeRunningOut = timeRemaining < 5000;
 	const optionLetters = ['A', 'B', 'C'];
 
 	return (
