@@ -14,7 +14,17 @@ export const playerActions = {
 			[playerStore, globalStore],
 			([playerState, globalState]) => {
 				playerState.name = name;
-				globalState.players[kmClient.id] = { name };
+				if (!globalState.players[kmClient.id]) {
+					globalState.players[kmClient.id] = {
+						name,
+						score: 0,
+						lives: 3,
+						isSpectator: false,
+						hasVoted: false
+					};
+				} else {
+					globalState.players[kmClient.id].name = name;
+				}
 			}
 		);
 	}

@@ -8,7 +8,7 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-	/* Add theme styling here */
+	/* Fonts */
 	--km-font-sans:
 		'Noto Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
 		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
@@ -16,6 +16,13 @@
 	--font-mono:
 		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
 		'Courier New', monospace;
+
+	/* Game Colors */
+	--color-success: #22c55e;
+	--color-danger: #ef4444;
+	--color-option-1: oklch(0.6 0.15 230);
+	--color-option-2: oklch(0.6 0.15 150);
+	--color-option-3: oklch(0.6 0.15 50);
 }
 
 /* Markdown styling with Tailwind Typography (prose) */
@@ -62,4 +69,136 @@ body {
 
 .km-btn-neutral {
 	@apply not-disabled:bg-slate-600 not-disabled:text-white not-disabled:hover:bg-slate-700;
+}
+
+/* Game-Specific Styles */
+
+.game-card {
+	@apply rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50 to-slate-50 p-6 shadow-md transition-all hover:shadow-lg;
+}
+
+.game-question {
+	@apply text-3xl font-bold text-slate-900 sm:text-4xl;
+}
+
+.vote-option-button {
+	@apply relative flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-slate-300 bg-white px-6 py-4 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-offset-2 focus:outline-none;
+}
+
+.vote-option-button.option-1 {
+	@apply border-option-1 hover:border-option-1 focus:ring-option-1 hover:bg-blue-50;
+}
+
+.vote-option-button.option-2 {
+	@apply border-option-2 hover:border-option-2 focus:ring-option-2 hover:bg-green-50;
+}
+
+.vote-option-button.option-3 {
+	@apply border-option-3 hover:border-option-3 focus:ring-option-3 hover:bg-orange-50;
+}
+
+.vote-option-button.selected {
+	@apply scale-105 border-2 shadow-lg;
+}
+
+.vote-option-button.selected.option-1 {
+	@apply border-option-1 bg-blue-100;
+}
+
+.vote-option-button.selected.option-2 {
+	@apply border-option-2 bg-green-100;
+}
+
+.vote-option-button.selected.option-3 {
+	@apply border-option-3 bg-orange-100;
+}
+
+.winner-option {
+	@apply border-success ring-success/50 bg-green-50 ring-2;
+}
+
+.outlier-option {
+	@apply border-danger ring-danger/50 bg-red-50 ring-2;
+}
+
+.spectator-badge {
+	@apply inline-flex items-center gap-2 rounded-full bg-red-100 px-4 py-2 font-semibold text-red-700;
+}
+
+.spectator-badge.pulse {
+	animation: pulse-fade 0.5s ease-in-out infinite;
+}
+
+.confidence-slider {
+	@apply w-full;
+}
+
+.confidence-slider-label {
+	@apply text-sm font-medium text-slate-600;
+}
+
+.timer-badge {
+	@apply rounded-full bg-slate-100 px-4 py-2 font-bold text-slate-900;
+}
+
+.timer-badge.warning {
+	@apply bg-yellow-100 text-yellow-900;
+}
+
+.timer-badge.critical {
+	@apply animate-pulse bg-red-100 text-red-900;
+}
+
+.leaderboard-row {
+	@apply transition-all duration-300 ease-out;
+}
+
+.leaderboard-row:nth-child(odd) {
+	@apply bg-slate-50;
+}
+
+.leaderboard-row:nth-child(even) {
+	@apply bg-white;
+}
+
+.score-notification {
+	animation: pop-scale 0.3s ease-out;
+}
+
+@keyframes pop-scale {
+	0% {
+		opacity: 0;
+		transform: scale(0.5);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.2);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes pulse-fade {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+@keyframes count-up {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.count-up-number {
+	animation: count-up 0.3s ease-out;
 }

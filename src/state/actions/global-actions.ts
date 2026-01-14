@@ -1,4 +1,6 @@
+import { config } from '@/config';
 import { kmClient } from '@/services/km-client';
+import type { Question } from '../stores/global-store';
 import { globalStore } from '../stores/global-store';
 
 export const globalActions = {
@@ -6,6 +8,19 @@ export const globalActions = {
 		await kmClient.transact([globalStore], ([globalState]) => {
 			globalState.started = true;
 			globalState.startTimestamp = kmClient.serverTimestamp();
+			globalState.gamePhase = 'lobby';
+			globalState.roundNumber = 0;
+
+			// Initialize all players with starting lives
+			for (const clientId of Object.keys(globalState.players)) {
+				globalState.players[clientId] = {
+					...globalState.players[clientId],
+					score: 0,
+					lives: config.playerStartingLives,
+					isSpectator: false,
+					hasVoted: false
+				};
+			}
 		});
 	},
 
@@ -13,12 +28,176 @@ export const globalActions = {
 		await kmClient.transact([globalStore], ([globalState]) => {
 			globalState.started = false;
 			globalState.startTimestamp = 0;
+			globalState.gamePhase = 'lobby';
 		});
 	},
 
 	async togglePresenterQr() {
 		await kmClient.transact([globalStore], ([globalState]) => {
 			globalState.showPresenterQr = !globalState.showPresenterQr;
+		});
+	},
+
+	async addQuestionToBank(question: Question) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			globalState.questionBank.push(question);
+		});
+	},
+
+	async removeQuestionFromBank(questionId: string) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			globalState.questionBank = globalState.questionBank.filter(
+				(q) => q.id !== questionId
+			);
+		});
+	},
+
+	async updateQuestion(questionId: string, updates: Partial<Question>) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			const question = globalState.questionBank.find(
+				(q) => q.id === questionId
+			);
+			if (question) {
+				Object.assign(question, updates);
+			}
+		});
+	},
+
+	async startRound(questionId: string) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			const question = globalState.questionBank.find(
+				(q) => q.id === questionId
+			);
+			if (!question) return;
+
+			globalState.currentQuestion = question;
+			globalState.gamePhase = 'question-display';
+			globalState.roundNumber += 1;
+			globalState.votes = {};
+			globalState.voteAggregation = {};
+			globalState.votingEndTimestamp = 0;
+
+			// Reset hasVoted flag for all players
+			for (const clientId of Object.keys(globalState.players)) {
+				globalState.players[clientId].hasVoted = false;
+			}
+		});
+	},
+
+	async startVoting() {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			globalState.gamePhase = 'voting';
+			globalState.votingEndTimestamp =
+				kmClient.serverTimestamp() + config.votingDurationSeconds * 1000;
+		});
+	},
+
+	async submitVote(optionIndex: number, confidence: number) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			if (globalState.gamePhase !== 'voting') return;
+
+			globalState.votes[kmClient.id] = {
+				optionIndex,
+				confidence
+			};
+			globalState.players[kmClient.id].hasVoted = true;
+		});
+	},
+
+	async revealResults() {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			if (!globalState.currentQuestion) return;
+
+			// Aggregate votes
+			const aggregation: Record<number, number> = {};
+			for (let i = 0; i < globalState.currentQuestion.options.length; i++) {
+				aggregation[i] = 0;
+			}
+
+			for (const vote of Object.values(globalState.votes)) {
+				aggregation[vote.optionIndex]++;
+			}
+
+			globalState.voteAggregation = aggregation;
+
+			// Find max vote count
+			const maxVotes = Math.max(...Object.values(aggregation), 0);
+
+			// Determine winning options (all options with max votes win - ties all win)
+			const winningOptionIndices = Object.entries(aggregation)
+				.filter(([, count]) => count === maxVotes && maxVotes > 0)
+				.map(([index]) => parseInt(index, 10));
+
+			// Calculate scores and eliminate
+			const totalVotes = Object.keys(globalState.votes).length;
+			const secondMaxVotes =
+				maxVotes > 0
+					? Math.max(
+							...Object.values(aggregation).filter((count) => count < maxVotes),
+							0
+						)
+					: 0;
+			const votingMargin =
+				totalVotes > 0 ? ((maxVotes - secondMaxVotes) / totalVotes) * 100 : 0;
+
+			// Margin bonus formula: (100 - margin) / 50, capped at 2x
+			const marginBonus = Math.min((100 - votingMargin) / 50, 2);
+
+			for (const [clientId, vote] of Object.entries(globalState.votes)) {
+				const player = globalState.players[clientId];
+				if (!player || player.isSpectator) continue;
+
+				const isWinner = winningOptionIndices.includes(vote.optionIndex);
+
+				if (isWinner) {
+					// Award points
+					const points = Math.round(
+						config.baseScorePoints * vote.confidence * marginBonus
+					);
+					player.score += points;
+				} else {
+					// Lose 1 life
+					player.lives -= 1;
+					if (player.lives <= 0) {
+						player.isSpectator = true;
+					}
+				}
+			}
+
+			// Auto-submit timeout votes (players who didn't vote)
+			const votedPlayers = new Set(Object.keys(globalState.votes));
+			for (const [clientId, player] of Object.entries(globalState.players)) {
+				if (!votedPlayers.has(clientId) && !player.isSpectator) {
+					// Timeout = loss of 1 life
+					player.lives -= 1;
+					if (player.lives <= 0) {
+						player.isSpectator = true;
+					}
+				}
+			}
+
+			globalState.gamePhase = 'results';
+		});
+	},
+
+	async advanceRound() {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			// Count active (non-spectator) players
+			const activePlayers = Object.values(globalState.players).filter(
+				(p) => !p.isSpectator
+			);
+
+			if (activePlayers.length <= 1) {
+				globalState.gamePhase = 'game-over';
+			} else {
+				globalState.gamePhase = 'lobby';
+			}
+		});
+	},
+
+	async setAiGenerationStatus(status: 'idle' | 'generating' | 'ready') {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			globalState.aiGenerationStatus = status;
 		});
 	}
 };

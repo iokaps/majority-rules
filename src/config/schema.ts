@@ -35,7 +35,39 @@ export const schema = z.object({
 	togglePresenterQrButton: z.string().default('Toggle Presenter QR'),
 
 	menuAriaLabel: z.string().default('Open menu drawer'),
-	menuHelpAriaLabel: z.string().default('Open help drawer')
+	menuHelpAriaLabel: z.string().default('Open help drawer'),
+
+	// Game mechanics config
+	playerStartingLives: z.number().default(3),
+	votingDurationSeconds: z.number().default(30),
+	questionDisplaySeconds: z.number().default(5),
+	resultsDisplaySeconds: z.number().default(5),
+	baseScorePoints: z.number().default(10),
+	maxOptionsPerQuestion: z.number().default(3),
+
+	// AI and questions
+	aiQuestionPrompt: z
+		.string()
+		.default(
+			'Generate a fun party game question in JSON format with exactly {{optionCount}} options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
+		),
+
+	// Game messages (markdown)
+	winnersMessageMd: z
+		.string()
+		.default(
+			'# 🎉 You got the majority!\nGreat prediction! You matched what the group thought.'
+		),
+	losersMessageMd: z
+		.string()
+		.default(
+			'# ❌ You were in the minority.\nUnfortunately, you picked the wrong side. -1 life'
+		),
+	eliminatedMessageMd: z
+		.string()
+		.default(
+			"# 😵 You've been eliminated!\nYou're out of the game, but you can still watch the results."
+		)
 });
 
 export type Config = z.infer<typeof schema>;

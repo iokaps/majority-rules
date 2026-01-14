@@ -93,3 +93,27 @@ openPlayerHelpButton: 'Force Players Help to Open'
 
 menuAriaLabel: 'Open menu drawer'
 menuHelpAriaLabel: 'Open help drawer'
+
+# Game mechanics config
+playerStartingLives: 3
+votingDurationSeconds: 30
+questionDisplaySeconds: 5
+resultsDisplaySeconds: 5
+baseScorePoints: 10
+maxOptionsPerQuestion: 3
+
+# AI and questions
+aiQuestionPrompt: 'Generate a fun party game question in JSON format with exactly {{optionCount}} options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
+
+# Game messages (markdown)
+winnersMessageMd: |
+  # 🎉 You got the majority!
+  Great prediction! You matched what the group thought.
+
+losersMessageMd: |
+  # ❌ You were in the minority
+  Unfortunately, you picked the wrong side. **-1 life**
+
+eliminatedMessageMd: |
+  # 😵 You've been eliminated!
+  You're out of the game, but you can still watch the results.
