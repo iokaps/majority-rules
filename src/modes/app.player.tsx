@@ -14,6 +14,7 @@ import { GameLobbyView } from '@/views/game-lobby-view';
 import { ResultsView } from '@/views/results-view';
 import { VotingView } from '@/views/voting-view';
 import { useSnapshot } from '@kokimoki/app';
+import { KmPodiumTable, useKmConfettiContext } from '@kokimoki/shared';
 import * as React from 'react';
 
 const App: React.FC = () => {
@@ -46,6 +47,20 @@ const App: React.FC = () => {
 			.map(([index]) => parseInt(index, 10));
 		return winningIndices.includes(currentVote.optionIndex);
 	}, [currentVote, currentQuestion, gamePhase, voteAggregation]);
+
+	const { triggerConfetti } = useKmConfettiContext();
+
+	// Trigger massive confetti for top 3 on game over
+	React.useEffect(() => {
+		if (gamePhase === 'game-over') {
+			const playerRank = Object.values(players)
+				.sort((a, b) => b.score - a.score)
+				.findIndex((p) => p.name === name);
+			if (playerRank >= 0 && playerRank < 3) {
+				triggerConfetti({ preset: 'massive' });
+			}
+		}
+	}, [gamePhase, players, name, triggerConfetti]);
 
 	if (!name) {
 		return (
@@ -113,49 +128,50 @@ const App: React.FC = () => {
 
 				{gamePhase === 'results' && (
 					<div className="w-full space-y-4">
-						<ResultsView
-							playerWon={playerWon}
-							pointsEarned={
-								playerWon
-									? Math.round(
-											config.baseScorePoints *
-												(currentVote?.confidence ?? 1) *
-												Math.min(
-													(100 -
-														((Math.max(...Object.values(voteAggregation), 0) -
-															Math.max(
-																...Object.values(voteAggregation).filter(
-																	(c) =>
-																		c <
-																		Math.max(
-																			...Object.values(voteAggregation),
-																			0
-																		)
-																),
-																0
-															)) /
-															Object.values(voteAggregation).reduce(
-																(a, b) => a + b,
-																0
-															)) *
-															100) /
-														50,
-													2
-												)
-										)
-									: 0
-							}
-						/>
-						<div className="overlay-blue text-center">
-							<p className="text-sm text-slate-600">
-								{config.playerResultsWaitingMessage}
-							</p>
-						</div>
+						{/* Calculate points earned */}
+						{(() => {
+							const maxVotes = Math.max(...Object.values(voteAggregation), 0);
+							const secondMaxVotes = Math.max(
+								...Object.values(voteAggregation).filter((c) => c < maxVotes),
+								0
+							);
+							const totalVotes = Object.values(voteAggregation).reduce(
+								(a, b) => a + b,
+								0
+							);
+							const votingMargin =
+								totalVotes > 0
+									? ((maxVotes - secondMaxVotes) / totalVotes) * 100
+									: 0;
+							const marginBonus = Math.min(votingMargin / 50, 2);
+							const confidenceMultiplier =
+								currentVote?.confidence === 1
+									? 1
+									: currentVote?.confidence === 2
+										? 0.5
+										: 3;
+							const points = playerWon
+								? Math.round(
+										config.baseScorePoints * confidenceMultiplier * marginBonus
+									)
+								: 0;
+
+							return (
+								<>
+									<ResultsView playerWon={playerWon} pointsEarned={points} />
+									<div className="overlay-blue text-center">
+										<p className="text-sm text-slate-600">
+											{config.playerResultsWaitingMessage}
+										</p>
+									</div>
+								</>
+							);
+						})()}
 					</div>
 				)}
 
 				{gamePhase === 'game-over' && (
-					<div className="space-y-4">
+					<div className="mx-auto w-full max-w-md space-y-4">
 						<div className="overlay-purple text-center">
 							<h2 className="mb-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
 								{config.playerGameOverTitle}
@@ -164,34 +180,66 @@ const App: React.FC = () => {
 
 						{/* Leaderboard */}
 						<div className="overlay-green">
-							<h3 className="mb-3 font-semibold text-slate-900">
+							<h3 className="mb-4 text-center font-semibold text-slate-900">
 								{config.playerFinalLeaderboardTitle}
 							</h3>
-							<div className="space-y-2">
-								{Object.entries(players)
-									.map(([, p]) => ({
-										name: p.name,
-										score: p.score
-									}))
-									.sort((a, b) => b.score - a.score)
-									.map((player, index) => (
-										<div
-											key={player.name}
-											className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3"
-										>
-											<div className="flex items-center gap-3">
-												<span className="text-xl font-bold text-slate-400">
-													{index + 1}.
-												</span>
-												<span className="font-semibold text-slate-900">
-													{player.name}
-												</span>
-											</div>
-											<span className="text-lg font-bold text-slate-900">
-												{player.score} {config.playerPointsLabel}
-											</span>
-										</div>
-									))}
+							<div className="space-y-3">
+								{/* Podium */}
+								<KmPodiumTable
+									entries={Object.entries(players)
+										.map(([clientId, p]) => ({
+											id: clientId,
+											name: p.name,
+											points: p.score
+										}))
+										.sort((a, b) => b.points - a.points)}
+									pointsLabel={config.playerPointsLabel}
+									podiumSettings={{
+										'0': {
+											label: '🥇',
+											className: 'bg-yellow-100 border-yellow-400'
+										},
+										'1': {
+											label: '🥈',
+											className: 'bg-slate-100 border-slate-400'
+										},
+										'2': {
+											label: '🥉',
+											className: 'bg-orange-100 border-orange-400'
+										}
+									}}
+								/>
+
+								{/* Rest of Players */}
+								{Object.entries(players).length > 3 && (
+									<div className="border-t border-green-200 pt-3">
+										{Object.entries(players)
+											.map(([, p]) => ({
+												name: p.name,
+												score: p.score
+											}))
+											.sort((a, b) => b.score - a.score)
+											.slice(3)
+											.map((p, idx) => (
+												<div
+													key={p.name}
+													className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"
+												>
+													<div className="flex items-center gap-2">
+														<span className="text-sm font-bold text-slate-500">
+															{idx + 4}.
+														</span>
+														<span className="text-sm font-semibold text-slate-900">
+															{p.name}
+														</span>
+													</div>
+													<span className="text-sm font-bold text-slate-900">
+														{p.score}
+													</span>
+												</div>
+											))}
+									</div>
+								)}
 							</div>
 						</div>
 					</div>

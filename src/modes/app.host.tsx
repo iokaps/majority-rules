@@ -1,3 +1,4 @@
+import { withKmProviders } from '@/components/with-km-providers';
 import { config } from '@/config';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useGlobalController } from '@/hooks/useGlobalController';
@@ -11,7 +12,7 @@ import { cn } from '@/utils/cn';
 import { QuestionManagementView } from '@/views/question-management-view';
 import { VotingView } from '@/views/voting-view';
 import { useSnapshot } from '@kokimoki/app';
-import { useKmModal } from '@kokimoki/shared';
+import { KmTimeCountdown, useKmModal } from '@kokimoki/shared';
 import {
 	CirclePlay,
 	CircleStop,
@@ -196,15 +197,24 @@ const App: React.FC = () => {
 				</HostPresenterLayout.Header>
 
 				<HostPresenterLayout.Main>
-					<div className="grid gap-4 lg:grid-cols-3">
-						{/* Current Question / Status */}
-						<div className="lg:col-span-2">
+					<div
+						className={cn(
+							'grid gap-3',
+							gamePhase === 'game-over' ? 'grid-cols-1' : 'lg:grid-cols-4'
+						)}
+					>
+						{/* Current Question / Status - Left Side */}
+						<div
+							className={cn(
+								gamePhase === 'game-over' && 'mx-auto w-full max-w-2xl'
+							)}
+						>
 							{gamePhase === 'lobby' && questionBank.length > 0 ? (
 								<div className="space-y-2">
 									<h2 className="text-sm font-semibold text-slate-900">
 										{config.hostSelectQuestion}
 									</h2>
-									<div className="space-y-2">
+									<div className="grid gap-2 lg:grid-cols-2">
 										{questionBank.map((q) => (
 											<button
 												key={q.id}
@@ -252,15 +262,14 @@ const App: React.FC = () => {
 												</p>
 											</div>
 											<div className="rounded-xl bg-blue-50 p-4">
-												<p className="text-sm font-semibold text-blue-900">
-													Time remaining:{' '}
+												<p className="mb-2 text-sm font-semibold text-blue-900">
+													Time remaining:
 												</p>
-												<p className="text-2xl font-bold text-blue-600">
-													{Math.ceil(
-														Math.max(0, votingEndTimestamp - serverTime) / 1000
-													)}
-													s
-												</p>
+												<div className="text-2xl font-bold text-blue-600">
+													<KmTimeCountdown
+														ms={Math.max(0, votingEndTimestamp - serverTime)}
+													/>
+												</div>
 											</div>
 										</>
 									)}
@@ -290,35 +299,40 @@ const App: React.FC = () => {
 							) : null}
 						</div>
 
-						<div className="rounded-xl border border-slate-200 bg-white p-3">
-							<h3 className="mb-2 text-sm font-semibold text-slate-900">
-								{config.hostPlayersLabel}
-							</h3>
-							<div className="space-y-1.5">
-								{Object.values(players).map((player) => (
-									<div
-										key={player.name}
-										className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-slate-900"
-									>
-										<div className="flex items-center justify-between">
-											<div className="flex-1">
-												<p className="text-xs font-semibold">{player.name}</p>
-											</div>
-											<div className="text-right">
-												<p className="text-xs font-bold">{player.score}</p>
-												{gamePhase === 'voting' && (
-													<p className="text-xs text-slate-600">
-														{player.hasVoted
-															? config.hostVotedLabel
-															: config.hostWaitingLabel}
+						{/* Players Panel - Right Side */}
+						{gamePhase !== 'game-over' && (
+							<div className="rounded-xl border border-slate-200 bg-white p-2">
+								<h3 className="mb-2 text-xs font-semibold text-slate-900">
+									{config.hostPlayersLabel}
+								</h3>
+								<div className="space-y-1">
+									{Object.values(players).map((player) => (
+										<div
+											key={player.name}
+											className="rounded-lg bg-slate-100 px-2 py-1 text-slate-900"
+										>
+											<div className="flex items-center justify-between gap-1">
+												<div className="flex-1 truncate">
+													<p className="truncate text-xs font-semibold">
+														{player.name}
 													</p>
-												)}
+												</div>
+												<div className="flex-shrink-0 text-right">
+													<p className="text-xs font-bold">{player.score}</p>
+													{gamePhase === 'voting' && (
+														<p className="text-xs text-slate-600">
+															{player.hasVoted
+																? config.hostVotedLabel
+																: config.hostWaitingLabel}
+														</p>
+													)}
+												</div>
 											</div>
 										</div>
-									</div>
-								))}
+									))}
+								</div>
 							</div>
-						</div>
+						)}
 					</div>
 				</HostPresenterLayout.Main>
 
@@ -470,4 +484,4 @@ const App: React.FC = () => {
 	);
 };
 
-export default App;
+export default withKmProviders(App);

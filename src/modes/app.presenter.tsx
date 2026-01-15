@@ -8,7 +8,7 @@ import { kmClient } from '@/services/km-client';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
-import { KmQrCode } from '@kokimoki/shared';
+import { KmPodiumTable, KmQrCode, KmTimeCountdown } from '@kokimoki/shared';
 import * as React from 'react';
 
 const App: React.FC = () => {
@@ -63,9 +63,21 @@ const App: React.FC = () => {
 				<HostPresenterLayout.Header />
 
 				<HostPresenterLayout.Main>
-					<div className="grid gap-6 lg:grid-cols-[1fr_auto]">
+					<div
+						className={cn(
+							'grid gap-6',
+							gamePhase !== 'game-over'
+								? 'lg:grid-cols-[1fr_auto]'
+								: 'mx-auto w-full max-w-2xl grid-cols-1'
+						)}
+					>
 						{/* Main Content */}
-						<div className="space-y-6">
+						<div
+							className={cn(
+								'space-y-6',
+								gamePhase === 'game-over' ? '' : 'mx-auto w-full max-w-2xl'
+							)}
+						>
 							{/* Question Display */}
 							{started && currentQuestion && gamePhase !== 'game-over' && (
 								<div className="overlay-purple">
@@ -82,7 +94,7 @@ const App: React.FC = () => {
 														: 'gradient-blue text-white'
 												)}
 											>
-												{Math.ceil(timeRemaining / 1000)}s
+												<KmTimeCountdown ms={timeRemaining} />
 											</div>
 										</div>
 									)}
@@ -174,53 +186,64 @@ const App: React.FC = () => {
 									<h2 className="mb-4 text-xl font-semibold text-slate-900">
 										{config.presenterLeaderboardTitle}
 									</h2>
-									<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-										{allPlayers.map((player, index) => (
-											<div
-												key={player.clientId}
-												className={cn(
-													'flex items-center justify-between rounded-xl bg-white p-4 shadow-sm transition-all hover:shadow-md',
-													index === 0 && 'ring-2 ring-yellow-400',
-													index === 1 && 'ring-2 ring-slate-300',
-													index === 2 && 'ring-2 ring-orange-400'
-												)}
-											>
-												<div className="flex items-center gap-3">
-													<span
-														className={cn(
-															'flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold',
-															index === 0 && 'bg-yellow-100 text-yellow-700',
-															index === 1 && 'bg-slate-100 text-slate-700',
-															index === 2 && 'bg-orange-100 text-orange-700',
-															index > 2 && 'bg-slate-50 text-slate-600'
-														)}
+									<div className="space-y-3">
+										{/* Podium */}
+										<KmPodiumTable
+											entries={allPlayers.map((p) => ({
+												id: p.clientId,
+												name: p.name,
+												points: p.score
+											}))}
+											pointsLabel={config.presenterPointsLabel}
+											podiumSettings={{
+												'0': {
+													label: '🥇',
+													className: 'bg-yellow-100 border-yellow-400'
+												},
+												'1': {
+													label: '🥈',
+													className: 'bg-slate-100 border-slate-400'
+												},
+												'2': {
+													label: '🥉',
+													className: 'bg-orange-100 border-orange-400'
+												}
+											}}
+										/>
+
+										{/* Rest of Players */}
+										{allPlayers.length > 3 && (
+											<div className="border-t border-green-200 pt-3">
+												{allPlayers.slice(3).map((p, idx) => (
+													<div
+														key={p.clientId}
+														className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"
 													>
-														{index + 1}
-													</span>
-													<p className="text-base font-semibold text-slate-900">
-														{player.name}
-													</p>
-												</div>
-												<div className="text-right">
-													<p className="text-2xl font-bold text-slate-900">
-														{player.score}
-													</p>
-													<p className="text-xs text-slate-600">
-														{config.presenterPointsLabel}
-													</p>
-												</div>
+														<div className="flex items-center gap-2">
+															<span className="text-sm font-bold text-slate-500">
+																{idx + 4}.
+															</span>
+															<span className="text-sm font-semibold text-slate-900">
+																{p.name}
+															</span>
+														</div>
+														<span className="text-sm font-bold text-slate-900">
+															{p.score}
+														</span>
+													</div>
+												))}
 											</div>
-										))}
+										)}
 									</div>
 								</div>
 							)}
 						</div>
 
 						{/* Sidebar - QR Code Only */}
-						{showPresenterQr && (
+						{showPresenterQr && gamePhase !== 'game-over' && (
 							<div className="flex justify-center lg:justify-start">
-								<div className="game-card sticky top-20 flex justify-center">
-									<KmQrCode data={playerLink} size={180} />
+								<div className="game-card sticky top-20 rounded-2xl p-6">
+									<KmQrCode data={playerLink} size={200} />
 								</div>
 							</div>
 						)}

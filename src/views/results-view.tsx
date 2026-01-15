@@ -2,6 +2,7 @@ import { config } from '@/config';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
+import { useKmConfettiContext } from '@kokimoki/shared';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -15,6 +16,14 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 	pointsEarned = 0
 }) => {
 	const { currentQuestion, voteAggregation } = useSnapshot(globalStore.proxy);
+	const { triggerConfetti } = useKmConfettiContext();
+
+	// Trigger confetti immediately when player wins
+	React.useEffect(() => {
+		if (playerWon) {
+			triggerConfetti();
+		}
+	}, [playerWon, triggerConfetti]);
 
 	if (!currentQuestion) {
 		return <div className="text-center text-slate-600">No question loaded</div>;
@@ -78,7 +87,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 			<div
 				className={cn(
 					'prose prose-sm max-w-none',
-					playerWon ? 'overlay-green' : 'overlay-amber'
+					playerWon ? 'overlay-green' : 'overlay-amber',
+					!playerWon && 'animate-shake'
 				)}
 			>
 				<div className={playerWon ? 'text-success' : 'text-danger'}>
@@ -89,7 +99,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 			</div>
 
 			{/* Points Display */}
-			{pointsEarned > 0 && (
+			{playerWon && (
 				<div className="score-notification text-center">
 					<div className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-5xl font-bold text-transparent">
 						+{pointsEarned}

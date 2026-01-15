@@ -1,4 +1,4 @@
-import { config } from '@/config';
+﻿import { config } from '@/config';
 import { useServerTimer } from '@/hooks/useServerTime';
 import { kmClient } from '@/services/km-client';
 import { globalActions } from '@/state/actions/global-actions';
@@ -80,7 +80,8 @@ export const VotingView: React.FC<VotingViewProps> = ({
 							'vote-option-button',
 							`option-${index + 1}`,
 							selectedOption === index && 'selected',
-							!interactive && 'opacity-50'
+							!interactive && 'opacity-50',
+							interactive && !submitted && 'hover:animate-pulse'
 						)}
 					>
 						<span className="text-lg font-bold">{optionLetters[index]}</span>
@@ -91,17 +92,22 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
 			{/* Confidence Slider - only show during voting phase */}
 			{interactive && votingEndTimestamp > 0 && !submitted && (
-				<div className="space-y-2">
+				<div
+					className={cn(
+						'space-y-2 rounded-lg p-3 transition-all',
+						confidence === 2 && 'ring-2 ring-orange-400 ring-offset-2'
+					)}
+				>
 					<label className="confidence-slider-label block">
 						{config.votingConfidenceLabel.replace(
 							'{n}',
-							confidence === 1 ? '1' : confidence === 2 ? '0.5' : '3'
+							confidence === 0 ? '🤔 0.5' : confidence === 1 ? '😐 1' : '😎 3'
 						)}
 					</label>
 					<input
 						type="range"
-						min="1"
-						max="3"
+						min="0"
+						max="2"
 						step="1"
 						value={confidence}
 						onChange={(e) => setConfidence(parseInt(e.target.value))}
