@@ -6,6 +6,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useGlobalController } from '@/hooks/useGlobalController';
 import { PlayerLayout } from '@/layouts/player';
 import { kmClient } from '@/services/km-client';
+import { globalActions } from '@/state/actions/global-actions';
 import { playerActions } from '@/state/actions/player-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { playerStore } from '@/state/stores/player-store';
@@ -26,7 +27,9 @@ const App: React.FC = () => {
 		currentQuestion,
 		players,
 		voteAggregation,
-		votes
+		votes,
+		playerTopicsEnabled,
+		playerTopics
 	} = useSnapshot(globalStore.proxy);
 	const isSpectator = players[kmClient.id]?.isSpectator ?? false;
 
@@ -102,19 +105,27 @@ const App: React.FC = () => {
 					<PlayerMenu />
 				</PlayerLayout.Header>
 
-				<PlayerLayout.Main>
-					<div className="w-full space-y-6">
-						<div className="game-card text-center">
-							<h2 className="mb-4 text-2xl font-bold text-slate-900">
+				<PlayerLayout.Main className="py-4">
+					<div className="w-full space-y-4">
+						<div className="overlay-blue text-center">
+							<h2 className="mb-3 text-xl font-bold text-slate-900">
 								{config.preGameWelcome.replace('{name}', name)}
 							</h2>
-							<p className="text-lg text-slate-700">
+							<p className="mb-2 text-base text-slate-700">
 								{config.preGameWaitingMessage}
 							</p>
-							<p className="mt-4 text-sm text-slate-600">
+							<p className="text-sm text-slate-600">
 								{config.preGameInstructions}
 							</p>
 						</div>
+
+						{/* Topic Submission Form */}
+						{playerTopicsEnabled && (
+							<TopicSubmissionForm
+								playerName={name}
+								hasSubmitted={kmClient.id in playerTopics}
+							/>
+						)}
 					</div>
 				</PlayerLayout.Main>
 
@@ -136,10 +147,10 @@ const App: React.FC = () => {
 				)}
 			</PlayerLayout.Header>
 
-			<PlayerLayout.Main>
+			<PlayerLayout.Main className="py-4">
 				{gamePhase === 'question-display' && currentQuestion && (
-					<div className="game-card">
-						<h2 className="game-question text-center">
+					<div className="overlay-blue">
+						<h2 className="game-question-compact text-center">
 							{currentQuestion.text}
 						</h2>
 					</div>
@@ -184,14 +195,16 @@ const App: React.FC = () => {
 				{gamePhase === 'lobby' && <GameLobbyView isGameActive={started} />}
 
 				{gamePhase === 'game-over' && (
-					<div className="space-y-6">
-						<div className="game-card text-center">
-							<h2 className="game-question text-success mb-2">🏆 Game Over!</h2>
+					<div className="space-y-4">
+						<div className="overlay-purple text-center">
+							<h2 className="mb-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
+								🏆 Game Over!
+							</h2>
 						</div>
 
 						{/* Leaderboard */}
-						<div className="game-card">
-							<h3 className="mb-4 font-semibold text-slate-900">
+						<div className="overlay-green">
+							<h3 className="mb-3 font-semibold text-slate-900">
 								Final Leaderboard
 							</h3>
 							<div className="space-y-2">
@@ -235,6 +248,77 @@ const App: React.FC = () => {
 				<NameLabel name={name} />
 			</PlayerLayout.Footer>
 		</PlayerLayout.Root>
+	);
+};
+
+const TopicSubmissionForm: React.FC<{
+	playerName: string;
+	hasSubmitted: boolean;
+}> = ({ playerName, hasSubmitted }) => {
+	const [topic, setTopic] = React.useState('');
+	const [submitted, setSubmitted] = React.useState(false);
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!topic.trim() || hasSubmitted) return;
+
+		try {
+			await globalActions.submitPlayerTopic(topic, playerName);
+			setSubmitted(true);
+			setTopic('');
+
+			// Reset submitted message after 3 seconds
+			setTimeout(() => {
+				setSubmitted(false);
+			}, 3000);
+		} catch (error) {
+			console.error('Failed to submit topic:', error);
+		}
+	};
+
+	if (hasSubmitted) {
+		return (
+			<div className="overlay-amber text-center">
+				<h3 className="mb-2 font-semibold text-slate-900">
+					{config.playerSubmitTopicTitle}
+				</h3>
+				<p className="text-sm text-slate-600">
+					{config.playerAlreadySubmittedMessage}
+				</p>
+			</div>
+		);
+	}
+
+	return (
+		<div className="overlay-amber">
+			<h3 className="mb-3 font-semibold text-slate-900">
+				{config.playerSubmitTopicTitle}
+			</h3>
+
+			{submitted && (
+				<div className="mb-4 rounded-lg bg-green-100 p-3 text-center font-semibold text-green-700">
+					{config.playerTopicSubmittedMessage}
+				</div>
+			)}
+
+			<form onSubmit={handleSubmit} className="space-y-3">
+				<input
+					type="text"
+					value={topic}
+					onChange={(e) => setTopic(e.target.value)}
+					placeholder={config.playerSubmitTopicPlaceholder}
+					className="km-input"
+					maxLength={100}
+				/>
+				<button
+					type="submit"
+					disabled={!topic.trim()}
+					className="km-btn-primary w-full"
+				>
+					{config.playerSubmitTopicButton}
+				</button>
+			</form>
+		</div>
 	);
 };
 

@@ -31,10 +31,12 @@ export const CreateProfileView: React.FC<Props> = () => {
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-96 space-y-12">
-			<article className="prose text-center">
-				<Markdown>{config.createProfileMd}</Markdown>
-			</article>
+		<div className="mx-auto w-full max-w-96 space-y-8">
+			<div className="overlay-blue">
+				<article className="prose prose-sm max-w-none text-center">
+					<Markdown>{config.createProfileMd}</Markdown>
+				</article>
+			</div>
 			<form onSubmit={handleSubmit} className="grid gap-4">
 				<input
 					type="text"

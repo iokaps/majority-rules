@@ -8,7 +8,6 @@ export const globalActions = {
 		await kmClient.transact([globalStore], ([globalState]) => {
 			globalState.started = true;
 			globalState.startTimestamp = kmClient.serverTimestamp();
-			globalState.gamePhase = 'lobby';
 			globalState.roundNumber = 0;
 			globalState.usedQuestionIds = [];
 
@@ -21,6 +20,40 @@ export const globalActions = {
 					isSpectator: false,
 					hasVoted: false
 				};
+			}
+
+			// Auto-select and start first round with first available question
+			if (globalState.questionBank.length > 0) {
+				// Try to find first unplayed question
+				let question = globalState.questionBank.find(
+					(q) => !globalState.usedQuestionIds.includes(q.id)
+				);
+
+				// If all played, use first question
+				if (!question) {
+					question = globalState.questionBank[0];
+				}
+
+				// Start round with selected question
+				globalState.currentQuestion = question;
+				globalState.gamePhase = 'question-display';
+				globalState.roundNumber = 1;
+				globalState.votes = {};
+				globalState.voteAggregation = {};
+				globalState.votingEndTimestamp = 0;
+
+				// Track used question
+				if (!globalState.usedQuestionIds.includes(question.id)) {
+					globalState.usedQuestionIds.push(question.id);
+				}
+
+				// Reset hasVoted flag for all players
+				for (const clientId of Object.keys(globalState.players)) {
+					globalState.players[clientId].hasVoted = false;
+				}
+			} else {
+				// No questions available, stay in lobby
+				globalState.gamePhase = 'lobby';
 			}
 		});
 	},
@@ -271,6 +304,81 @@ export const globalActions = {
 			});
 		} catch (error) {
 			console.error('Failed to generate question:', error);
+			// Reset status on error
+			await kmClient.transact([globalStore], ([globalState]) => {
+				globalState.aiGenerationStatus = 'idle';
+			});
+			throw error;
+		}
+	},
+
+	async togglePlayerTopics() {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			globalState.playerTopicsEnabled = !globalState.playerTopicsEnabled;
+		});
+	},
+
+	async submitPlayerTopic(topic: string, playerName: string) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			if (!topic.trim()) return;
+
+			// Prevent submitting if player already has a topic
+			if (globalState.playerTopics[kmClient.id]) return;
+
+			globalState.playerTopics[kmClient.id] = {
+				topic: topic.trim(),
+				submittedBy: kmClient.id,
+				submittedByName: playerName,
+				timestamp: kmClient.serverTimestamp()
+			};
+		});
+	},
+
+	async deletePlayerTopic(topicKey: string) {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			delete globalState.playerTopics[topicKey];
+		});
+	},
+
+	async generateQuestionFromTopic(topicKey: string) {
+		try {
+			const topic = globalStore.proxy.playerTopics[topicKey];
+			if (!topic) return;
+
+			await kmClient.transact([globalStore], ([globalState]) => {
+				globalState.aiGenerationStatus = 'generating';
+			});
+
+			// Generate AI question using the topic
+
+			const userPrompt = config.aiTopicPrompt.replace('{topic}', topic.topic);
+
+			const response = await kmClient.ai.generateJson<{
+				question: string;
+				options: string[];
+			}>({ userPrompt });
+
+			const typedResponse = response as {
+				question: string;
+				options: string[];
+			};
+
+			// Create new question
+			const newQuestion: Question = {
+				id: `q-${Date.now()}`,
+				text: typedResponse.question,
+				options: typedResponse.options,
+				isAiGenerated: true
+			};
+
+			// Add to bank and delete the topic
+			await kmClient.transact([globalStore], ([globalState]) => {
+				globalState.questionBank.push(newQuestion);
+				delete globalState.playerTopics[topicKey];
+				globalState.aiGenerationStatus = 'idle';
+			});
+		} catch (error) {
+			console.error('Failed to generate question from topic:', error);
 			// Reset status on error
 			await kmClient.transact([globalStore], ([globalState]) => {
 				globalState.aiGenerationStatus = 'idle';

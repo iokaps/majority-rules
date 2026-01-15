@@ -14,6 +14,7 @@ import * as React from 'react';
 const App: React.FC = () => {
 	const { title } = config;
 	const {
+		started,
 		showPresenterQr,
 		gamePhase,
 		currentQuestion,
@@ -72,8 +73,8 @@ const App: React.FC = () => {
 						{/* Main Content */}
 						<div className="space-y-6 lg:col-span-3">
 							{/* Question Display */}
-							{currentQuestion && (
-								<div className="game-card">
+							{started && currentQuestion && (
+								<div className="overlay-purple">
 									<h1 className="game-question mb-4 text-center">
 										{currentQuestion.text}
 									</h1>
@@ -81,10 +82,10 @@ const App: React.FC = () => {
 										<div className="flex justify-center">
 											<div
 												className={cn(
-													'rounded-full px-6 py-3 text-2xl font-bold',
+													'rounded-full px-8 py-4 text-3xl font-bold shadow-lg',
 													isTimeRunningOut
-														? 'animate-pulse bg-red-100 text-red-700'
-														: 'bg-blue-100 text-blue-700'
+														? 'gradient-danger animate-pulse text-white'
+														: 'gradient-blue text-white'
 												)}
 											>
 												{Math.ceil(timeRemaining / 1000)}s
@@ -95,8 +96,8 @@ const App: React.FC = () => {
 							)}
 
 							{/* Vote Breakdown Bar Chart */}
-							{currentQuestion && hasVoteResults && (
-								<div className="game-card">
+							{started && currentQuestion && hasVoteResults && (
+								<div className="overlay-blue">
 									<h2 className="mb-4 font-semibold text-slate-900">
 										Vote Breakdown
 									</h2>
@@ -126,7 +127,9 @@ const App: React.FC = () => {
 														<div
 															className={cn(
 																'h-full rounded-lg transition-all duration-500',
-																isWinner ? 'bg-success' : 'bg-danger'
+																isWinner
+																	? 'gradient-success'
+																	: 'gradient-danger'
 															)}
 															style={{ width: `${percentage}%` }}
 														/>
@@ -139,7 +142,15 @@ const App: React.FC = () => {
 							)}
 
 							{/* Game Status Messages */}
-							{gamePhase === 'lobby' && (
+							{!started && (
+								<div className="game-card text-center">
+									<p className="text-lg font-semibold text-slate-900">
+										Waiting for game to start...
+									</p>
+								</div>
+							)}
+
+							{started && gamePhase === 'lobby' && (
 								<div className="game-card text-center">
 									<p className="text-lg font-semibold text-slate-900">
 										Waiting for next round...
@@ -147,7 +158,7 @@ const App: React.FC = () => {
 								</div>
 							)}
 
-							{gamePhase === 'question-display' && (
+							{started && gamePhase === 'question-display' && (
 								<div className="game-card text-center">
 									<p className="text-slate-600">
 										Question will be followed by a{' '}
@@ -179,7 +190,7 @@ const App: React.FC = () => {
 							)}
 
 							{/* Leaderboard */}
-							<div className="game-card">
+							<div className="overlay-green">
 								<h2 className="mb-3 font-semibold text-slate-900">
 									Leaderboard
 								</h2>
@@ -207,7 +218,7 @@ const App: React.FC = () => {
 
 							{/* Spectators */}
 							{spectators.length > 0 && (
-								<div className="game-card">
+								<div className="overlay-amber">
 									<h2 className="mb-3 font-semibold text-slate-900">
 										Spectators
 									</h2>

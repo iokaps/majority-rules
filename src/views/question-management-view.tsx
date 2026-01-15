@@ -14,7 +14,9 @@ interface QuestionManagementViewProps {
 export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 	onQuestionAdded
 }) => {
-	const { questionBank, aiGenerationStatus } = useSnapshot(globalStore.proxy);
+	const { questionBank, aiGenerationStatus, playerTopics } = useSnapshot(
+		globalStore.proxy
+	);
 	const [showManualForm, setShowManualForm] = React.useState(false);
 	const [manualQuestion, setManualQuestion] = React.useState('');
 	const [manualOptions, setManualOptions] = React.useState(['', '', '']);
@@ -266,6 +268,66 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 					</button>
 				</div>
 			</div>
+
+			{/* Player Suggested Topics Section */}
+			{Object.keys(playerTopics).length > 0 && (
+				<div className="rounded-xl border-2 border-green-200 bg-green-50 p-6">
+					<h2 className="mb-4 font-semibold text-green-900">
+						{config.hostPlayerTopicsTitle} ({Object.keys(playerTopics).length})
+					</h2>
+
+					<div className="space-y-3">
+						{Object.entries(playerTopics)
+							.sort(([, a], [, b]) => b.timestamp - a.timestamp)
+							.map(([key, topicData]) => (
+								<div
+									key={key}
+									className="rounded-lg border border-green-300 bg-white p-4"
+								>
+									<div className="mb-3">
+										<p className="font-semibold text-slate-900">
+											{topicData.topic}
+										</p>
+										<p className="text-xs text-slate-600">
+											Suggested by: {topicData.submittedByName}
+										</p>
+									</div>
+
+									<div className="flex gap-2">
+										<button
+											type="button"
+											onClick={() =>
+												globalActions.generateQuestionFromTopic(key)
+											}
+											disabled={aiGenerationStatus === 'generating'}
+											className="km-btn-primary flex-1 text-sm"
+										>
+											{aiGenerationStatus === 'generating' ? (
+												<>
+													<div className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+													Generating...
+												</>
+											) : (
+												<>
+													<Wand2 className="size-4" />
+													{config.hostGenerateFromTopicButton}
+												</>
+											)}
+										</button>
+										<button
+											type="button"
+											onClick={() => globalActions.deletePlayerTopic(key)}
+											className="km-btn-error text-sm"
+										>
+											<Trash2 className="size-4" />
+											{config.hostDeleteTopicButton}
+										</button>
+									</div>
+								</div>
+							))}
+					</div>
+				</div>
+			)}
 
 			{/* Manual Creation Section */}
 			<div className="rounded-xl border-2 border-purple-200 bg-purple-50 p-6">

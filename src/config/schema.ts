@@ -88,6 +88,27 @@ export const schema = z.object({
 			'Generate a fun party game question in JSON format with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
 		),
 
+	// Player topic submissions
+	playerTopicsToggleButton: z.string().default('Toggle Player Topics'),
+	playerTopicsEnabledLabel: z.string().default('Player Topics: ON'),
+	playerTopicsDisabledLabel: z.string().default('Player Topics: OFF'),
+	playerSubmitTopicTitle: z.string().default('Suggest a Topic'),
+	playerSubmitTopicPlaceholder: z.string().default('Enter topic idea...'),
+	playerSubmitTopicButton: z.string().default('Submit Topic'),
+	playerTopicSubmittedMessage: z.string().default('Topic submitted!'),
+	playerAlreadySubmittedMessage: z
+		.string()
+		.default('You already submitted a topic'),
+	hostPlayerTopicsTitle: z.string().default('Player Suggested Topics'),
+	hostGenerateFromTopicButton: z.string().default('Generate Question'),
+	hostDeleteTopicButton: z.string().default('Delete'),
+	hostNoPlayerTopics: z.string().default('No player topics yet'),
+	aiTopicPrompt: z
+		.string()
+		.default(
+			'Generate a fun party game question about: {topic}. Return JSON with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
+		),
+
 	// Game messages (markdown)
 	winnersMessageMd: z
 		.string()

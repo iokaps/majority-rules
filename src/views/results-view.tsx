@@ -31,10 +31,12 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 		.map(([index]) => parseInt(index, 10));
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			{/* Question */}
-			<div className="game-card">
-				<h2 className="game-question text-center">{currentQuestion.text}</h2>
+			<div className="overlay-blue">
+				<h2 className="game-question-compact text-center">
+					{currentQuestion.text}
+				</h2>
 			</div>
 
 			{/* Vote Breakdown */}
@@ -64,7 +66,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 								<div
 									className={cn(
 										'h-full rounded-full transition-all duration-500',
-										isWinner ? 'bg-success' : 'bg-danger'
+										isWinner ? 'gradient-success' : 'gradient-danger'
 									)}
 									style={{ width: `${percentage}%` }}
 								/>
@@ -77,10 +79,8 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 			{/* Result Message */}
 			<div
 				className={cn(
-					'prose prose-sm max-w-none rounded-2xl p-6',
-					playerWon
-						? 'border-success border-2 bg-green-50'
-						: 'border-danger border-2 bg-red-50'
+					'prose prose-sm max-w-none',
+					playerWon ? 'overlay-green' : 'overlay-amber'
 				)}
 			>
 				<div className={playerWon ? 'text-success' : 'text-danger'}>
@@ -93,7 +93,9 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 			{/* Points Display */}
 			{pointsEarned > 0 && (
 				<div className="score-notification text-center">
-					<div className="text-success text-4xl font-bold">+{pointsEarned}</div>
+					<div className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-5xl font-bold text-transparent">
+						+{pointsEarned}
+					</div>
 					<div className="text-sm text-slate-600">points earned</div>
 				</div>
 			)}

@@ -28,7 +28,7 @@ const App: React.FC = () => {
 		players,
 		votingEndTimestamp,
 		votes,
-		aiGenerationStatus
+		playerTopicsEnabled
 	} = useSnapshot(globalStore.proxy);
 	const serverTime = useServerTimer(250);
 	const [buttonCooldown, setButtonCooldown] = React.useState(true);
@@ -47,6 +47,34 @@ const App: React.FC = () => {
 
 		return () => clearTimeout(timeout);
 	}, [started, gamePhase]);
+
+	// Auto-start voting after question display period
+	React.useEffect(() => {
+		if (gamePhase === 'question-display' && started) {
+			const timeout = setTimeout(() => {
+				globalActions.startVoting();
+			}, config.questionDisplaySeconds * 1000);
+
+			return () => clearTimeout(timeout);
+		}
+	}, [gamePhase, started]);
+
+	// Auto-reveal results when voting timer expires
+	React.useEffect(() => {
+		if (gamePhase === 'voting' && started && votingEndTimestamp > 0) {
+			const timeRemaining = votingEndTimestamp - serverTime;
+
+			if (timeRemaining <= 0) {
+				globalActions.revealResults();
+			} else {
+				const timeout = setTimeout(() => {
+					globalActions.revealResults();
+				}, timeRemaining);
+
+				return () => clearTimeout(timeout);
+			}
+		}
+	}, [gamePhase, started, votingEndTimestamp, serverTime]);
 
 	if (kmClient.clientContext.mode !== 'host') {
 		throw new Error('App host rendered in non-host mode');
@@ -74,19 +102,6 @@ const App: React.FC = () => {
 	const handleStartRound = async () => {
 		if (!selectedQuestionId) return;
 		await globalActions.startRound(selectedQuestionId);
-	};
-
-	const handleGenerateAndStartRound = async () => {
-		try {
-			await globalActions.generateAndStartRound();
-		} catch (error) {
-			console.error('Failed to generate and start round:', error);
-			alert('Failed to generate question. Please try again.');
-		}
-	};
-
-	const handleStartVoting = async () => {
-		await globalActions.startVoting();
 	};
 
 	const handleRevealResults = async () => {
@@ -242,48 +257,14 @@ const App: React.FC = () => {
 				<HostPresenterLayout.Footer>
 					<div className="inline-flex flex-wrap gap-3">
 						{gamePhase === 'lobby' && (
-							<>
-								<button
-									type="button"
-									className="km-btn-primary"
-									onClick={handleStartRound}
-									disabled={buttonCooldown || !selectedQuestionId}
-								>
-									<CirclePlay className="size-5" />
-									{config.hostStartRoundButton}
-								</button>
-
-								<button
-									type="button"
-									className="km-btn-secondary"
-									onClick={handleGenerateAndStartRound}
-									disabled={
-										buttonCooldown || aiGenerationStatus === 'generating'
-									}
-								>
-									{aiGenerationStatus === 'generating' ? (
-										<>
-											<div className="size-5 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
-											{config.hostGeneratingButton}
-										</>
-									) : (
-										<>
-											<CirclePlay className="size-5" />
-											{config.hostGenerateStartButton}
-										</>
-									)}
-								</button>
-							</>
-						)}
-
-						{gamePhase === 'question-display' && (
 							<button
 								type="button"
 								className="km-btn-primary"
-								onClick={handleStartVoting}
-								disabled={buttonCooldown}
+								onClick={handleStartRound}
+								disabled={buttonCooldown || !selectedQuestionId}
 							>
-								Start Voting
+								<CirclePlay className="size-5" />
+								{config.hostStartRoundButton}
 							</button>
 						)}
 
@@ -374,6 +355,18 @@ const App: React.FC = () => {
 					>
 						<CirclePlay className="size-5" />
 						{config.startButton}
+					</button>
+
+					<button
+						type="button"
+						className={
+							playerTopicsEnabled ? 'km-btn-primary' : 'km-btn-secondary'
+						}
+						onClick={globalActions.togglePlayerTopics}
+					>
+						{playerTopicsEnabled
+							? config.playerTopicsEnabledLabel
+							: config.playerTopicsDisabledLabel}
 					</button>
 
 					<button

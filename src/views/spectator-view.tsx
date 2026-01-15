@@ -27,16 +27,23 @@ export const SpectatorView: React.FC = () => {
 		.map(([index]) => parseInt(index, 10));
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			{/* Eliminated Badge */}
-			<div className="spectator-badge pulse border-danger mx-auto justify-center border-2">
-				⚠️ You&apos;ve Been Eliminated
+			<div className="overlay-amber text-center">
+				<div className="spectator-badge pulse mx-auto justify-center">
+					⚠️ You&apos;ve Been Eliminated
+				</div>
+				<p className="mt-3 text-sm text-slate-700">
+					You can still watch the game!
+				</p>
 			</div>
 
 			{/* Question Display */}
 			{currentQuestion && (
-				<div className="game-card opacity-75">
-					<h2 className="game-question text-center">{currentQuestion.text}</h2>
+				<div className="overlay-blue">
+					<h2 className="game-question-compact text-center">
+						{currentQuestion.text}
+					</h2>
 				</div>
 			)}
 

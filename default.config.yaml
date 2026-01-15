@@ -143,3 +143,18 @@ losersMessageMd: |
 eliminatedMessageMd: |
   # 😵 You've been eliminated!
   You're out of the game, but you can still watch the results.
+
+# Player topic submissions
+playerTopicsToggleButton: 'Toggle Player Topics'
+playerTopicsEnabledLabel: 'Player Topics: ON'
+playerTopicsDisabledLabel: 'Player Topics: OFF'
+playerSubmitTopicTitle: 'Suggest a Topic'
+playerSubmitTopicPlaceholder: 'Enter topic idea...'
+playerSubmitTopicButton: 'Submit Topic'
+playerTopicSubmittedMessage: 'Topic submitted!'
+playerAlreadySubmittedMessage: 'You already submitted a topic'
+hostPlayerTopicsTitle: 'Player Suggested Topics'
+hostGenerateFromTopicButton: 'Generate Question'
+hostDeleteTopicButton: 'Delete'
+hostNoPlayerTopics: 'No player topics yet'
+aiTopicPrompt: 'Generate a fun party game question about: {topic}. Return JSON with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'

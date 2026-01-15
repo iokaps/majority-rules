@@ -44,6 +44,18 @@ export interface GlobalState {
 	voteAggregation: Record<number, number>; // key: optionIndex, value: vote count
 	votingEndTimestamp: number;
 	aiGenerationStatus: 'idle' | 'generating' | 'ready';
+
+	// Player topic submissions
+	playerTopicsEnabled: boolean;
+	playerTopics: Record<
+		string,
+		{
+			topic: string;
+			submittedBy: string;
+			submittedByName: string;
+			timestamp: number;
+		}
+	>;
 }
 
 const initialState: GlobalState = {
@@ -62,7 +74,11 @@ const initialState: GlobalState = {
 	votes: {},
 	voteAggregation: {},
 	votingEndTimestamp: 0,
-	aiGenerationStatus: 'idle'
+	aiGenerationStatus: 'idle',
+
+	// Player topic submissions
+	playerTopicsEnabled: false,
+	playerTopics: {}
 };
 
 export const globalStore = kmClient.store<GlobalState>('global', initialState);

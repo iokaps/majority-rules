@@ -53,10 +53,12 @@ export const VotingView: React.FC<VotingViewProps> = ({
 	const optionLetters = ['A', 'B', 'C'];
 
 	return (
-		<div className="space-y-8">
+		<div className="space-y-6">
 			{/* Question */}
-			<div className="game-card">
-				<h2 className="game-question text-center">{currentQuestion.text}</h2>
+			<div className="overlay-blue">
+				<h2 className="game-question-compact text-center">
+					{currentQuestion.text}
+				</h2>
 			</div>
 
 			{/* Options */}
@@ -84,7 +86,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
 			{/* Confidence Slider - only show during voting phase */}
 			{interactive && votingEndTimestamp > 0 && !submitted && (
-				<div className="space-y-3">
+				<div className="space-y-2">
 					<label className="confidence-slider-label block">
 						How confident? {confidence}x points
 					</label>

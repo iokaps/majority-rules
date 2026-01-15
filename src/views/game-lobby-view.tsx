@@ -37,9 +37,9 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 		}
 
 		return (
-			<div className="w-full space-y-6">
-				<div className="game-card">
-					<h2 className="mb-4 text-center text-2xl font-bold text-slate-900">
+			<div className="w-full space-y-4">
+				<div className="overlay-blue">
+					<h2 className="mb-4 text-center text-xl font-bold text-slate-900">
 						{config.lobbyCurrentStatus}
 					</h2>
 					<div className="space-y-3">
@@ -90,11 +90,11 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 					</div>
 				</div>
 
-				<div className="rounded-xl bg-blue-50 p-6 text-center">
-					<p className="text-lg font-semibold text-blue-900">
+				<div className="overlay-purple text-center">
+					<p className="text-lg font-semibold text-slate-900">
 						{config.lobbyWaitingTitle}
 					</p>
-					<p className="mt-2 text-sm text-blue-700">
+					<p className="mt-2 text-sm text-slate-700">
 						{config.lobbyWaitingMessage}
 					</p>
 				</div>
