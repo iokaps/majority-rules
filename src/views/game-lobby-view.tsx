@@ -31,7 +31,7 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 		if (!currentPlayer) {
 			return (
 				<div className="game-card text-center">
-					<p className="text-slate-600">Loading player data...</p>
+					<p className="text-slate-600">{config.lobbyLoadingMessage}</p>
 				</div>
 			);
 		}
@@ -40,25 +40,29 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 			<div className="w-full space-y-6">
 				<div className="game-card">
 					<h2 className="mb-4 text-center text-2xl font-bold text-slate-900">
-						📊 Current Status
+						{config.lobbyCurrentStatus}
 					</h2>
 					<div className="space-y-3">
 						<div className="flex items-center justify-between">
-							<span className="font-semibold text-slate-700">Round:</span>
+							<span className="font-semibold text-slate-700">
+								{config.lobbyRoundLabel}
+							</span>
 							<span className="text-xl font-bold text-blue-600">
 								{roundNumber}
 							</span>
 						</div>
 						<div className="flex items-center justify-between">
-							<span className="font-semibold text-slate-700">Your Score:</span>
+							<span className="font-semibold text-slate-700">
+								{config.lobbyYourScoreLabel}
+							</span>
 							<span className="text-xl font-bold text-slate-900">
-								{currentPlayer.score} points
+								{currentPlayer.score} {config.lobbyPointsLabel}
 							</span>
 						</div>
 						{!currentPlayer.isSpectator && (
 							<div className="flex items-center justify-between">
 								<span className="font-semibold text-slate-700">
-									Lives Remaining:
+									{config.lobbyLivesLabel}
 								</span>
 								<span className="text-xl">
 									{'❤️'.repeat(currentPlayer.lives)}
@@ -67,7 +71,7 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 						)}
 						<div className="flex items-center justify-between">
 							<span className="font-semibold text-slate-700">
-								Active Players:
+								{config.lobbyActivePlayersLabel}
 							</span>
 							<span className="text-xl font-bold text-green-700">
 								{activePlayers}
@@ -76,7 +80,7 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 						{eliminatedPlayers > 0 && (
 							<div className="flex items-center justify-between">
 								<span className="font-semibold text-slate-700">
-									Eliminated:
+									{config.lobbyEliminatedLabel}
 								</span>
 								<span className="text-xl font-bold text-red-600">
 									{eliminatedPlayers}
@@ -88,10 +92,10 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 
 				<div className="rounded-xl bg-blue-50 p-6 text-center">
 					<p className="text-lg font-semibold text-blue-900">
-						🎯 Waiting for Next Question
+						{config.lobbyWaitingTitle}
 					</p>
 					<p className="mt-2 text-sm text-blue-700">
-						The host is selecting the next question...
+						{config.lobbyWaitingMessage}
 					</p>
 				</div>
 			</div>

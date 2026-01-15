@@ -94,6 +94,32 @@ openPlayerHelpButton: 'Force Players Help to Open'
 menuAriaLabel: 'Open menu drawer'
 menuHelpAriaLabel: 'Open help drawer'
 
+# Player pre-game screen
+preGameWelcome: 'Welcome, {name}!'
+preGameWaitingMessage: '🎯 Waiting for the game to start...'
+preGameInstructions: 'The host will begin the game soon. Get ready to vote with the majority!'
+
+# Game lobby (between rounds)
+lobbyCurrentStatus: '📊 Current Status'
+lobbyRoundLabel: 'Round:'
+lobbyYourScoreLabel: 'Your Score:'
+lobbyLivesLabel: 'Lives Remaining:'
+lobbyActivePlayersLabel: 'Active Players:'
+lobbyEliminatedLabel: 'Eliminated:'
+lobbyPointsLabel: 'points'
+lobbyWaitingTitle: '🎯 Waiting for Next Question'
+lobbyWaitingMessage: 'The host is selecting the next question...'
+lobbyLoadingMessage: 'Loading player data...'
+
+# Host screen
+hostSelectQuestion: 'Select Next Question'
+hostStartRoundButton: 'Start Round'
+hostGenerateStartButton: 'Generate & Start Round'
+hostGeneratingButton: 'Generating...'
+hostDeleteAllButton: 'Delete All'
+hostDeleteAllConfirm: 'Are you sure you want to delete all {count} questions?'
+hostPlayedBadge: '✓ Played'
+
 # Game mechanics config
 playerStartingLives: 3
 votingDurationSeconds: 30

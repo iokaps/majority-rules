@@ -106,14 +106,13 @@ const App: React.FC = () => {
 					<div className="w-full space-y-6">
 						<div className="game-card text-center">
 							<h2 className="mb-4 text-2xl font-bold text-slate-900">
-								Welcome, {name}!
+								{config.preGameWelcome.replace('{name}', name)}
 							</h2>
 							<p className="text-lg text-slate-700">
-								🎯 Waiting for the game to start...
+								{config.preGameWaitingMessage}
 							</p>
 							<p className="mt-4 text-sm text-slate-600">
-								The host will begin the game soon. Get ready to vote with the
-								majority!
+								{config.preGameInstructions}
 							</p>
 						</div>
 					</div>

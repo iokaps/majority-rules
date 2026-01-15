@@ -118,7 +118,7 @@ const App: React.FC = () => {
 							{gamePhase === 'lobby' && questionBank.length > 0 ? (
 								<div className="space-y-4">
 									<h2 className="font-semibold text-slate-900">
-										Select Next Question
+										{config.hostSelectQuestion}
 									</h2>
 									<div className="space-y-2">
 										{questionBank.map((q) => (
@@ -142,7 +142,7 @@ const App: React.FC = () => {
 													</div>
 													{usedQuestionIds.includes(q.id) && (
 														<span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
-															✓ Played
+															{config.hostPlayedBadge}
 														</span>
 													)}
 												</div>
@@ -250,7 +250,7 @@ const App: React.FC = () => {
 									disabled={buttonCooldown || !selectedQuestionId}
 								>
 									<CirclePlay className="size-5" />
-									Start Round
+									{config.hostStartRoundButton}
 								</button>
 
 								<button
@@ -264,12 +264,12 @@ const App: React.FC = () => {
 									{aiGenerationStatus === 'generating' ? (
 										<>
 											<div className="size-5 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
-											Generating...
+											{config.hostGeneratingButton}
 										</>
 									) : (
 										<>
 											<CirclePlay className="size-5" />
-											Generate & Start Round
+											{config.hostGenerateStartButton}
 										</>
 									)}
 								</button>

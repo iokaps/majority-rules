@@ -37,6 +37,42 @@ export const schema = z.object({
 	menuAriaLabel: z.string().default('Open menu drawer'),
 	menuHelpAriaLabel: z.string().default('Open help drawer'),
 
+	// Player pre-game screen
+	preGameWelcome: z.string().default('Welcome, {name}!'),
+	preGameWaitingMessage: z
+		.string()
+		.default('🎯 Waiting for the game to start...'),
+	preGameInstructions: z
+		.string()
+		.default(
+			'The host will begin the game soon. Get ready to vote with the majority!'
+		),
+
+	// Game lobby (between rounds)
+	lobbyCurrentStatus: z.string().default('📊 Current Status'),
+	lobbyRoundLabel: z.string().default('Round:'),
+	lobbyYourScoreLabel: z.string().default('Your Score:'),
+	lobbyLivesLabel: z.string().default('Lives Remaining:'),
+	lobbyActivePlayersLabel: z.string().default('Active Players:'),
+	lobbyEliminatedLabel: z.string().default('Eliminated:'),
+	lobbyPointsLabel: z.string().default('points'),
+	lobbyWaitingTitle: z.string().default('🎯 Waiting for Next Question'),
+	lobbyWaitingMessage: z
+		.string()
+		.default('The host is selecting the next question...'),
+	lobbyLoadingMessage: z.string().default('Loading player data...'),
+
+	// Host screen
+	hostSelectQuestion: z.string().default('Select Next Question'),
+	hostStartRoundButton: z.string().default('Start Round'),
+	hostGenerateStartButton: z.string().default('Generate & Start Round'),
+	hostGeneratingButton: z.string().default('Generating...'),
+	hostDeleteAllButton: z.string().default('Delete All'),
+	hostDeleteAllConfirm: z
+		.string()
+		.default('Are you sure you want to delete all {count} questions?'),
+	hostPlayedBadge: z.string().default('✓ Played'),
+
 	// Game mechanics config
 	playerStartingLives: z.number().default(3),
 	votingDurationSeconds: z.number().default(30),
