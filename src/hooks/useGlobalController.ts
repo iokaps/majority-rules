@@ -1,4 +1,5 @@
 import { kmClient } from '@/services/km-client';
+import { globalActions } from '@/state/actions/global-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { useSnapshot } from '@kokimoki/app';
 import { useEffect } from 'react';
@@ -9,7 +10,9 @@ import { useServerTimer } from './useServerTime';
  * @returns A boolean indicating if the current client is the global controller
  */
 export function useGlobalController() {
-	const { controllerConnectionId } = useSnapshot(globalStore.proxy);
+	const { controllerConnectionId, gamePhase, votingEndTimestamp } = useSnapshot(
+		globalStore.proxy
+	);
 	const connections = useSnapshot(globalStore.connections);
 	const connectionIds = connections.connectionIds;
 	const isGlobalController = controllerConnectionId === kmClient.connectionId;
@@ -39,10 +42,13 @@ export function useGlobalController() {
 			return;
 		}
 
-		// IMPORTANT: Global controller-specific logic goes here
-		// For example, a time-based event that modifies the global state
-		// All global controller logic does not need to be time-based
-	}, [isGlobalController, serverTime]);
+		// Auto-reveal results when voting timer expires
+		if (gamePhase === 'voting' && serverTime >= votingEndTimestamp) {
+			globalActions.revealResults().catch((error) => {
+				console.error('Failed to auto-reveal results:', error);
+			});
+		}
+	}, [isGlobalController, serverTime, gamePhase, votingEndTimestamp]);
 
 	return isGlobalController;
 }

@@ -17,18 +17,20 @@
 
 **Round Flow:**
 
-1. **Question Display** (5 seconds): All players see question, no voting yet
-2. **Voting Phase** (30 seconds): Players select option + optional confidence (1–3x multiplier, default 1x), submit
-3. **Results** (5 seconds): Votes aggregated and displayed with animations, scores calculated
-4. **Advance**: Check round limit; if rounds < maxRounds, next round; else game over
+1. **Voting Phase** (30 seconds): Players see question and vote immediately (select option + confidence slider), submit
+2. **Results**: Votes aggregated and displayed with animations, scores calculated, host manually advances
+3. **Advance**: Host clicks "Next Round" to continue, or "End Game" to finish
+4. **Game Over**: After maxRounds reached (if set) or host clicks "End Game"
 
 ### 2. Voting & Confidence Slider
 
 **Player Voting:**
 
 - Select one option (required)
-- Optionally move confidence slider: 1x = "Not Sure" to 3x = "Very Sure"
-- Skip slider = default 1x multiplier
+- Confidence slider with 3 positions (default: middle/1x):
+  - **Left (0.5x)**: Low confidence - half points if majority, **no penalty** if minority
+  - **Middle (1x)**: Normal confidence - standard points if majority, standard penalty if minority
+  - **Right (3x)**: High confidence - triple points if majority, triple penalty if minority
 - 30-second countdown timer with auto-submit on timeout
 - Once submitted, cannot change vote
 
@@ -61,32 +63,35 @@
 
 ### 4. Scoring System
 
-**Margin-Based Scoring Formula:**
+**Winning the Majority:**
 
-```
-Score = baseScore * confidenceMultiplier * marginBonus
-```
+Score = baseScore × confidenceMultiplier × marginBonus
 
 Where:
 
 - `baseScore`: 10 points (configured in `baseScorePoints`)
-- `confidenceMultiplier`: 1–3 (from slider, default 1)
-- `marginBonus`: `(100 - votingMargin) / 50` (capped at 2x max)
-  - `votingMargin` = `(maxVotes - secondMaxVotes) / totalVotes * 100`
-  - Close calls (low margin) reward higher multiplier
-  - Landslides (high margin) reward lower multiplier
+- `confidenceMultiplier`: 0.5, 1, or 3 (from slider position)
+- `marginBonus`: `votingMargin / 50` (capped at 2x max)
+  - `votingMargin` = `(maxVotes - secondMaxVotes) / totalVotes × 100`
+  - **Higher consensus (larger margin) = higher bonus** (this is a majority game!)
 
-**Examples:**
+**Examples (Winners):**
 
-- 51% majority (margin = 49%): marginBonus = 51/50 = 1.02x (high bonus)
-- 75% majority (margin = 50%): marginBonus = 50/50 = 1.0x (normal)
-- 90% majority (margin = 80%): marginBonus = 20/50 = 0.4x (low bonus)
+- Everyone agrees (100% margin): marginBonus = 2x (maximum)
+- Strong majority (66% margin): marginBonus = 1.33x
+- Close call (10% margin): marginBonus = 0.2x (minimum)
+
+**Losing the Majority (Penalties):**
+
+- **0.5x confidence**: No penalty (safe choice)
+- **1x confidence**: Lose baseScore × 1 = 10 points
+- **3x confidence**: Lose baseScore × 3 = 30 points
 
 **Tie Handling:**
 
-- If multiple options tie for max votes, all are winners (no penalty for picking tied options)
-- All non-winning options split loss among voters
-- Margin calculation uses actual vote counts
+- If multiple options tie for max votes, all tied options are winners
+- All players who voted for any tied option receive **half the normal points**
+- Example: Options A and B both get 5 votes (tied) → all A and B voters get 50% points
 
 ### 5. Game Duration & End Condition
 
@@ -190,11 +195,10 @@ losersMessageMd: '# You were in the minority...' # Loser message (markdown)
 
 ## Game Phases
 
-- `lobby`: Pregame, waiting to start
-- `question-display`: Showing question for 5 seconds (no voting)
+- `lobby`: Between rounds, host selects next question
 - `voting`: Players selecting options + confidence (30 seconds)
-- `results`: Displaying results, scores, eliminations (5 seconds)
-- `game-over`: Final leaderboard, game ended
+- `results`: Displaying vote breakdown and scores, waiting for host to advance
+- `game-over`: Final leaderboard, game ended (question hidden)
 
 ## Display Modes
 
@@ -220,22 +224,35 @@ losersMessageMd: '# You were in the minority...' # Loser message (markdown)
 - Main area: Current question + real-time voting progress
 - Side panel: Player list (names, scores, voted/waiting status)
 - Header: Round counter showing current round and active player count
-- Footer: "Start Round" button (lobby) → "Reveal Results" button (voting) → "Next Round" button (results) → "Stop Game" button (always available)
+- Footer buttons:
+  - Lobby: "Start Round" (launches selected question)
+  - Voting: "Reveal Results" (calculates scores, shows results)
+  - Results: "Next Round" (returns to lobby) + "End Game" (jumps to game-over)
+  - Always available: "Stop Game" (returns to pregame)
 
 ### Presenter Mode
 
-**All Phases:**
+**Layout:**
 
-- Large question display (gradient card, 48px+ font, font-weight: 700)
-- Full-width animated bar chart below question
-  - Colored bars (blue/green/orange for options)
-  - Vote count badges on bars
-  - Animated reveal at voting deadline (bars grow left-to-right)
-- Right sidebar: Top 3 leaderboard
-  - Shows player names and scores
-  - Smooth transitions (300ms) on score updates
-- Timer overlay: Large countdown in corner during voting phase
-  - Green (plenty of time) → yellow → red (final 5 seconds)
+- **Main Content Area** (left, stacked vertically):
+  - Large question display (gradient card, 48px+ font, font-weight: 700)
+  - Animated vote breakdown bar chart (during results phase)
+    - Colored bars (blue/green/orange for options)
+    - Large vote count and percentage labels
+    - Animated reveal (bars grow left-to-right, 500ms)
+  - **Full player leaderboard** (ALL players, not just top 3)
+    - Grid layout (2-3 columns)
+    - Large cards with rank badges, names, and scores
+    - Top 3 highlighted with colored rings (gold/silver/bronze)
+- **Sidebar** (right, sticky):
+  - QR code only (180px, for player join)
+- **Timer**: Large countdown circle during voting phase
+  - Blue (plenty of time) → red pulsing (final 5 seconds)
+
+**Game-Over Phase:**
+
+- Question is hidden (only shows "🏆 Game Over!" message)
+- Full leaderboard remains visible
 
 ## Win Condition & Game End
 

@@ -172,7 +172,10 @@ export const globalActions = {
 				.filter(([, count]) => count === maxVotes && maxVotes > 0)
 				.map(([index]) => parseInt(index, 10));
 
-			// Calculate scores and eliminate
+			// Check if there's a tie (multiple options with max votes)
+			const isTie = winningOptionIndices.length > 1;
+
+			// Calculate scores
 			const totalVotes = Object.keys(globalState.votes).length;
 			const secondMaxVotes =
 				maxVotes > 0
@@ -184,8 +187,9 @@ export const globalActions = {
 			const votingMargin =
 				totalVotes > 0 ? ((maxVotes - secondMaxVotes) / totalVotes) * 100 : 0;
 
-			// Margin bonus formula: (100 - margin) / 50, capped at 2x
-			const marginBonus = Math.min((100 - votingMargin) / 50, 2);
+			// Margin bonus formula: margin / 50, capped at 2x
+			// Higher margin (more consensus) = higher bonus (this is a majority game!)
+			const marginBonus = Math.min(votingMargin / 50, 2);
 
 			for (const [clientId, vote] of Object.entries(globalState.votes)) {
 				const player = globalState.players[clientId];
@@ -193,14 +197,30 @@ export const globalActions = {
 
 				const isWinner = winningOptionIndices.includes(vote.optionIndex);
 
+				// Map confidence slider: 1=middle(1x), 2=left(0.5x), 3=right(3x)
+				const confidenceMultiplier =
+					vote.confidence === 1 ? 1 : vote.confidence === 2 ? 0.5 : 3;
+
 				if (isWinner) {
-					// Award points
-					const points = Math.round(
-						config.baseScorePoints * vote.confidence * marginBonus
+					// Award points (half if tie)
+					let points = Math.round(
+						config.baseScorePoints * confidenceMultiplier * marginBonus
 					);
+					if (isTie) {
+						points = Math.round(points / 2);
+					}
 					player.score += points;
+				} else {
+					// Lose points based on confidence (0.5x loses 0, 1x loses base points, 3x loses 3x points)
+					if (confidenceMultiplier === 0.5) {
+						// No penalty for 0.5x
+					} else {
+						const penalty = Math.round(
+							config.baseScorePoints * confidenceMultiplier
+						);
+						player.score -= penalty;
+					}
 				}
-				// No penalty for losers - just no points awarded
 			}
 
 			globalState.gamePhase = 'results';

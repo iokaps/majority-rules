@@ -14,7 +14,6 @@ export const schema = z.object({
 	online: z.string().default('Online'),
 	offline: z.string().default('Offline'),
 	startButton: z.string().default('Start Game'),
-	stopButton: z.string().default('Stop Game'),
 	loading: z.string().default('Loading...'),
 
 	menuHelpMd: z
@@ -31,7 +30,6 @@ export const schema = z.object({
 
 	togglePresenterQrButton: z.string().default('Toggle Presenter QR'),
 
-	menuAriaLabel: z.string().default('Open menu drawer'),
 	menuHelpAriaLabel: z.string().default('Open help drawer'),
 
 	// Player pre-game screen
@@ -88,16 +86,12 @@ export const schema = z.object({
 	hostVotingProgress: z
 		.string()
 		.default('{votedPlayers} / {activePlayers} players voted'),
-	hostTimeRemainingLabel: z.string().default('Time remaining:'),
 	hostGameOverTitle: z.string().default('Game Over!'),
-	hostPlayerScoreFormat: z.string().default('{name}: {score} points'),
 	hostPlayersLabel: z.string().default('Players'),
-	hostSpectatorLabel: z.string().default('Spectator'),
 	hostVotedLabel: z.string().default('✓ Voted'),
 	hostWaitingLabel: z.string().default('Waiting...'),
 	hostRevealResultsButton: z.string().default('Reveal Results'),
 	hostNextRoundButton: z.string().default('Next Round'),
-	hostNewGameButton: z.string().default('New Game'),
 	hostStopGameButton: z.string().default('Stop Game'),
 	hostEndGameButton: z.string().default('End Game'),
 
@@ -109,11 +103,8 @@ export const schema = z.object({
 	presenterWaitingForRoundMessage: z
 		.string()
 		.default('Waiting for next round...'),
-	presenterQuestionFollowedByVoting: z
-		.string()
-		.default('Question will be followed by a {seconds}s voting phase'),
 	presenterGameOverTitle: z.string().default('🏆 Game Over!'),
-	presenterWinnerMessage: z
+	presenterWinsWithPoints: z
 		.string()
 		.default('{name} wins with {score} points!'),
 	presenterLeaderboardTitle: z.string().default('Leaderboard'),
@@ -200,7 +191,55 @@ export const schema = z.object({
 		.string()
 		.default(
 			'# ❌ You were in the minority.\nUnfortunately, you picked the wrong side.'
-		)
+		),
+
+	// How to Play modal (host info)
+	hostInfoTitle: z.string().default('How to Play'),
+	hostInfoGameGoalTitle: z.string().default('🎯 Game Goal'),
+	hostInfoGameGoalText: z
+		.string()
+		.default(
+			'Match the majority! Players vote on subjective questions and earn points by voting with the most popular answer.'
+		),
+	hostInfoConfidenceTitle: z.string().default('🎚️ Confidence Slider'),
+	hostInfoConfidenceText: z
+		.string()
+		.default('Players choose their confidence level:'),
+	hostInfoConfidenceLeft: z
+		.string()
+		.default('Safe choice - half points if right, no penalty if wrong'),
+	hostInfoConfidenceMiddle: z
+		.string()
+		.default('Normal - standard points/penalty'),
+	hostInfoConfidenceRight: z
+		.string()
+		.default('Risky - triple points if right, triple penalty if wrong'),
+	hostInfoScoringTitle: z.string().default('📊 Scoring'),
+	hostInfoScoringWinning: z.string().default('Winning (Majority Vote):'),
+	hostInfoScoringFormula: z
+		.string()
+		.default('Points = 10 × confidence × consensus bonus'),
+	hostInfoScoringConsensus: z
+		.string()
+		.default(
+			'More agreement = more points! When everyone agrees, you get up to 2x bonus.'
+		),
+	hostInfoScoringLosing: z
+		.string()
+		.default('Lose points equal to your confidence (except 0.5x = no penalty)'),
+	hostInfoTiesTitle: z.string().default('🤝 Ties'),
+	hostInfoTiesText: z
+		.string()
+		.default(
+			'When answers tie for most votes, all tied voters get half points.'
+		),
+	hostInfoGameEndTitle: z.string().default('🏁 Game End'),
+	hostInfoGameEndText: z
+		.string()
+		.default(
+			'Game runs for {maxRounds} rounds or until you end it manually. Highest score wins!'
+		),
+	hostInfoButtonLabel: z.string().default('How to Play')
 });
 
 export type Config = z.infer<typeof schema>;

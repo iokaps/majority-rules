@@ -93,7 +93,10 @@ export const VotingView: React.FC<VotingViewProps> = ({
 			{interactive && votingEndTimestamp > 0 && !submitted && (
 				<div className="space-y-2">
 					<label className="confidence-slider-label block">
-						{config.votingConfidenceLabel.replace('{n}', confidence.toString())}
+						{config.votingConfidenceLabel.replace(
+							'{n}',
+							confidence === 1 ? '1' : confidence === 2 ? '0.5' : '3'
+						)}
 					</label>
 					<input
 						type="range"
@@ -106,6 +109,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					/>
 					<div className="flex justify-between text-xs text-slate-600">
 						<span>{config.votingConfidenceMin}</span>
+						<span className="font-semibold">1x</span>
 						<span>{config.votingConfidenceMax}</span>
 					</div>
 				</div>

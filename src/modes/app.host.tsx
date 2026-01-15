@@ -11,7 +11,13 @@ import { cn } from '@/utils/cn';
 import { QuestionManagementView } from '@/views/question-management-view';
 import { VotingView } from '@/views/voting-view';
 import { useSnapshot } from '@kokimoki/app';
-import { CirclePlay, CircleStop, SquareArrowOutUpRight } from 'lucide-react';
+import { useKmModal } from '@kokimoki/shared';
+import {
+	CirclePlay,
+	CircleStop,
+	Info,
+	SquareArrowOutUpRight
+} from 'lucide-react';
 import * as React from 'react';
 
 const App: React.FC = () => {
@@ -90,11 +96,98 @@ const App: React.FC = () => {
 		await globalActions.endGame();
 	};
 
+	const { openDrawer } = useKmModal();
+
+	const handleShowInfo = () => {
+		openDrawer({
+			title: config.hostInfoTitle,
+			content: (
+				<div className="space-y-4">
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							{config.hostInfoGameGoalTitle}
+						</h3>
+						<p className="text-slate-700">{config.hostInfoGameGoalText}</p>
+					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							{config.hostInfoConfidenceTitle}
+						</h3>
+						<p className="mb-2 text-slate-700">
+							{config.hostInfoConfidenceText}
+						</p>
+						<ul className="ml-4 space-y-1 text-slate-700">
+							<li>
+								<strong>Left (0.5x)</strong>: {config.hostInfoConfidenceLeft}
+							</li>
+							<li>
+								<strong>Middle (1x)</strong>: {config.hostInfoConfidenceMiddle}
+							</li>
+							<li>
+								<strong>Right (3x)</strong>: {config.hostInfoConfidenceRight}
+							</li>
+						</ul>
+					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							{config.hostInfoScoringTitle}
+						</h3>
+						<p className="mb-2 text-slate-700">
+							<strong>{config.hostInfoScoringWinning}</strong>
+						</p>
+						<p className="mb-2 ml-4 text-slate-700">
+							{config.hostInfoScoringFormula}
+						</p>
+						<p className="mb-2 text-slate-700">
+							<strong>Consensus Bonus:</strong>{' '}
+							{config.hostInfoScoringConsensus}
+						</p>
+						<p className="text-slate-700">
+							<strong>Losing (Minority Vote):</strong>{' '}
+							{config.hostInfoScoringLosing}
+						</p>
+					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							{config.hostInfoTiesTitle}
+						</h3>
+						<p className="text-slate-700">{config.hostInfoTiesText}</p>
+					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							{config.hostInfoGameEndTitle}
+						</h3>
+						<p className="text-slate-700">
+							{config.hostInfoGameEndText.replace(
+								'{maxRounds}',
+								config.maxRounds.toString()
+							)}
+						</p>
+					</div>
+				</div>
+			)
+		});
+	};
+
 	// Main game view
 	if (started) {
 		return (
 			<HostPresenterLayout.Root>
 				<HostPresenterLayout.Header>
+					{' '}
+					<button
+						type="button"
+						onClick={handleShowInfo}
+						className="inline-flex items-center gap-2 rounded-lg bg-blue-100 px-3 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-200"
+						aria-label="Game information"
+					>
+						<Info className="size-4" />
+						{config.hostInfoButtonLabel}
+					</button>
 					<div className="text-sm font-semibold text-slate-600">
 						{config.hostRoundPlayersLabel
 							.replace('{roundNumber}', roundNumber.toString())
@@ -103,12 +196,12 @@ const App: React.FC = () => {
 				</HostPresenterLayout.Header>
 
 				<HostPresenterLayout.Main>
-					<div className="grid gap-6 lg:grid-cols-3">
+					<div className="grid gap-4 lg:grid-cols-3">
 						{/* Current Question / Status */}
 						<div className="lg:col-span-2">
 							{gamePhase === 'lobby' && questionBank.length > 0 ? (
-								<div className="space-y-4">
-									<h2 className="font-semibold text-slate-900">
+								<div className="space-y-2">
+									<h2 className="text-sm font-semibold text-slate-900">
 										{config.hostSelectQuestion}
 									</h2>
 									<div className="space-y-2">
@@ -122,9 +215,9 @@ const App: React.FC = () => {
 														'border-blue-500 ring-2 ring-blue-500'
 												)}
 											>
-												<div className="flex items-start justify-between gap-3">
+												<div className="flex items-start justify-between gap-2">
 													<div className="flex-1">
-														<p className="font-semibold text-slate-900">
+														<p className="text-sm font-semibold text-slate-900">
 															{q.text}
 														</p>
 														<p className="text-xs text-slate-600">
@@ -141,38 +234,46 @@ const App: React.FC = () => {
 										))}
 									</div>
 								</div>
-							) : gamePhase === 'voting' ? (
-								<div className="space-y-4">
-									<div className="game-card">
-										<h2 className="game-question mb-4 text-center">
-											{currentQuestion?.text}
-										</h2>
-										<p className="text-center text-lg font-semibold text-slate-900">
-											{config.hostVotingProgress
-												.replace('{votedPlayers}', votedPlayers.toString())
-												.replace('{activePlayers}', activePlayers.toString())}
-										</p>
-									</div>
-									<div className="rounded-xl bg-blue-50 p-4">
-										<p className="text-sm font-semibold text-blue-900">
-											Time remaining:{' '}
-										</p>
-										<p className="text-2xl font-bold text-blue-600">
-											{Math.ceil(
-												Math.max(0, votingEndTimestamp - serverTime) / 1000
-											)}
-											s
-										</p>
-									</div>
+							) : gamePhase === 'voting' || gamePhase === 'results' ? (
+								<div className="space-y-3">
+									{gamePhase === 'voting' && (
+										<>
+											<div className="game-card-compact">
+												<h2 className="game-question-compact mb-3 text-center">
+													{currentQuestion?.text}
+												</h2>
+												<p className="text-center text-base font-semibold text-slate-900">
+													{config.hostVotingProgress
+														.replace('{votedPlayers}', votedPlayers.toString())
+														.replace(
+															'{activePlayers}',
+															activePlayers.toString()
+														)}
+												</p>
+											</div>
+											<div className="rounded-xl bg-blue-50 p-4">
+												<p className="text-sm font-semibold text-blue-900">
+													Time remaining:{' '}
+												</p>
+												<p className="text-2xl font-bold text-blue-600">
+													{Math.ceil(
+														Math.max(0, votingEndTimestamp - serverTime) / 1000
+													)}
+													s
+												</p>
+											</div>
+										</>
+									)}
+									{gamePhase === 'results' && (
+										<VotingView interactive={false} />
+									)}
 								</div>
-							) : gamePhase === 'results' ? (
-								<VotingView interactive={false} />
 							) : gamePhase === 'game-over' ? (
-								<div className="game-card text-center">
-									<h2 className="game-question mb-4">
+								<div className="game-card-compact text-center">
+									<h2 className="game-question-compact mb-3">
 										{config.hostGameOverTitle}
 									</h2>
-									<div className="space-y-3">
+									<div className="space-y-2">
 										{Object.entries(players)
 											.map(([, p]) => ({
 												name: p.name,
@@ -180,7 +281,7 @@ const App: React.FC = () => {
 											}))
 											.sort((a, b) => b.score - a.score)
 											.map((p) => (
-												<div key={p.name} className="font-semibold">
+												<div key={p.name} className="text-sm font-semibold">
 													{p.name}: {p.score} points
 												</div>
 											))}
@@ -189,22 +290,22 @@ const App: React.FC = () => {
 							) : null}
 						</div>
 
-						<div className="rounded-xl border border-slate-200 bg-white p-4">
-							<h3 className="mb-4 font-semibold text-slate-900">
+						<div className="rounded-xl border border-slate-200 bg-white p-3">
+							<h3 className="mb-2 text-sm font-semibold text-slate-900">
 								{config.hostPlayersLabel}
 							</h3>
-							<div className="space-y-2">
+							<div className="space-y-1.5">
 								{Object.values(players).map((player) => (
 									<div
 										key={player.name}
-										className="rounded-lg bg-slate-100 px-3 py-2 text-slate-900"
+										className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-slate-900"
 									>
 										<div className="flex items-center justify-between">
 											<div className="flex-1">
-												<p className="text-sm font-semibold">{player.name}</p>
+												<p className="text-xs font-semibold">{player.name}</p>
 											</div>
 											<div className="text-right">
-												<p className="text-sm font-bold">{player.score}</p>
+												<p className="text-xs font-bold">{player.score}</p>
 												{gamePhase === 'voting' && (
 													<p className="text-xs text-slate-600">
 														{player.hasVoted
@@ -222,7 +323,7 @@ const App: React.FC = () => {
 				</HostPresenterLayout.Main>
 
 				<HostPresenterLayout.Footer>
-					<div className="inline-flex flex-wrap gap-3">
+					<div className="inline-flex flex-wrap gap-2">
 						{gamePhase === 'lobby' && (
 							<button
 								type="button"
@@ -313,7 +414,7 @@ const App: React.FC = () => {
 			</HostPresenterLayout.Main>
 
 			<HostPresenterLayout.Footer>
-				<div className="inline-flex flex-wrap gap-4">
+				<div className="inline-flex flex-wrap gap-2">
 					<button
 						type="button"
 						className="km-btn-primary"
