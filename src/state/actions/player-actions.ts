@@ -18,8 +18,6 @@ export const playerActions = {
 					globalState.players[kmClient.id] = {
 						name,
 						score: 0,
-						lives: 3,
-						isSpectator: false,
 						hasVoted: false
 					};
 				} else {

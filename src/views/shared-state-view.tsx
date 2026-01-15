@@ -1,4 +1,4 @@
-import { config } from '@/config';
+// import { config } from '@/config';
 import { useServerTimer } from '@/hooks/useServerTime';
 import { kmClient } from '@/services/km-client';
 import { globalStore } from '@/state/stores/global-store';
@@ -29,7 +29,8 @@ export const SharedStateView: React.FC<React.PropsWithChildren> = () => {
 				)}
 
 				<Markdown>
-					{isHost ? config.sharedStateMd : config.sharedStatePlayerMd}
+					{/* {isHost ? config.sharedStateMd : config.sharedStatePlayerMd} */}
+					Shared state view (template file - not used in this game)
 				</Markdown>
 			</article>
 		</>

@@ -44,11 +44,6 @@ const App: React.FC = () => {
 		.sort((a, b) => b.score - a.score)
 		.slice(0, 3);
 
-	// Get spectators
-	const spectators = Object.values(players)
-		.filter((p) => p.isSpectator)
-		.sort((a, b) => b.score - a.score);
-
 	// Vote breakdown
 	const totalVotes = Object.values(voteAggregation).reduce((a, b) => a + b, 0);
 	const maxVotes = Math.max(...Object.values(voteAggregation), 0);
@@ -69,9 +64,9 @@ const App: React.FC = () => {
 				<HostPresenterLayout.Header />
 
 				<HostPresenterLayout.Main>
-					<div className="grid gap-6 lg:grid-cols-4">
+					<div className="grid gap-6 lg:grid-cols-5">
 						{/* Main Content */}
-						<div className="space-y-6 lg:col-span-3">
+						<div className="space-y-6 lg:col-span-4">
 							{/* Question Display */}
 							{started && currentQuestion && (
 								<div className="overlay-purple">
@@ -99,7 +94,7 @@ const App: React.FC = () => {
 							{started && currentQuestion && hasVoteResults && (
 								<div className="overlay-blue">
 									<h2 className="mb-4 font-semibold text-slate-900">
-										Vote Breakdown
+										{config.presenterVoteBreakdownTitle}
 									</h2>
 									<div className="space-y-4">
 										{currentQuestion.options.map((option, index) => {
@@ -158,15 +153,6 @@ const App: React.FC = () => {
 								</div>
 							)}
 
-							{started && gamePhase === 'question-display' && (
-								<div className="game-card text-center">
-									<p className="text-slate-600">
-										Question will be followed by a{' '}
-										{config.votingDurationSeconds}s voting phase
-									</p>
-								</div>
-							)}
-
 							{gamePhase === 'game-over' && (
 								<div className="game-card text-center">
 									<h2 className="game-question text-success mb-4">
@@ -185,14 +171,14 @@ const App: React.FC = () => {
 							{/* QR Code */}
 							{showPresenterQr && (
 								<div className="game-card flex justify-center">
-									<KmQrCode data={playerLink} size={180} />
+									<KmQrCode data={playerLink} size={140} />
 								</div>
 							)}
 
 							{/* Leaderboard */}
 							<div className="overlay-green">
 								<h2 className="mb-3 font-semibold text-slate-900">
-									Leaderboard
+									{config.presenterLeaderboardTitle}
 								</h2>
 								<div className="space-y-2">
 									{leaderboard.map((player, index) => (
@@ -209,36 +195,14 @@ const App: React.FC = () => {
 												<p className="text-lg font-bold text-slate-900">
 													{player.score}
 												</p>
-												<p className="text-xs text-slate-600">pts</p>
+												<p className="text-xs text-slate-600">
+													{config.presenterPointsLabel}
+												</p>
 											</div>
 										</div>
 									))}
 								</div>
 							</div>
-
-							{/* Spectators */}
-							{spectators.length > 0 && (
-								<div className="overlay-amber">
-									<h2 className="mb-3 font-semibold text-slate-900">
-										Spectators
-									</h2>
-									<div className="space-y-2">
-										{spectators.map((player) => (
-											<div
-												key={player.name}
-												className="flex items-center justify-between rounded-lg bg-red-50 px-3 py-2 opacity-60"
-											>
-												<p className="text-xs font-semibold text-red-700">
-													{player.name}
-												</p>
-												<p className="text-xs text-red-600">
-													{player.score} pts
-												</p>
-											</div>
-										))}
-									</div>
-								</div>
-							)}
 						</div>
 					</div>
 				</HostPresenterLayout.Main>

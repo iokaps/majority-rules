@@ -178,23 +178,23 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 	return (
 		<div className="space-y-6">
 			<div className="game-card">
-				<h1 className="game-question mb-2">Question Manager</h1>
-				<p className="text-slate-600">
-					Generate AI questions or create custom ones for your game
-				</p>
+				<h1 className="game-question mb-2">{config.questionManagerTitle}</h1>
+				<p className="text-slate-600">{config.questionManagerDescription}</p>
 			</div>
 
 			{/* AI Generation Section */}
 			<div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-6">
 				<div className="mb-4 flex items-center gap-2">
 					<Wand2 className="size-5 text-blue-600" />
-					<h2 className="font-semibold text-blue-900">AI Question Generator</h2>
+					<h2 className="font-semibold text-blue-900">
+						{config.aiGeneratorTitle}
+					</h2>
 				</div>
 
 				<div className="space-y-3">
 					<div>
 						<label className="mb-2 block text-sm font-medium text-blue-900">
-							Topics or Themes (one per line)
+							{config.aiTopicsLabel}
 						</label>
 						<div className="space-y-2">
 							{aiTopics.map((topic, index) => (
@@ -203,7 +203,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 										type="text"
 										value={topic}
 										onChange={(e) => updateTopic(index, e.target.value)}
-										placeholder="e.g., breakfast foods, movie genres, travel destinations"
+										placeholder={config.aiTopicsPlaceholder}
 										className="km-input flex-1"
 									/>
 									{aiTopics.length > 1 && (
@@ -231,7 +231,9 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 					{aiGenerationStatus === 'generating' && totalBatchQuestions > 0 && (
 						<div className="rounded-lg bg-blue-100 p-3">
 							<p className="text-sm font-semibold text-blue-900">
-								Generating {batchProgress} / {totalBatchQuestions} questions...
+								{config.aiGeneratingProgress
+									.replace('{progress}', batchProgress.toString())
+									.replace('{total}', totalBatchQuestions.toString())}
 							</p>
 							<div className="mt-2 h-2 w-full rounded-full bg-blue-200">
 								<div
@@ -256,13 +258,20 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 						{aiGenerationStatus === 'generating' ? (
 							<>
 								<div className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-								Generating...
+								{config.aiGeneratingLabel}
 							</>
 						) : (
 							<>
 								<Wand2 className="size-5" />
-								Generate {aiTopics.filter((t) => t.trim()).length} Question
-								{aiTopics.filter((t) => t.trim()).length !== 1 ? 's' : ''}
+								{config.aiGenerateButton
+									.replace(
+										'{count}',
+										aiTopics.filter((t) => t.trim()).length.toString()
+									)
+									.replace(
+										'{s}',
+										aiTopics.filter((t) => t.trim()).length !== 1 ? 's' : ''
+									)}
 							</>
 						)}
 					</button>
@@ -289,7 +298,10 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 											{topicData.topic}
 										</p>
 										<p className="text-xs text-slate-600">
-											Suggested by: {topicData.submittedByName}
+											{config.questionSuggestedBy.replace(
+												'{name}',
+												topicData.submittedByName
+											)}
 										</p>
 									</div>
 
@@ -332,7 +344,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 			{/* Manual Creation Section */}
 			<div className="rounded-xl border-2 border-purple-200 bg-purple-50 p-6">
 				<h2 className="mb-4 font-semibold text-purple-900">
-					Create Custom Question
+					{config.customQuestionTitle}
 				</h2>
 
 				{!showManualForm ? (
@@ -342,7 +354,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 						className="km-btn-secondary w-full"
 					>
 						<Plus className="size-5" />
-						New Custom Question
+						{config.customQuestionNewButton}
 					</button>
 				) : (
 					<div className="space-y-3">
@@ -350,7 +362,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 							type="text"
 							value={manualQuestion}
 							onChange={(e) => setManualQuestion(e.target.value)}
-							placeholder="Question text..."
+							placeholder={config.customQuestionPlaceholder}
 							className="km-input"
 						/>
 
@@ -364,7 +376,10 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 									newOptions[index] = e.target.value;
 									setManualOptions(newOptions);
 								}}
-								placeholder={`Option ${index + 1}`}
+								placeholder={config.customOptionPlaceholder.replace(
+									'{n}',
+									(index + 1).toString()
+								)}
 								className="km-input"
 							/>
 						))}
@@ -375,14 +390,14 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 								onClick={addManualQuestion}
 								className="km-btn-primary flex-1"
 							>
-								Add Question
+								{config.customAddButton}
 							</button>
 							<button
 								type="button"
 								onClick={() => setShowManualForm(false)}
 								className="km-btn-secondary flex-1"
 							>
-								Cancel
+								{config.customCancelButton}
 							</button>
 						</div>
 					</div>
@@ -393,7 +408,10 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 			<div>
 				<div className="mb-4 flex items-center justify-between">
 					<h2 className="font-semibold text-slate-900">
-						Question Bank ({questionBank.length})
+						{config.questionBankTitle.replace(
+							'{count}',
+							questionBank.length.toString()
+						)}
 					</h2>
 					{questionBank.length > 0 && (
 						<button
@@ -401,7 +419,10 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 							onClick={() => {
 								if (
 									window.confirm(
-										`Are you sure you want to delete all ${questionBank.length} questions?`
+										config.questionBankDeleteAllConfirm.replace(
+											'{count}',
+											questionBank.length.toString()
+										)
 									)
 								) {
 									globalActions.clearAllQuestions();
@@ -409,14 +430,14 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 							}}
 							className="km-btn-error text-sm"
 						>
-							Delete All
+							{config.questionBankDeleteAll}
 						</button>
 					)}
 				</div>
 
 				{questionBank.length === 0 ? (
 					<div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-6 text-center text-slate-600">
-						No questions yet. Generate or create some!
+						{config.questionBankEmpty}
 					</div>
 				) : (
 					<div className="space-y-3">
@@ -489,7 +510,9 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 														: 'bg-purple-200 text-purple-700'
 												)}
 											>
-												{question.isAiGenerated ? '🤖 AI' : '✏️ Manual'}
+												{question.isAiGenerated
+													? config.questionAiLabel
+													: config.questionManualLabel}
 											</span>
 										</div>
 

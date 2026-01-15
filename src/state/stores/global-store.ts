@@ -17,8 +17,6 @@ export interface Question {
 export interface PlayerData {
 	name: string;
 	score: number;
-	lives: number;
-	isSpectator: boolean;
 	hasVoted: boolean;
 }
 

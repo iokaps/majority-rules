@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Majority Rules** is a psychological social game for 5–30 players where the goal isn't to be "right," but to be "common." Players predict how the majority will vote on subjective questions. Anyone in the minority loses a life. Hard elimination after 3 losses. Only voting results revealed at deadline.
+**Majority Rules** is a psychological social game where the goal isn't to be "right," but to be "common." Players predict how the majority will vote on subjective questions and accumulate points by matching the majority vote. Players compete over multiple rounds to achieve the highest score. Only voting results revealed at deadline.
 
 ## Core Game Mechanics
 
@@ -19,8 +19,8 @@
 
 1. **Question Display** (5 seconds): All players see question, no voting yet
 2. **Voting Phase** (30 seconds): Players select option + optional confidence (1–3x multiplier, default 1x), submit
-3. **Results** (5 seconds): Votes aggregated and displayed with animations, scores calculated, eliminations processed
-4. **Advance**: Check win condition; if active players > 1, next round; else game over
+3. **Results** (5 seconds): Votes aggregated and displayed with animations, scores calculated
+4. **Advance**: Check round limit; if rounds < maxRounds, next round; else game over
 
 ### 2. Voting & Confidence Slider
 
@@ -35,7 +35,7 @@
 **Auto-Submit Behavior:**
 
 - If voting deadline reached and player hasn't submitted, auto-submit with: selected option (if any) + default 1x confidence
-- If no option selected by deadline, auto-submit as "no vote" (treated as loss)
+- If no option selected by deadline, player receives no points for that round
 
 ### 3. Vote Aggregation & Winners
 
@@ -50,14 +50,14 @@
 - Count votes per option
 - **All options with maximum vote count are "winning options"** (tie handling: all tied options win)
 - Any player who selected a winning option gets points
-- Any player who selected a non-winning option loses 1 life
+- Any player who selected a non-winning option receives no points for that round
 
 **Example:**
 
 - Question: "Pancakes or Waffles?"
 - Votes: 12 Pancakes, 12 Waffles, 1 French Toast
-- Winners: All Pancakes voters AND all Waffles voters (12 points each + confidence multiplier)
-- Losers: French Toast voter (loses 1 life)
+- Winners: All Pancakes voters AND all Waffles voters (earn points based on confidence multiplier)
+- Losers: French Toast voter (no points awarded)
 
 ### 4. Scoring System
 
@@ -88,27 +88,24 @@ Where:
 - All non-winning options split loss among voters
 - Margin calculation uses actual vote counts
 
-### 5. Elimination & Spectator Mode
+### 5. Game Duration & End Condition
 
-**Hard Elimination:**
+**Round-Based Game:**
 
-- Each player starts with 3 lives
-- Lose 1 life every round you pick non-winning option (or timeout without submitting)
-- When lives reach 0: **immediately switched to spectator mode** (cannot vote, cannot affect game)
+- Game runs for a configurable number of rounds (default: 10)
+- Setting `maxRounds` to 0 enables unlimited rounds (manual stop only)
+- All players remain active throughout the entire game (no elimination)
+- Players accumulate points across all rounds
 
-**Spectator Mode:**
+**Game-Over Conditions (Hybrid):**
 
-- Can view current question, votes, results, leaderboard
-- Read-only UI (dimmed, no interaction)
-- Display "You've Been Eliminated" badge
-- Remains visible through game end
-- See final leaderboard and elimination status
+1. **Automatic**: Game ends after `maxRounds` rounds (if maxRounds > 0)
+2. **Manual**: Host can click "Stop Game" button at any time to end immediately
 
-**Game-Over Condition:**
+**Winner Determination:**
 
-- Game ends when only 1 active (non-spectator) player remains
-- All other players are spectators
-- Winner = the last active player
+- Player with highest total score at game end wins
+- Ties awarded to all players with max score
 
 ### 6. Question Management (Host)
 
@@ -179,17 +176,16 @@ Where:
 **Game Parameters** (`schema.ts` and `default.config.yaml`):
 
 ```yaml
-playerStartingLives: 3                    # Lives per player
-votingDurationSeconds: 30                 # Voting phase duration
-questionDisplaySeconds: 5                 # Question display before voting
-resultsDisplaySeconds: 5                  # Results visible before next round
-confidenceSliderRange: [1, 3]            # Multiplier range
-maxOptionsPerQuestion: 3                  # Max options per question
-baseScorePoints: 10                       # Base points per round
-aiQuestionPrompt: "Generate a subjective..." # AI generation template
-winnersMessageMd: "# You got it right!..." # Winner message (markdown)
-losersMessageMd: "# Oops, you were..."  # Loser message (markdown)
-eliminatedMessageMd: "# You're out!"...  # Eliminated message (markdown)
+maxRounds: 10 # Max rounds (0 = unlimited)
+votingDurationSeconds: 30 # Voting phase duration
+questionDisplaySeconds: 5 # Question display before voting
+resultsDisplaySeconds: 5 # Results visible before next round
+confidenceSliderRange: [1, 3] # Multiplier range
+maxOptionsPerQuestion: 3 # Max options per question
+baseScorePoints: 10 # Base points per round
+aiQuestionPrompt: 'Generate a subjective...' # AI generation template
+winnersMessageMd: '# You got the majority!...' # Winner message (markdown)
+losersMessageMd: '# You were in the minority...' # Loser message (markdown)
 ```
 
 ## Game Phases
@@ -204,19 +200,13 @@ eliminatedMessageMd: "# You're out!"...  # Eliminated message (markdown)
 
 ### Player Mode
 
-**Active Player:**
+**All Players:**
 
 - Sees question during `question-display` phase (static, no interaction)
 - Sees [voting-view.tsx](src/views/voting-view.tsx) during `voting` phase (interactive)
 - Sees [results-view.tsx](src/views/results-view.tsx) during `results` phase
-- Repeats until eliminated or game over
-
-**Spectator (Eliminated):**
-
-- Sees [spectator-view.tsx](src/views/spectator-view.tsx) for all phases
-- Read-only question/options display
-- Can see results after reveal
-- Can see live leaderboard
+- Sees [game-lobby-view.tsx](src/views/game-lobby-view.tsx) between rounds
+- All players remain active throughout the entire game
 
 ### Host Mode
 
@@ -227,10 +217,10 @@ eliminatedMessageMd: "# You're out!"...  # Eliminated message (markdown)
 **During Game:**
 
 - Split layout with [HostPresenterLayout](src/layouts/host-presenter.tsx)
-- Main area: Current question + real-time option vote badges (color-coded, live counts)
-- Side panel: Player list (names, scores, lives remaining, voted/waiting status)
-- Footer: "Start Voting" button (during question-display) → "Reveal Results" button (during voting) → "Next Round" button (during results)
-- Red badge showing eliminated player count
+- Main area: Current question + real-time voting progress
+- Side panel: Player list (names, scores, voted/waiting status)
+- Header: Round counter showing current round and active player count
+- Footer: "Start Round" button (lobby) → "Reveal Results" button (voting) → "Next Round" button (results) → "Stop Game" button (always available)
 
 ### Presenter Mode
 
@@ -241,27 +231,27 @@ eliminatedMessageMd: "# You're out!"...  # Eliminated message (markdown)
   - Colored bars (blue/green/orange for options)
   - Vote count badges on bars
   - Animated reveal at voting deadline (bars grow left-to-right)
-- [KmPodiumTable](kokimoki-shared.instructions.md#kmpodiumtable) leaderboard (top 3 players)
+- Right sidebar: Top 3 leaderboard
+  - Shows player names and scores
   - Smooth transitions (300ms) on score updates
-- Right sidebar: "Spectators" section
-  - Lists eliminated players with red badges
-  - Sorted by final score
-- Timer overlay: Large countdown in corner
+- Timer overlay: Large countdown in corner during voting phase
   - Green (plenty of time) → yellow → red (final 5 seconds)
 
 ## Win Condition & Game End
 
 **Winner:**
 
-- Last remaining active (non-spectator) player
-- All others have 0 lives and are spectators
+- Player with highest total score after all rounds complete
+- Ties awarded to all players with maximum score
 
 **Game-Over Screen:**
 
-- Winner announcement: "🏆 [Winner Name] Wins!" (gold-gradient text, large)
-- Final leaderboard: [KmPodiumTable](kokimoki-shared.instructions.md#kmpodiumtable) showing all players ranked by final score
-- Spectators section: Eliminated players (grayed, below active players)
-- Host button: "Start New Game" (gradient, large, hover scale) to reset and restart
+- Winner announcement: "🏆 Game Over!" (gold-gradient text, large)
+- Final leaderboard showing all players ranked by final score
+  - Sorted descending by score
+  - Shows player names and total points earned
+- Host button: "New Game" to reset and restart
+- Player view: Full leaderboard with final rankings
 
 ## Implementation Notes
 
@@ -270,5 +260,5 @@ eliminatedMessageMd: "# You're out!"...  # Eliminated message (markdown)
 - AI questions generated with `kmClient.ai.generateJson()` (prompt must include word "json")
 - Vote aggregation happens only at deadline, not during voting phase
 - All animations use CSS transitions (300ms smooth)
-- Spectator view accessible via updated `playerStore.currentView`
-- Global controller manages round progression and elimination logic
+- Game ends when: `roundNumber >= maxRounds` (if maxRounds > 0) OR host clicks "Stop Game"
+- Global controller manages round progression and automatic game-over checks

@@ -39,20 +39,6 @@ gameLobbyMd: |
 
   ![Logo](/logo.svg)
 
-connectionsMd: |
-  Scan the QR to join the game.
-
-sharedStateMd: |
-  # Shared State Host
-  This is an example of shared state view. Host can start the game, open the presenter screen and allow players to join by scanning the QR.
-
-  ## Host Actions
-  Here's a demo of dashboard actions that can be used to control the state on presenter and player screens.
-
-sharedStatePlayerMd: |
-  # Shared State Player
-  You are connected as a player. Host has started the game. In this shared state example the playtime is synchronized between all players.
-
 players: 'Players Connected'
 online: 'Online'
 offline: 'Offline'
@@ -103,9 +89,7 @@ preGameInstructions: 'The host will begin the game soon. Get ready to vote with 
 lobbyCurrentStatus: '📊 Current Status'
 lobbyRoundLabel: 'Round:'
 lobbyYourScoreLabel: 'Your Score:'
-lobbyLivesLabel: 'Lives Remaining:'
 lobbyActivePlayersLabel: 'Active Players:'
-lobbyEliminatedLabel: 'Eliminated:'
 lobbyPointsLabel: 'points'
 lobbyWaitingTitle: '🎯 Waiting for Next Question'
 lobbyWaitingMessage: 'The host is selecting the next question...'
@@ -121,10 +105,8 @@ hostDeleteAllConfirm: 'Are you sure you want to delete all {count} questions?'
 hostPlayedBadge: '✓ Played'
 
 # Game mechanics config
-playerStartingLives: 3
+maxRounds: 10
 votingDurationSeconds: 30
-questionDisplaySeconds: 5
-resultsDisplaySeconds: 5
 baseScorePoints: 10
 maxOptionsPerQuestion: 3
 
@@ -138,11 +120,71 @@ winnersMessageMd: |
 
 losersMessageMd: |
   # ❌ You were in the minority
-  Unfortunately, you picked the wrong side. **-1 life**
+  Unfortunately, you picked the wrong side.
 
-eliminatedMessageMd: |
-  # 😵 You've been eliminated!
-  You're out of the game, but you can still watch the results.
+# Host screen - game view
+hostRoundPlayersLabel: 'Round {roundNumber} • {activePlayers} Active Players'
+hostVotingProgress: '{votedPlayers} / {activePlayers} players voted'
+hostTimeRemainingLabel: 'Time remaining:'
+hostGameOverTitle: 'Game Over!'
+hostPlayerScoreFormat: '{name}: {score} points'
+hostPlayersLabel: 'Players'
+hostVotedLabel: '✓ Voted'
+hostWaitingLabel: 'Waiting...'
+hostRevealResultsButton: 'Reveal Results'
+hostNextRoundButton: 'Next Round'
+hostNewGameButton: 'New Game'
+hostStopGameButton: 'Stop Game'
+hostEndGameButton: 'End Game'
+
+# Presenter screen
+presenterVoteBreakdownTitle: 'Vote Breakdown'
+presenterWaitingToStartMessage: 'Waiting for game to start...'
+presenterWaitingForRoundMessage: 'Waiting for next round...'
+presenterQuestionFollowedByVoting: 'Question will be followed by a {seconds}s voting phase'
+presenterGameOverTitle: '🏆 Game Over!'
+presenterWinnerMessage: '{name} wins with {score} points!'
+presenterLeaderboardTitle: 'Leaderboard'
+presenterPointsLabel: 'pts'
+
+# Player screen - game over
+playerGameOverTitle: '🏆 Game Over!'
+playerFinalLeaderboardTitle: 'Final Leaderboard'
+playerPointsLabel: 'pts'
+
+# Question management
+questionManagerTitle: 'Question Manager'
+questionManagerDescription: 'Generate AI questions or create custom ones for your game'
+aiGeneratorTitle: 'AI Question Generator'
+aiTopicsLabel: 'Topics or Themes (one per line)'
+aiTopicsPlaceholder: 'e.g., breakfast foods, movie genres, travel destinations'
+aiAddTopicButton: 'Add Another Topic'
+aiGeneratingProgress: 'Generating {progress} / {total} questions...'
+aiGenerateButton: 'Generate {count} Question{s}'
+aiGeneratingLabel: 'Generating...'
+customQuestionTitle: 'Create Custom Question'
+customQuestionNewButton: 'New Custom Question'
+customQuestionPlaceholder: 'Question text...'
+customOptionPlaceholder: 'Option {n}'
+customAddButton: 'Add Question'
+customCancelButton: 'Cancel'
+questionBankTitle: 'Question Bank ({count})'
+questionBankDeleteAll: 'Delete All'
+questionBankDeleteAllConfirm: 'Are you sure you want to delete all {count} questions?'
+questionBankEmpty: 'No questions yet. Generate or create some!'
+questionAiLabel: '🤖 AI'
+questionManualLabel: '✏️ Manual'
+questionEditButton: 'Edit'
+questionSaveButton: 'Save'
+questionSuggestedBy: 'Suggested by: {name}'
+
+# Voting view
+votingNoQuestionMessage: 'No question loaded'
+votingConfidenceLabel: 'How confident? {n}x points'
+votingConfidenceMin: 'Not Sure'
+votingConfidenceMax: 'Very Sure'
+votingSubmitButton: 'Submit Vote'
+votingSubmittedMessage: '✓ Vote submitted!'
 
 # Player topic submissions
 playerTopicsToggleButton: 'Toggle Player Topics'
@@ -158,3 +200,5 @@ hostGenerateFromTopicButton: 'Generate Question'
 hostDeleteTopicButton: 'Delete'
 hostNoPlayerTopics: 'No player topics yet'
 aiTopicPrompt: 'Generate a fun party game question about: {topic}. Return JSON with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
+
+playerResultsWaitingMessage: 'Waiting for next round...'

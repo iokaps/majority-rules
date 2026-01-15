@@ -9,9 +9,6 @@ export const schema = z.object({
 		.default(
 			'# Waiting for game to start...\nThe game will start once the host presses the start button.'
 		),
-	connectionsMd: z.string().default('# Connections example'),
-	sharedStateMd: z.string().default('# Shared State example'),
-	sharedStatePlayerMd: z.string().default('# Shared State example for players'),
 
 	players: z.string().default('Players'),
 	online: z.string().default('Online'),
@@ -52,9 +49,7 @@ export const schema = z.object({
 	lobbyCurrentStatus: z.string().default('📊 Current Status'),
 	lobbyRoundLabel: z.string().default('Round:'),
 	lobbyYourScoreLabel: z.string().default('Your Score:'),
-	lobbyLivesLabel: z.string().default('Lives Remaining:'),
 	lobbyActivePlayersLabel: z.string().default('Active Players:'),
-	lobbyEliminatedLabel: z.string().default('Eliminated:'),
 	lobbyPointsLabel: z.string().default('points'),
 	lobbyWaitingTitle: z.string().default('🎯 Waiting for Next Question'),
 	lobbyWaitingMessage: z
@@ -74,10 +69,8 @@ export const schema = z.object({
 	hostPlayedBadge: z.string().default('✓ Played'),
 
 	// Game mechanics config
-	playerStartingLives: z.number().default(3),
+	maxRounds: z.number().default(10),
 	votingDurationSeconds: z.number().default(30),
-	questionDisplaySeconds: z.number().default(5),
-	resultsDisplaySeconds: z.number().default(5),
 	baseScorePoints: z.number().default(10),
 	maxOptionsPerQuestion: z.number().default(3),
 
@@ -87,6 +80,94 @@ export const schema = z.object({
 		.default(
 			'Generate a fun party game question in JSON format with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
 		),
+
+	// Host screen - game view
+	hostRoundPlayersLabel: z
+		.string()
+		.default('Round {roundNumber} • {activePlayers} Active Players'),
+	hostVotingProgress: z
+		.string()
+		.default('{votedPlayers} / {activePlayers} players voted'),
+	hostTimeRemainingLabel: z.string().default('Time remaining:'),
+	hostGameOverTitle: z.string().default('Game Over!'),
+	hostPlayerScoreFormat: z.string().default('{name}: {score} points'),
+	hostPlayersLabel: z.string().default('Players'),
+	hostSpectatorLabel: z.string().default('Spectator'),
+	hostVotedLabel: z.string().default('✓ Voted'),
+	hostWaitingLabel: z.string().default('Waiting...'),
+	hostRevealResultsButton: z.string().default('Reveal Results'),
+	hostNextRoundButton: z.string().default('Next Round'),
+	hostNewGameButton: z.string().default('New Game'),
+	hostStopGameButton: z.string().default('Stop Game'),
+	hostEndGameButton: z.string().default('End Game'),
+
+	// Presenter screen
+	presenterVoteBreakdownTitle: z.string().default('Vote Breakdown'),
+	presenterWaitingToStartMessage: z
+		.string()
+		.default('Waiting for game to start...'),
+	presenterWaitingForRoundMessage: z
+		.string()
+		.default('Waiting for next round...'),
+	presenterQuestionFollowedByVoting: z
+		.string()
+		.default('Question will be followed by a {seconds}s voting phase'),
+	presenterGameOverTitle: z.string().default('🏆 Game Over!'),
+	presenterWinnerMessage: z
+		.string()
+		.default('{name} wins with {score} points!'),
+	presenterLeaderboardTitle: z.string().default('Leaderboard'),
+	presenterPointsLabel: z.string().default('pts'),
+
+	// Player screen - game over
+	playerGameOverTitle: z.string().default('🏆 Game Over!'),
+	playerFinalLeaderboardTitle: z.string().default('Final Leaderboard'),
+	playerPointsLabel: z.string().default('pts'),
+	playerResultsWaitingMessage: z.string().default('Waiting for next round...'),
+
+	// Question management
+	questionManagerTitle: z.string().default('Question Manager'),
+	questionManagerDescription: z
+		.string()
+		.default('Generate AI questions or create custom ones for your game'),
+	aiGeneratorTitle: z.string().default('AI Question Generator'),
+	aiTopicsLabel: z.string().default('Topics or Themes (one per line)'),
+	aiTopicsPlaceholder: z
+		.string()
+		.default('e.g., breakfast foods, movie genres, travel destinations'),
+	aiAddTopicButton: z.string().default('Add Another Topic'),
+	aiGeneratingProgress: z
+		.string()
+		.default('Generating {progress} / {total} questions...'),
+	aiGenerateButton: z.string().default('Generate {count} Question{s}'),
+	aiGeneratingLabel: z.string().default('Generating...'),
+	customQuestionTitle: z.string().default('Create Custom Question'),
+	customQuestionNewButton: z.string().default('New Custom Question'),
+	customQuestionPlaceholder: z.string().default('Question text...'),
+	customOptionPlaceholder: z.string().default('Option {n}'),
+	customAddButton: z.string().default('Add Question'),
+	customCancelButton: z.string().default('Cancel'),
+	questionBankTitle: z.string().default('Question Bank ({count})'),
+	questionBankDeleteAll: z.string().default('Delete All'),
+	questionBankDeleteAllConfirm: z
+		.string()
+		.default('Are you sure you want to delete all {count} questions?'),
+	questionBankEmpty: z
+		.string()
+		.default('No questions yet. Generate or create some!'),
+	questionAiLabel: z.string().default('🤖 AI'),
+	questionManualLabel: z.string().default('✏️ Manual'),
+	questionEditButton: z.string().default('Edit'),
+	questionSaveButton: z.string().default('Save'),
+	questionSuggestedBy: z.string().default('Suggested by: {name}'),
+
+	// Voting view
+	votingNoQuestionMessage: z.string().default('No question loaded'),
+	votingConfidenceLabel: z.string().default('How confident? {n}x points'),
+	votingConfidenceMin: z.string().default('Not Sure'),
+	votingConfidenceMax: z.string().default('Very Sure'),
+	votingSubmitButton: z.string().default('Submit Vote'),
+	votingSubmittedMessage: z.string().default('✓ Vote submitted!'),
 
 	// Player topic submissions
 	playerTopicsToggleButton: z.string().default('Toggle Player Topics'),
@@ -118,12 +199,7 @@ export const schema = z.object({
 	losersMessageMd: z
 		.string()
 		.default(
-			'# ❌ You were in the minority.\nUnfortunately, you picked the wrong side. -1 life'
-		),
-	eliminatedMessageMd: z
-		.string()
-		.default(
-			"# 😵 You've been eliminated!\nYou're out of the game, but you can still watch the results."
+			'# ❌ You were in the minority.\nUnfortunately, you picked the wrong side.'
 		)
 });
 

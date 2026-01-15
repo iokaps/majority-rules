@@ -7,13 +7,11 @@ import { useGlobalController } from '@/hooks/useGlobalController';
 import { PlayerLayout } from '@/layouts/player';
 import { kmClient } from '@/services/km-client';
 import { globalActions } from '@/state/actions/global-actions';
-import { playerActions } from '@/state/actions/player-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { playerStore } from '@/state/stores/player-store';
 import { CreateProfileView } from '@/views/create-profile-view';
 import { GameLobbyView } from '@/views/game-lobby-view';
 import { ResultsView } from '@/views/results-view';
-import { SpectatorView } from '@/views/spectator-view';
 import { VotingView } from '@/views/voting-view';
 import { useSnapshot } from '@kokimoki/app';
 import * as React from 'react';
@@ -31,7 +29,6 @@ const App: React.FC = () => {
 		playerTopicsEnabled,
 		playerTopics
 	} = useSnapshot(globalStore.proxy);
-	const isSpectator = players[kmClient.id]?.isSpectator ?? false;
 
 	useGlobalController();
 	useDocumentTitle(title);
@@ -50,27 +47,6 @@ const App: React.FC = () => {
 		return winningIndices.includes(currentVote.optionIndex);
 	}, [currentVote, currentQuestion, gamePhase, voteAggregation]);
 
-	// Auto-transition to next phase
-	React.useEffect(() => {
-		if (gamePhase === 'question-display' && started) {
-			const timeout = setTimeout(() => {
-				// Auto-advance to voting
-				playerActions.setCurrentView('voting');
-			}, config.questionDisplaySeconds * 1000);
-			return () => clearTimeout(timeout);
-		}
-	}, [gamePhase, started]);
-
-	React.useEffect(() => {
-		if (gamePhase === 'results' && started) {
-			const timeout = setTimeout(() => {
-				// Auto-advance to next round or game-over
-				playerActions.setCurrentView('lobby');
-			}, config.resultsDisplaySeconds * 1000);
-			return () => clearTimeout(timeout);
-		}
-	}, [gamePhase, started]);
-
 	if (!name) {
 		return (
 			<PlayerLayout.Root>
@@ -78,21 +54,6 @@ const App: React.FC = () => {
 				<PlayerLayout.Main>
 					<CreateProfileView />
 				</PlayerLayout.Main>
-			</PlayerLayout.Root>
-		);
-	}
-
-	// Spectator mode - always show spectator view
-	if (isSpectator) {
-		return (
-			<PlayerLayout.Root>
-				<PlayerLayout.Header />
-				<PlayerLayout.Main>
-					<SpectatorView />
-				</PlayerLayout.Main>
-				<PlayerLayout.Footer>
-					<NameLabel name={name} />
-				</PlayerLayout.Footer>
 			</PlayerLayout.Root>
 		);
 	}
@@ -148,71 +109,69 @@ const App: React.FC = () => {
 			</PlayerLayout.Header>
 
 			<PlayerLayout.Main className="py-4">
-				{gamePhase === 'question-display' && currentQuestion && (
-					<div className="overlay-blue">
-						<h2 className="game-question-compact text-center">
-							{currentQuestion.text}
-						</h2>
-					</div>
-				)}
-
 				{gamePhase === 'voting' && <VotingView interactive />}
 
 				{gamePhase === 'results' && (
-					<ResultsView
-						playerWon={playerWon}
-						playerEliminated={isSpectator}
-						pointsEarned={
-							playerWon
-								? Math.round(
-										config.baseScorePoints *
-											(currentVote?.confidence ?? 1) *
-											Math.min(
-												(100 -
-													((Math.max(...Object.values(voteAggregation), 0) -
-														Math.max(
-															...Object.values(voteAggregation).filter(
-																(c) =>
-																	c <
-																	Math.max(...Object.values(voteAggregation), 0)
-															),
-															0
-														)) /
-														Object.values(voteAggregation).reduce(
-															(a, b) => a + b,
-															0
-														)) *
-														100) /
-													50,
-												2
-											)
-									)
-								: 0
-						}
-					/>
+					<div className="w-full space-y-4">
+						<ResultsView
+							playerWon={playerWon}
+							pointsEarned={
+								playerWon
+									? Math.round(
+											config.baseScorePoints *
+												(currentVote?.confidence ?? 1) *
+												Math.min(
+													(100 -
+														((Math.max(...Object.values(voteAggregation), 0) -
+															Math.max(
+																...Object.values(voteAggregation).filter(
+																	(c) =>
+																		c <
+																		Math.max(
+																			...Object.values(voteAggregation),
+																			0
+																		)
+																),
+																0
+															)) /
+															Object.values(voteAggregation).reduce(
+																(a, b) => a + b,
+																0
+															)) *
+															100) /
+														50,
+													2
+												)
+										)
+									: 0
+							}
+						/>
+						<div className="overlay-blue text-center">
+							<p className="text-sm text-slate-600">
+								{config.playerResultsWaitingMessage}
+							</p>
+						</div>
+					</div>
 				)}
-
-				{gamePhase === 'lobby' && <GameLobbyView isGameActive={started} />}
 
 				{gamePhase === 'game-over' && (
 					<div className="space-y-4">
 						<div className="overlay-purple text-center">
 							<h2 className="mb-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
-								🏆 Game Over!
+								{config.playerGameOverTitle}
 							</h2>
 						</div>
 
 						{/* Leaderboard */}
 						<div className="overlay-green">
 							<h3 className="mb-3 font-semibold text-slate-900">
-								Final Leaderboard
+								{config.playerFinalLeaderboardTitle}
 							</h3>
 							<div className="space-y-2">
 								{Object.entries(players)
 									.map(([, p]) => ({
 										name: p.name,
-										score: p.score,
-										isSpectator: p.isSpectator
+										score: p.score
 									}))
 									.sort((a, b) => b.score - a.score)
 									.map((player, index) => (
@@ -227,14 +186,9 @@ const App: React.FC = () => {
 												<span className="font-semibold text-slate-900">
 													{player.name}
 												</span>
-												{player.isSpectator && (
-													<span className="text-xs text-red-600">
-														eliminated
-													</span>
-												)}
 											</div>
 											<span className="text-lg font-bold text-slate-900">
-												{player.score} pts
+												{player.score} {config.playerPointsLabel}
 											</span>
 										</div>
 									))}
@@ -242,6 +196,8 @@ const App: React.FC = () => {
 						</div>
 					</div>
 				)}
+
+				{gamePhase === 'lobby' && <GameLobbyView isGameActive={started} />}
 			</PlayerLayout.Main>
 
 			<PlayerLayout.Footer>

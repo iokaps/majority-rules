@@ -48,34 +48,6 @@ const App: React.FC = () => {
 		return () => clearTimeout(timeout);
 	}, [started, gamePhase]);
 
-	// Auto-start voting after question display period
-	React.useEffect(() => {
-		if (gamePhase === 'question-display' && started) {
-			const timeout = setTimeout(() => {
-				globalActions.startVoting();
-			}, config.questionDisplaySeconds * 1000);
-
-			return () => clearTimeout(timeout);
-		}
-	}, [gamePhase, started]);
-
-	// Auto-reveal results when voting timer expires
-	React.useEffect(() => {
-		if (gamePhase === 'voting' && started && votingEndTimestamp > 0) {
-			const timeRemaining = votingEndTimestamp - serverTime;
-
-			if (timeRemaining <= 0) {
-				globalActions.revealResults();
-			} else {
-				const timeout = setTimeout(() => {
-					globalActions.revealResults();
-				}, timeRemaining);
-
-				return () => clearTimeout(timeout);
-			}
-		}
-	}, [gamePhase, started, votingEndTimestamp, serverTime]);
-
 	if (kmClient.clientContext.mode !== 'host') {
 		throw new Error('App host rendered in non-host mode');
 	}
@@ -90,9 +62,7 @@ const App: React.FC = () => {
 	});
 
 	// Count players who have voted
-	const activePlayers = Object.values(players).filter(
-		(p) => !p.isSpectator
-	).length;
+	const activePlayers = Object.values(players).length;
 	const votedPlayers = Object.keys(votes).length;
 
 	const handleStartGame = async () => {
@@ -116,13 +86,19 @@ const App: React.FC = () => {
 		await globalActions.stopGame();
 	};
 
+	const handleEndGame = async () => {
+		await globalActions.endGame();
+	};
+
 	// Main game view
 	if (started) {
 		return (
 			<HostPresenterLayout.Root>
 				<HostPresenterLayout.Header>
 					<div className="text-sm font-semibold text-slate-600">
-						Round {roundNumber} • {activePlayers} Active Players
+						{config.hostRoundPlayersLabel
+							.replace('{roundNumber}', roundNumber.toString())
+							.replace('{activePlayers}', activePlayers.toString())}
 					</div>
 				</HostPresenterLayout.Header>
 
@@ -165,16 +141,6 @@ const App: React.FC = () => {
 										))}
 									</div>
 								</div>
-							) : gamePhase === 'question-display' ? (
-								<div className="game-card">
-									<h2 className="game-question mb-4 text-center">
-										{currentQuestion?.text}
-									</h2>
-									<p className="text-center text-sm text-slate-600">
-										Showing question for {config.questionDisplaySeconds}s before
-										voting starts...
-									</p>
-								</div>
 							) : gamePhase === 'voting' ? (
 								<div className="space-y-4">
 									<div className="game-card">
@@ -182,7 +148,9 @@ const App: React.FC = () => {
 											{currentQuestion?.text}
 										</h2>
 										<p className="text-center text-lg font-semibold text-slate-900">
-											{votedPlayers} / {activePlayers} players voted
+											{config.hostVotingProgress
+												.replace('{votedPlayers}', votedPlayers.toString())
+												.replace('{activePlayers}', activePlayers.toString())}
 										</p>
 									</div>
 									<div className="rounded-xl bg-blue-50 p-4">
@@ -201,11 +169,17 @@ const App: React.FC = () => {
 								<VotingView interactive={false} />
 							) : gamePhase === 'game-over' ? (
 								<div className="game-card text-center">
-									<h2 className="game-question mb-4">Game Over!</h2>
+									<h2 className="game-question mb-4">
+										{config.hostGameOverTitle}
+									</h2>
 									<div className="space-y-3">
 										{Object.entries(players)
-											.filter(([, p]) => !p.isSpectator)
-											.map(([, p]) => (
+											.map(([, p]) => ({
+												name: p.name,
+												score: p.score
+											}))
+											.sort((a, b) => b.score - a.score)
+											.map((p) => (
 												<div key={p.name} className="font-semibold">
 													{p.name}: {p.score} points
 												</div>
@@ -215,34 +189,27 @@ const App: React.FC = () => {
 							) : null}
 						</div>
 
-						{/* Player Status Sidebar */}
 						<div className="rounded-xl border border-slate-200 bg-white p-4">
-							<h3 className="mb-4 font-semibold text-slate-900">Players</h3>
+							<h3 className="mb-4 font-semibold text-slate-900">
+								{config.hostPlayersLabel}
+							</h3>
 							<div className="space-y-2">
 								{Object.values(players).map((player) => (
 									<div
 										key={player.name}
-										className={cn(
-											'rounded-lg px-3 py-2',
-											player.isSpectator
-												? 'bg-red-50 text-red-700'
-												: 'bg-slate-100 text-slate-900'
-										)}
+										className="rounded-lg bg-slate-100 px-3 py-2 text-slate-900"
 									>
 										<div className="flex items-center justify-between">
 											<div className="flex-1">
 												<p className="text-sm font-semibold">{player.name}</p>
-												<p className="text-xs text-slate-600">
-													{player.isSpectator
-														? 'Spectator'
-														: `❤️ ${player.lives}`}
-												</p>
 											</div>
 											<div className="text-right">
 												<p className="text-sm font-bold">{player.score}</p>
-												{gamePhase === 'voting' && !player.isSpectator && (
+												{gamePhase === 'voting' && (
 													<p className="text-xs text-slate-600">
-														{player.hasVoted ? '✓ Voted' : 'Waiting...'}
+														{player.hasVoted
+															? config.hostVotedLabel
+															: config.hostWaitingLabel}
 													</p>
 												)}
 											</div>
@@ -275,7 +242,7 @@ const App: React.FC = () => {
 								onClick={handleRevealResults}
 								disabled={buttonCooldown}
 							>
-								Reveal Results
+								{config.hostRevealResultsButton}
 							</button>
 						)}
 
@@ -286,18 +253,18 @@ const App: React.FC = () => {
 								onClick={handleAdvanceRound}
 								disabled={buttonCooldown}
 							>
-								Next Round
+								{config.hostNextRoundButton}
 							</button>
 						)}
 
-						{gamePhase === 'game-over' && (
+						{(gamePhase === 'voting' || gamePhase === 'results') && (
 							<button
 								type="button"
-								className="km-btn-primary"
-								onClick={handleStartGame}
+								className="km-btn-error"
+								onClick={handleEndGame}
 								disabled={buttonCooldown}
 							>
-								New Game
+								{config.hostEndGameButton}
 							</button>
 						)}
 
@@ -308,7 +275,7 @@ const App: React.FC = () => {
 							disabled={buttonCooldown}
 						>
 							<CircleStop className="size-5" />
-							Stop Game
+							{config.hostStopGameButton}
 						</button>
 
 						<a

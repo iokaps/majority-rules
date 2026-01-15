@@ -7,13 +7,11 @@ import ReactMarkdown from 'react-markdown';
 
 interface ResultsViewProps {
 	playerWon: boolean;
-	playerEliminated?: boolean;
 	pointsEarned?: number;
 }
 
 export const ResultsView: React.FC<ResultsViewProps> = ({
 	playerWon,
-	playerEliminated = false,
 	pointsEarned = 0
 }) => {
 	const { currentQuestion, voteAggregation } = useSnapshot(globalStore.proxy);
@@ -97,25 +95,6 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 						+{pointsEarned}
 					</div>
 					<div className="text-sm text-slate-600">points earned</div>
-				</div>
-			)}
-
-			{/* Eliminated Message */}
-			{playerEliminated && (
-				<div className="border-danger rounded-2xl border-2 bg-red-50 p-6">
-					<div className="spectator-badge pulse mb-3 justify-center">
-						⚠️ Eliminated
-					</div>
-					<div className="prose prose-sm text-danger max-w-none">
-						<ReactMarkdown>{config.eliminatedMessageMd}</ReactMarkdown>
-					</div>
-				</div>
-			)}
-
-			{/* Non-winner, not eliminated */}
-			{!playerWon && !playerEliminated && (
-				<div className="rounded-2xl border-2 border-slate-300 bg-slate-50 p-4 text-center text-sm text-slate-600">
-					Lost 1 life. {config.playerStartingLives - 1} remaining.
 				</div>
 			)}
 		</div>

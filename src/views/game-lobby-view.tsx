@@ -21,12 +21,7 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 	// Show player stats during active game
 	if (isGameActive) {
 		const currentPlayer = players[kmClient.id];
-		const activePlayers = Object.values(players).filter(
-			(p) => !p.isSpectator
-		).length;
-		const eliminatedPlayers = Object.values(players).filter(
-			(p) => p.isSpectator
-		).length;
+		const totalPlayers = Object.values(players).length;
 
 		if (!currentPlayer) {
 			return (
@@ -59,34 +54,14 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 								{currentPlayer.score} {config.lobbyPointsLabel}
 							</span>
 						</div>
-						{!currentPlayer.isSpectator && (
-							<div className="flex items-center justify-between">
-								<span className="font-semibold text-slate-700">
-									{config.lobbyLivesLabel}
-								</span>
-								<span className="text-xl">
-									{'❤️'.repeat(currentPlayer.lives)}
-								</span>
-							</div>
-						)}
 						<div className="flex items-center justify-between">
 							<span className="font-semibold text-slate-700">
 								{config.lobbyActivePlayersLabel}
 							</span>
 							<span className="text-xl font-bold text-green-700">
-								{activePlayers}
+								{totalPlayers}
 							</span>
 						</div>
-						{eliminatedPlayers > 0 && (
-							<div className="flex items-center justify-between">
-								<span className="font-semibold text-slate-700">
-									{config.lobbyEliminatedLabel}
-								</span>
-								<span className="text-xl font-bold text-red-600">
-									{eliminatedPlayers}
-								</span>
-							</div>
-						)}
 					</div>
 				</div>
 

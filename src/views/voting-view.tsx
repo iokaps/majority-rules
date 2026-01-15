@@ -1,3 +1,4 @@
+import { config } from '@/config';
 import { useServerTimer } from '@/hooks/useServerTime';
 import { kmClient } from '@/services/km-client';
 import { globalActions } from '@/state/actions/global-actions';
@@ -47,7 +48,11 @@ export const VotingView: React.FC<VotingViewProps> = ({
 	]);
 
 	if (!currentQuestion) {
-		return <div className="text-center text-slate-600">No question loaded</div>;
+		return (
+			<div className="text-center text-slate-600">
+				{config.votingNoQuestionMessage}
+			</div>
+		);
 	}
 
 	const optionLetters = ['A', 'B', 'C'];
@@ -88,7 +93,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 			{interactive && votingEndTimestamp > 0 && !submitted && (
 				<div className="space-y-2">
 					<label className="confidence-slider-label block">
-						How confident? {confidence}x points
+						{config.votingConfidenceLabel.replace('{n}', confidence.toString())}
 					</label>
 					<input
 						type="range"
@@ -100,8 +105,8 @@ export const VotingView: React.FC<VotingViewProps> = ({
 						className="confidence-slider"
 					/>
 					<div className="flex justify-between text-xs text-slate-600">
-						<span>Not Sure</span>
-						<span>Very Sure</span>
+						<span>{config.votingConfidenceMin}</span>
+						<span>{config.votingConfidenceMax}</span>
 					</div>
 				</div>
 			)}
@@ -114,14 +119,14 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					disabled={selectedOption === null}
 					className="km-btn-primary w-full"
 				>
-					Submit Vote
+					{config.votingSubmitButton}
 				</button>
 			)}
 
 			{/* Submitted confirmation */}
 			{submitted && interactive && (
 				<div className="rounded-xl bg-green-100 px-4 py-3 text-center font-semibold text-green-700">
-					✓ Vote submitted!
+					{config.votingSubmittedMessage}
 				</div>
 			)}
 		</div>

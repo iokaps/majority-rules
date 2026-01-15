@@ -8,8 +8,7 @@ export interface PlayerState {
 		| 'connections'
 		| 'question'
 		| 'voting'
-		| 'results'
-		| 'spectator';
+		| 'results';
 }
 
 const initialState: PlayerState = {
