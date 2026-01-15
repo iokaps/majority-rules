@@ -49,7 +49,7 @@ export const schema = z.object({
 	aiQuestionPrompt: z
 		.string()
 		.default(
-			'Generate a fun party game question in JSON format with exactly {{optionCount}} options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
+			'Generate a fun party game question in JSON format with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
 		),
 
 	// Game messages (markdown)

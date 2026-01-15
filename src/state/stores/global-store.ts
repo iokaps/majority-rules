@@ -39,6 +39,7 @@ export interface GlobalState {
 	roundNumber: number;
 	currentQuestion: Question | null;
 	questionBank: Question[];
+	usedQuestionIds: string[];
 	votes: Record<string, PlayerVote>; // key: clientId
 	voteAggregation: Record<number, number>; // key: optionIndex, value: vote count
 	votingEndTimestamp: number;
@@ -57,6 +58,7 @@ const initialState: GlobalState = {
 	roundNumber: 0,
 	currentQuestion: null,
 	questionBank: [],
+	usedQuestionIds: [],
 	votes: {},
 	voteAggregation: {},
 	votingEndTimestamp: 0,

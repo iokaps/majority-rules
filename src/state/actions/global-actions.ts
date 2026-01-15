@@ -10,6 +10,7 @@ export const globalActions = {
 			globalState.startTimestamp = kmClient.serverTimestamp();
 			globalState.gamePhase = 'lobby';
 			globalState.roundNumber = 0;
+			globalState.usedQuestionIds = [];
 
 			// Initialize all players with starting lives
 			for (const clientId of Object.keys(globalState.players)) {
@@ -29,6 +30,7 @@ export const globalActions = {
 			globalState.started = false;
 			globalState.startTimestamp = 0;
 			globalState.gamePhase = 'lobby';
+			globalState.usedQuestionIds = [];
 		});
 	},
 
@@ -76,6 +78,11 @@ export const globalActions = {
 			globalState.votes = {};
 			globalState.voteAggregation = {};
 			globalState.votingEndTimestamp = 0;
+
+			// Track used question
+			if (!globalState.usedQuestionIds.includes(questionId)) {
+				globalState.usedQuestionIds.push(questionId);
+			}
 
 			// Reset hasVoted flag for all players
 			for (const clientId of Object.keys(globalState.players)) {
@@ -199,5 +206,76 @@ export const globalActions = {
 		await kmClient.transact([globalStore], ([globalState]) => {
 			globalState.aiGenerationStatus = status;
 		});
+	},
+
+	async clearAllQuestions() {
+		await kmClient.transact([globalStore], ([globalState]) => {
+			globalState.questionBank = [];
+		});
+	},
+
+	async generateAndStartRound() {
+		try {
+			// Set generating status
+			await kmClient.transact([globalStore], ([globalState]) => {
+				globalState.aiGenerationStatus = 'generating';
+			});
+
+			// Generate AI question with exactly 3 options
+			const aiOptionCount = 3;
+			const userPrompt = config.aiQuestionPrompt.replace(
+				'{{optionCount}}',
+				aiOptionCount.toString()
+			);
+
+			const response = await kmClient.ai.generateJson<{
+				question: string;
+				options: string[];
+			}>({ userPrompt });
+
+			const typedResponse = response as {
+				question: string;
+				options: string[];
+			};
+
+			// Create new question
+			const newQuestion: Question = {
+				id: `q-${Date.now()}`,
+				text: typedResponse.question,
+				options: typedResponse.options,
+				isAiGenerated: true
+			};
+
+			// Add to bank and start round
+			await kmClient.transact([globalStore], ([globalState]) => {
+				globalState.questionBank.push(newQuestion);
+				globalState.aiGenerationStatus = 'idle';
+
+				// Start round with the new question
+				globalState.currentQuestion = newQuestion;
+				globalState.gamePhase = 'question-display';
+				globalState.roundNumber += 1;
+				globalState.votes = {};
+				globalState.voteAggregation = {};
+				globalState.votingEndTimestamp = 0;
+
+				// Track used question
+				if (!globalState.usedQuestionIds.includes(newQuestion.id)) {
+					globalState.usedQuestionIds.push(newQuestion.id);
+				}
+
+				// Reset hasVoted flag for all players
+				for (const clientId of Object.keys(globalState.players)) {
+					globalState.players[clientId].hasVoted = false;
+				}
+			});
+		} catch (error) {
+			console.error('Failed to generate question:', error);
+			// Reset status on error
+			await kmClient.transact([globalStore], ([globalState]) => {
+				globalState.aiGenerationStatus = 'idle';
+			});
+			throw error;
+		}
 	}
 };

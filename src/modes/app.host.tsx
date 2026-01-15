@@ -23,10 +23,12 @@ const App: React.FC = () => {
 		gamePhase,
 		roundNumber,
 		questionBank,
+		usedQuestionIds,
 		currentQuestion,
 		players,
 		votingEndTimestamp,
-		votes
+		votes,
+		aiGenerationStatus
 	} = useSnapshot(globalStore.proxy);
 	const serverTime = useServerTimer(250);
 	const [buttonCooldown, setButtonCooldown] = React.useState(true);
@@ -72,6 +74,15 @@ const App: React.FC = () => {
 	const handleStartRound = async () => {
 		if (!selectedQuestionId) return;
 		await globalActions.startRound(selectedQuestionId);
+	};
+
+	const handleGenerateAndStartRound = async () => {
+		try {
+			await globalActions.generateAndStartRound();
+		} catch (error) {
+			console.error('Failed to generate and start round:', error);
+			alert('Failed to generate question. Please try again.');
+		}
 	};
 
 	const handleStartVoting = async () => {
@@ -120,10 +131,21 @@ const App: React.FC = () => {
 														'border-blue-500 ring-2 ring-blue-500'
 												)}
 											>
-												<p className="font-semibold text-slate-900">{q.text}</p>
-												<p className="text-xs text-slate-600">
-													{q.options.join(' • ')}
-												</p>
+												<div className="flex items-start justify-between gap-3">
+													<div className="flex-1">
+														<p className="font-semibold text-slate-900">
+															{q.text}
+														</p>
+														<p className="text-xs text-slate-600">
+															{q.options.join(' • ')}
+														</p>
+													</div>
+													{usedQuestionIds.includes(q.id) && (
+														<span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+															✓ Played
+														</span>
+													)}
+												</div>
 											</button>
 										))}
 									</div>
@@ -220,15 +242,38 @@ const App: React.FC = () => {
 				<HostPresenterLayout.Footer>
 					<div className="inline-flex flex-wrap gap-3">
 						{gamePhase === 'lobby' && (
-							<button
-								type="button"
-								className="km-btn-primary"
-								onClick={handleStartRound}
-								disabled={buttonCooldown || !selectedQuestionId}
-							>
-								<CirclePlay className="size-5" />
-								Start Round
-							</button>
+							<>
+								<button
+									type="button"
+									className="km-btn-primary"
+									onClick={handleStartRound}
+									disabled={buttonCooldown || !selectedQuestionId}
+								>
+									<CirclePlay className="size-5" />
+									Start Round
+								</button>
+
+								<button
+									type="button"
+									className="km-btn-secondary"
+									onClick={handleGenerateAndStartRound}
+									disabled={
+										buttonCooldown || aiGenerationStatus === 'generating'
+									}
+								>
+									{aiGenerationStatus === 'generating' ? (
+										<>
+											<div className="size-5 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
+											Generating...
+										</>
+									) : (
+										<>
+											<CirclePlay className="size-5" />
+											Generate & Start Round
+										</>
+									)}
+								</button>
+							</>
 						)}
 
 						{gamePhase === 'question-display' && (

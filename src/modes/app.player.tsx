@@ -15,7 +15,6 @@ import { ResultsView } from '@/views/results-view';
 import { SpectatorView } from '@/views/spectator-view';
 import { VotingView } from '@/views/voting-view';
 import { useSnapshot } from '@kokimoki/app';
-import { KmTimeCountdown } from '@kokimoki/shared';
 import * as React from 'react';
 
 const App: React.FC = () => {
@@ -104,7 +103,20 @@ const App: React.FC = () => {
 				</PlayerLayout.Header>
 
 				<PlayerLayout.Main>
-					<GameLobbyView />
+					<div className="w-full space-y-6">
+						<div className="game-card text-center">
+							<h2 className="mb-4 text-2xl font-bold text-slate-900">
+								Welcome, {name}!
+							</h2>
+							<p className="text-lg text-slate-700">
+								🎯 Waiting for the game to start...
+							</p>
+							<p className="mt-4 text-sm text-slate-600">
+								The host will begin the game soon. Get ready to vote with the
+								majority!
+							</p>
+						</div>
+					</div>
 				</PlayerLayout.Main>
 
 				<PlayerLayout.Footer>
@@ -127,20 +139,10 @@ const App: React.FC = () => {
 
 			<PlayerLayout.Main>
 				{gamePhase === 'question-display' && currentQuestion && (
-					<div className="space-y-8">
-						<div className="game-card">
-							<h2 className="game-question text-center">
-								{currentQuestion.text}
-							</h2>
-						</div>
-						<div className="flex justify-center">
-							<div className="timer-badge">
-								<KmTimeCountdown
-									ms={Math.max(0, config.questionDisplaySeconds * 1000)}
-								/>
-								until voting starts
-							</div>
-						</div>
+					<div className="game-card">
+						<h2 className="game-question text-center">
+							{currentQuestion.text}
+						</h2>
 					</div>
 				)}
 
@@ -180,7 +182,7 @@ const App: React.FC = () => {
 					/>
 				)}
 
-				{gamePhase === 'lobby' && <GameLobbyView />}
+				{gamePhase === 'lobby' && <GameLobbyView isGameActive={started} />}
 
 				{gamePhase === 'game-over' && (
 					<div className="space-y-6">

@@ -19,7 +19,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 	const [manualQuestion, setManualQuestion] = React.useState('');
 	const [manualOptions, setManualOptions] = React.useState(['', '', '']);
 	const [aiTopics, setAiTopics] = React.useState<string[]>(['']);
-	const [aiOptionCount, setAiOptionCount] = React.useState(2);
+	const aiOptionCount = 3;
 	const [editingId, setEditingId] = React.useState<string | null>(null);
 	const [editQuestion, setEditQuestion] = React.useState('');
 	const [editOptions, setEditOptions] = React.useState<string[]>([]);
@@ -64,10 +64,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 					const newQuestion: Question = {
 						id: `q-${Date.now()}`,
 						text: typedResponse.question,
-						options: typedResponse.options.slice(
-							0,
-							config.maxOptionsPerQuestion
-						),
+						options: typedResponse.options,
 						isAiGenerated: true
 					};
 
@@ -139,7 +136,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 		const newQuestion: Question = {
 			id: `q-${Date.now()}`,
 			text: manualQuestion,
-			options: validOptions.slice(0, config.maxOptionsPerQuestion),
+			options: validOptions,
 			isAiGenerated: false
 		};
 
@@ -227,20 +224,6 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 							<Plus className="size-5" />
 							Add Another Topic
 						</button>
-					</div>
-
-					<div>
-						<label className="mb-2 block text-sm font-medium text-blue-900">
-							Number of Options
-						</label>
-						<select
-							value={aiOptionCount}
-							onChange={(e) => setAiOptionCount(parseInt(e.target.value))}
-							className="km-input"
-						>
-							<option value={2}>2 Options</option>
-							<option value={3}>3 Options</option>
-						</select>
 					</div>
 
 					{aiGenerationStatus === 'generating' && totalBatchQuestions > 0 && (
@@ -346,9 +329,28 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 
 			{/* Question Queue */}
 			<div>
-				<h2 className="mb-4 font-semibold text-slate-900">
-					Question Bank ({questionBank.length})
-				</h2>
+				<div className="mb-4 flex items-center justify-between">
+					<h2 className="font-semibold text-slate-900">
+						Question Bank ({questionBank.length})
+					</h2>
+					{questionBank.length > 0 && (
+						<button
+							type="button"
+							onClick={() => {
+								if (
+									window.confirm(
+										`Are you sure you want to delete all ${questionBank.length} questions?`
+									)
+								) {
+									globalActions.clearAllQuestions();
+								}
+							}}
+							className="km-btn-error text-sm"
+						>
+							Delete All
+						</button>
+					)}
+				</div>
 
 				{questionBank.length === 0 ? (
 					<div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-6 text-center text-slate-600">
