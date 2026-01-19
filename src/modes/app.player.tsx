@@ -9,6 +9,7 @@ import { kmClient } from '@/services/km-client';
 import { globalActions } from '@/state/actions/global-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { playerStore } from '@/state/stores/player-store';
+import { cn } from '@/utils/cn';
 import { CreateProfileView } from '@/views/create-profile-view';
 import { GameLobbyView } from '@/views/game-lobby-view';
 import { ResultsView } from '@/views/results-view';
@@ -118,8 +119,18 @@ const App: React.FC = () => {
 		<PlayerLayout.Root>
 			<PlayerLayout.Header>
 				{currentQuestion && (
-					<div className="text-sm font-semibold text-slate-600">
+					<div
+						className={cn(
+							'inline-flex items-center gap-2 rounded-lg px-4 py-2 font-bold',
+							'bg-blue-100 text-lg text-blue-700'
+						)}
+					>
 						Round {globalStore.proxy.roundNumber}
+						{config.maxRounds > 0 && (
+							<span className="text-sm font-medium text-blue-600">
+								/ {config.maxRounds}
+							</span>
+						)}
 					</div>
 				)}
 			</PlayerLayout.Header>

@@ -200,24 +200,43 @@ const App: React.FC = () => {
 						<Info className="size-4" />
 						{config.hostInfoButtonLabel}
 					</button>
-					<div className="text-sm font-semibold text-slate-600">
-						{config.hostRoundPlayersLabel
-							.replace('{roundNumber}', roundNumber.toString())
-							.replace('{activePlayers}', activePlayers.toString())}
+					<div className="flex flex-col gap-2">
+						<div className="text-sm font-semibold text-slate-600">
+							{config.hostRoundPlayersLabel
+								.replace('{roundNumber}', roundNumber.toString())
+								.replace('{activePlayers}', activePlayers.toString())}
+						</div>
+						{gamePhase === 'voting' && activePlayers > 0 && (
+							<div className="flex items-center gap-2">
+								<div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+									<div
+										className="gradient-success h-full transition-all duration-300"
+										style={{
+											width: `${activePlayers > 0 ? (votedPlayers / activePlayers) * 100 : 0}%`
+										}}
+									/>
+								</div>
+								<span className="text-xs font-medium whitespace-nowrap text-slate-600">
+									{votedPlayers}/{activePlayers}
+								</span>
+							</div>
+						)}
 					</div>
 				</HostPresenterLayout.Header>
 
 				<HostPresenterLayout.Main>
 					<div
 						className={cn(
-							'grid gap-3',
-							gamePhase === 'game-over' ? 'grid-cols-1' : 'lg:grid-cols-4'
+							'grid gap-6',
+							gamePhase === 'game-over'
+								? 'grid-cols-1'
+								: 'grid-cols-3 lg:grid-cols-4'
 						)}
 					>
-						{/* Current Question / Status - Left Side */}
+						{/* Current Question / Status - Main Content */}
 						<div
 							className={cn(
-								gamePhase === 'game-over' && 'mx-auto w-full max-w-2xl'
+								gamePhase === 'game-over' ? '' : 'col-span-3 lg:col-span-3'
 							)}
 						>
 							{gamePhase === 'lobby' && questionBank.length > 0 ? (
@@ -263,20 +282,17 @@ const App: React.FC = () => {
 												<h2 className="game-question-compact mb-3 text-center">
 													{currentQuestion?.text}
 												</h2>
-												<p className="text-center text-base font-semibold text-slate-900">
-													{config.hostVotingProgress
-														.replace('{votedPlayers}', votedPlayers.toString())
-														.replace(
-															'{activePlayers}',
-															activePlayers.toString()
-														)}
-												</p>
 											</div>
-											<div className="rounded-xl bg-blue-50 p-4">
-												<p className="mb-2 text-sm font-semibold text-blue-900">
-													Time remaining:
-												</p>
-												<div className="text-2xl font-bold text-blue-600">
+											<div className="flex justify-center">
+												<div
+													className={cn(
+														'rounded-full px-8 py-4 text-3xl font-bold shadow-lg',
+														votingEndTimestamp - serverTime < 5000 &&
+															votingEndTimestamp - serverTime > 0
+															? 'gradient-danger animate-pulse text-white'
+															: 'gradient-blue text-white'
+													)}
+												>
 													<KmTimeCountdown
 														ms={Math.max(0, votingEndTimestamp - serverTime)}
 													/>
@@ -312,11 +328,11 @@ const App: React.FC = () => {
 
 						{/* Players Panel - Right Side */}
 						{gamePhase !== 'game-over' && (
-							<div className="rounded-xl border border-slate-200 bg-white p-2">
-								<h3 className="mb-2 text-xs font-semibold text-slate-900">
+							<div className="sticky top-24 h-fit rounded-xl border border-slate-200 bg-white p-3">
+								<h3 className="mb-3 text-sm font-semibold text-slate-900">
 									{config.hostPlayersLabel}
 								</h3>
-								<div className="space-y-1">
+								<div className="max-h-96 space-y-2 overflow-y-auto">
 									{Object.values(players).map((player) => (
 										<div
 											key={player.name}

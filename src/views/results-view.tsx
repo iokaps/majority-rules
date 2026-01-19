@@ -1,4 +1,5 @@
 import { config } from '@/config';
+import { kmClient } from '@/services/km-client';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
@@ -15,7 +16,9 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 	playerWon,
 	pointsEarned = 0
 }) => {
-	const { currentQuestion, voteAggregation } = useSnapshot(globalStore.proxy);
+	const { currentQuestion, voteAggregation, votes } = useSnapshot(
+		globalStore.proxy
+	);
 	const { triggerConfetti } = useKmConfettiContext();
 
 	// Trigger confetti immediately when player wins
@@ -66,30 +69,45 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 					const percentage =
 						totalVotes > 0 ? (voteCount / totalVotes) * 100 : 0;
 					const isWinner = winningIndices.includes(index);
+					const currentVote = votes[kmClient.id];
+					const isPlayerVote = currentVote?.optionIndex === index;
 
 					return (
-						<div key={index} className="space-y-1">
-							<div className="flex items-center justify-between">
-								<span
-									className={cn(
-										'font-semibold',
-										isWinner ? 'text-success' : 'text-slate-700'
-									)}
-								>
-									{option}
-								</span>
-								<span className="text-sm text-slate-600">
-									{voteCount} votes ({percentage.toFixed(0)}%)
-								</span>
-							</div>
-							<div className="h-3 w-full rounded-full bg-slate-200">
-								<div
-									className={cn(
-										'h-full rounded-full transition-all duration-500',
-										isWinner ? 'gradient-success' : 'gradient-danger'
-									)}
-									style={{ width: `${percentage}%` }}
-								/>
+						<div
+							key={index}
+							className={cn(
+								'rounded-lg p-3 transition-all',
+								isPlayerVote && 'border-2 border-blue-400 bg-blue-50'
+							)}
+						>
+							<div className="space-y-1">
+								<div className="flex items-center justify-between">
+									<div className="flex items-center gap-2">
+										{isPlayerVote && (
+											<span className="text-lg font-bold text-blue-600">✓</span>
+										)}
+										<span
+											className={cn(
+												'font-semibold',
+												isWinner ? 'text-success' : 'text-slate-700'
+											)}
+										>
+											{option}
+										</span>
+									</div>
+									<span className="text-sm text-slate-600">
+										{voteCount} votes ({percentage.toFixed(0)}%)
+									</span>
+								</div>
+								<div className="h-3 w-full rounded-full bg-slate-200">
+									<div
+										className={cn(
+											'h-full rounded-full transition-all duration-500',
+											isWinner ? 'gradient-success' : 'gradient-danger'
+										)}
+										style={{ width: `${percentage}%` }}
+									/>
+								</div>
 							</div>
 						</div>
 					);

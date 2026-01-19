@@ -15,7 +15,6 @@ const App: React.FC = () => {
 	const { title } = config;
 	const {
 		started,
-		showPresenterQr,
 		gamePhase,
 		currentQuestion,
 		players,
@@ -23,6 +22,7 @@ const App: React.FC = () => {
 		votingEndTimestamp
 	} = useSnapshot(globalStore.proxy);
 	const serverTime = useServerTimer(250);
+	const [showQr, setShowQr] = React.useState(false);
 
 	useGlobalController();
 	useDocumentTitle(title);
@@ -63,7 +63,20 @@ const App: React.FC = () => {
 	return (
 		<>
 			<HostPresenterLayout.Root>
-				<HostPresenterLayout.Header />
+				<HostPresenterLayout.Header>
+					{gamePhase !== 'game-over' && (
+						<button
+							type="button"
+							onClick={() => setShowQr(!showQr)}
+							className={cn(
+								'km-btn-secondary text-sm',
+								showQr && 'km-btn-primary'
+							)}
+						>
+							{showQr ? 'Hide QR' : 'Show QR'}
+						</button>
+					)}
+				</HostPresenterLayout.Header>
 
 				<HostPresenterLayout.Main>
 					<div
@@ -182,11 +195,13 @@ const App: React.FC = () => {
 									</p>
 								</div>
 							)}
+						</div>
 
-							{/* Full Player List */}
-							{hasAnyPoints && (
-								<div className="overlay-green">
-									<h2 className="mb-4 text-xl font-semibold text-slate-900">
+						{/* Sidebar - Leaderboard */}
+						{gamePhase !== 'game-over' && hasAnyPoints && (
+							<div className="flex flex-col justify-start">
+								<div className="overlay-green h-fit">
+									<h2 className="mb-4 text-lg font-semibold text-slate-900">
 										{config.presenterLeaderboardTitle}
 									</h2>
 									<div className="space-y-3">
@@ -220,17 +235,17 @@ const App: React.FC = () => {
 												{allPlayers.slice(3).map((p, idx) => (
 													<div
 														key={p.clientId}
-														className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"
+														className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm"
 													>
 														<div className="flex items-center gap-2">
-															<span className="text-sm font-bold text-slate-500">
+															<span className="font-bold text-slate-500">
 																{idx + 4}.
 															</span>
-															<span className="text-sm font-semibold text-slate-900">
+															<span className="font-semibold text-slate-900">
 																{p.name}
 															</span>
 														</div>
-														<span className="text-sm font-bold text-slate-900">
+														<span className="font-bold text-slate-900">
 															{p.score}
 														</span>
 													</div>
@@ -239,18 +254,25 @@ const App: React.FC = () => {
 										)}
 									</div>
 								</div>
-							)}
-						</div>
-
-						{/* Sidebar - QR Code Only */}
-						{showPresenterQr && gamePhase !== 'game-over' && (
-							<div className="flex justify-center lg:justify-start">
-								<div className="game-card sticky top-20 rounded-2xl p-6">
-									<KmQrCode data={playerLink} size={200} />
-								</div>
 							</div>
 						)}
 					</div>
+
+					{/* QR Code Overlay */}
+					{showQr && gamePhase !== 'game-over' && (
+						<div className="fixed top-20 right-4 z-50 flex flex-col gap-2">
+							<button
+								type="button"
+								onClick={() => setShowQr(false)}
+								className="self-end rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200"
+							>
+								✕ Close
+							</button>
+							<div className="game-card rounded-2xl p-6 shadow-2xl">
+								<KmQrCode data={playerLink} size={200} />
+							</div>
+						</div>
+					)}
 				</HostPresenterLayout.Main>
 			</HostPresenterLayout.Root>
 		</>
