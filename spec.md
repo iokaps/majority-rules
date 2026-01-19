@@ -83,9 +83,17 @@ Where:
 
 **Losing the Majority (Penalties):**
 
-- **0.5x confidence**: No penalty (safe choice)
-- **1x confidence**: Lose baseScore × 1 = 10 points
-- **3x confidence**: Lose baseScore × 3 = 30 points
+Penalties now also scale with the consensus bonus (margin):
+
+Penalty = baseScore × confidenceMultiplier × marginBonus
+
+Where:
+
+- **0.5x confidence**: No penalty (safe choice - protected)
+- **1x confidence**: Lose 10 points × marginBonus
+- **3x confidence**: Lose 30 points × marginBonus
+
+This means players lose more points when the majority opinion is stronger (higher consensus).
 
 **Tie Handling:**
 
@@ -207,8 +215,11 @@ losersMessageMd: '# You were in the minority...' # Loser message (markdown)
 **All Players:**
 
 - Sees question during `question-display` phase (static, no interaction)
-- Sees [voting-view.tsx](src/views/voting-view.tsx) during `voting` phase (interactive)
-- Sees [results-view.tsx](src/views/results-view.tsx) during `results` phase
+- Sees [voting-view.tsx](src/views/voting-view.tsx) during `voting` phase (interactive) with countdown timer
+- Sees [results-view.tsx](src/views/results-view.tsx) during `results` phase showing:
+  - Vote breakdown bar chart
+  - **Round points earned/lost** (prominently displayed with +/- color coding)
+  - Results message (win/lose)
 - Sees [game-lobby-view.tsx](src/views/game-lobby-view.tsx) between rounds
 - All players remain active throughout the entire game
 
@@ -240,7 +251,7 @@ losersMessageMd: '# You were in the minority...' # Loser message (markdown)
     - Colored bars (blue/green/orange for options)
     - Large vote count and percentage labels
     - Animated reveal (bars grow left-to-right, 500ms)
-  - **Full player leaderboard** (ALL players, not just top 3)
+  - **Full player leaderboard** (shown only after players score points)
     - Grid layout (2-3 columns)
     - Large cards with rank badges, names, and scores
     - Top 3 highlighted with colored rings (gold/silver/bronze)

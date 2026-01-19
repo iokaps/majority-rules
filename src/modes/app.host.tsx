@@ -145,9 +145,20 @@ const App: React.FC = () => {
 							<strong>Consensus Bonus:</strong>{' '}
 							{config.hostInfoScoringConsensus}
 						</p>
-						<p className="text-slate-700">
+						<p className="mb-4 text-slate-700">
 							<strong>Losing (Minority Vote):</strong>{' '}
 							{config.hostInfoScoringLosing}
+						</p>
+					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							Player Feedback
+						</h3>
+						<p className="text-slate-700">
+							Players see a <strong>countdown timer</strong> during voting and{' '}
+							<strong>immediate visual feedback</strong> of points earned/lost
+							(+/- color coding) after each round.
 						</p>
 					</div>
 
