@@ -28,7 +28,8 @@ const App: React.FC = () => {
 		voteAggregation,
 		votes,
 		playerTopicsEnabled,
-		playerTopics
+		playerTopics,
+		roundPoints
 	} = useSnapshot(globalStore.proxy);
 
 	useGlobalController();
@@ -128,45 +129,15 @@ const App: React.FC = () => {
 
 				{gamePhase === 'results' && (
 					<div className="w-full space-y-4">
-						{/* Calculate points earned */}
-						{(() => {
-							const maxVotes = Math.max(...Object.values(voteAggregation), 0);
-							const secondMaxVotes = Math.max(
-								...Object.values(voteAggregation).filter((c) => c < maxVotes),
-								0
-							);
-							const totalVotes = Object.values(voteAggregation).reduce(
-								(a, b) => a + b,
-								0
-							);
-							const votingMargin =
-								totalVotes > 0
-									? ((maxVotes - secondMaxVotes) / totalVotes) * 100
-									: 0;
-							const marginBonus = Math.min(votingMargin / 50, 2);
-							const confidenceMultiplier =
-								currentVote?.confidence === 1
-									? 1
-									: currentVote?.confidence === 2
-										? 0.5
-										: 3;
-							const points = playerWon
-								? Math.round(
-										config.baseScorePoints * confidenceMultiplier * marginBonus
-									)
-								: 0;
-
-							return (
-								<>
-									<ResultsView playerWon={playerWon} pointsEarned={points} />
-									<div className="overlay-blue text-center">
-										<p className="text-sm text-slate-600">
-											{config.playerResultsWaitingMessage}
-										</p>
-									</div>
-								</>
-							);
-						})()}
+						<ResultsView
+							playerWon={playerWon}
+							pointsEarned={roundPoints[kmClient.id] || 0}
+						/>
+						<div className="overlay-blue text-center">
+							<p className="text-sm text-slate-600">
+								{config.playerResultsWaitingMessage}
+							</p>
+						</div>
 					</div>
 				)}
 

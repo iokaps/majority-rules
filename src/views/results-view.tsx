@@ -37,6 +37,19 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 		.filter(([, count]) => count === maxVotes && maxVotes > 0)
 		.map(([index]) => parseInt(index, 10));
 
+	// Get points color and icon based on earned points
+	const getPointsDisplay = () => {
+		if (pointsEarned > 0) {
+			return { color: 'text-success', sign: '+', bg: 'bg-green-50' };
+		} else if (pointsEarned < 0) {
+			return { color: 'text-danger', sign: '', bg: 'bg-red-50' };
+		} else {
+			return { color: 'text-slate-600', sign: '±', bg: 'bg-slate-50' };
+		}
+	};
+
+	const pointsDisplay = getPointsDisplay();
+
 	return (
 		<div className="space-y-6">
 			{/* Question */}
@@ -83,6 +96,31 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 				})}
 			</div>
 
+			{/* Points Display */}
+			<div
+				className={cn(
+					'rounded-xl border-2 p-6 text-center',
+					pointsDisplay.bg,
+					pointsDisplay.color === 'text-success'
+						? 'border-green-300'
+						: pointsDisplay.color === 'text-danger'
+							? 'border-red-300'
+							: 'border-slate-300'
+				)}
+			>
+				<p className="mb-2 text-sm font-medium text-slate-600">
+					{pointsEarned > 0
+						? 'Points Earned'
+						: pointsEarned < 0
+							? 'Points Lost'
+							: 'No Points'}
+				</p>
+				<p className={cn('text-5xl font-bold', pointsDisplay.color)}>
+					{pointsDisplay.sign}
+					{Math.abs(pointsEarned)}
+				</p>
+			</div>
+
 			{/* Result Message */}
 			<div
 				className={cn(
@@ -97,16 +135,6 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 					</ReactMarkdown>
 				</div>
 			</div>
-
-			{/* Points Display */}
-			{playerWon && (
-				<div className="score-notification text-center">
-					<div className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-5xl font-bold text-transparent">
-						+{pointsEarned}
-					</div>
-					<div className="text-sm text-slate-600">points earned</div>
-				</div>
-			)}
 		</div>
 	);
 };

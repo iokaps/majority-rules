@@ -5,6 +5,7 @@ import { globalActions } from '@/state/actions/global-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
+import { KmTimeCountdown } from '@kokimoki/shared';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface VotingViewProps {
@@ -56,6 +57,8 @@ export const VotingView: React.FC<VotingViewProps> = ({
 	}
 
 	const optionLetters = ['A', 'B', 'C'];
+	const timeRemaining = Math.max(0, votingEndTimestamp - serverTime);
+	const isTimeRunningOut = timeRemaining < 5000 && timeRemaining > 0;
 
 	return (
 		<div className="space-y-6">
@@ -65,6 +68,22 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					{currentQuestion.text}
 				</h2>
 			</div>
+
+			{/* Timer */}
+			{votingEndTimestamp > 0 && (
+				<div className="flex justify-center">
+					<div
+						className={cn(
+							'rounded-full px-8 py-4 text-3xl font-bold shadow-lg',
+							isTimeRunningOut
+								? 'gradient-danger animate-pulse text-white'
+								: 'gradient-blue text-white'
+						)}
+					>
+						<KmTimeCountdown ms={timeRemaining} />
+					</div>
+				</div>
+			)}
 
 			{/* Options */}
 			<div className="space-y-3">

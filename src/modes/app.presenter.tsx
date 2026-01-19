@@ -43,6 +43,9 @@ const App: React.FC = () => {
 		}))
 		.sort((a, b) => b.score - a.score);
 
+	// Check if anyone has scored points
+	const hasAnyPoints = allPlayers.some((p) => p.score > 0);
+
 	// Vote breakdown
 	const totalVotes = Object.values(voteAggregation).reduce((a, b) => a + b, 0);
 	const maxVotes = Math.max(...Object.values(voteAggregation), 0);
@@ -181,7 +184,7 @@ const App: React.FC = () => {
 							)}
 
 							{/* Full Player List */}
-							{allPlayers.length > 0 && (
+							{hasAnyPoints && (
 								<div className="overlay-green">
 									<h2 className="mb-4 text-xl font-semibold text-slate-900">
 										{config.presenterLeaderboardTitle}

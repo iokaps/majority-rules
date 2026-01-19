@@ -42,6 +42,7 @@ export interface GlobalState {
 	voteAggregation: Record<number, number>; // key: optionIndex, value: vote count
 	votingEndTimestamp: number;
 	aiGenerationStatus: 'idle' | 'generating' | 'ready';
+	roundPoints: Record<string, number>; // key: clientId, value: points from this round
 
 	// Player topic submissions
 	playerTopicsEnabled: boolean;
@@ -73,6 +74,7 @@ const initialState: GlobalState = {
 	voteAggregation: {},
 	votingEndTimestamp: 0,
 	aiGenerationStatus: 'idle',
+	roundPoints: {},
 
 	// Player topic submissions
 	playerTopicsEnabled: false,

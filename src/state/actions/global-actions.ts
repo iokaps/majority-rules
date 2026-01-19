@@ -191,6 +191,9 @@ export const globalActions = {
 			// Higher margin (more consensus) = higher bonus (this is a majority game!)
 			const marginBonus = Math.min(votingMargin / 50, 2);
 
+			// Track round points for each player
+			globalState.roundPoints = {};
+
 			for (const [clientId, vote] of Object.entries(globalState.votes)) {
 				const player = globalState.players[clientId];
 				if (!player) continue;
@@ -201,26 +204,32 @@ export const globalActions = {
 				const confidenceMultiplier =
 					vote.confidence === 1 ? 1 : vote.confidence === 2 ? 0.5 : 3;
 
+				let roundPoints = 0;
+
 				if (isWinner) {
 					// Award points (half if tie)
-					let points = Math.round(
+					roundPoints = Math.round(
 						config.baseScorePoints * confidenceMultiplier * marginBonus
 					);
 					if (isTie) {
-						points = Math.round(points / 2);
+						roundPoints = Math.round(roundPoints / 2);
 					}
-					player.score += points;
+					player.score += roundPoints;
 				} else {
-					// Lose points based on confidence (0.5x loses 0, 1x loses base points, 3x loses 3x points)
+					// Lose points based on confidence, with margin bonus (0.5x loses 0, 1x loses base points, 3x loses 3x points)
 					if (confidenceMultiplier === 0.5) {
 						// No penalty for 0.5x
+						roundPoints = 0;
 					} else {
-						const penalty = Math.round(
-							config.baseScorePoints * confidenceMultiplier
+						roundPoints = -Math.round(
+							config.baseScorePoints * confidenceMultiplier * marginBonus
 						);
-						player.score -= penalty;
+						player.score += roundPoints;
 					}
 				}
+
+				// Store round points for this player
+				globalState.roundPoints[clientId] = roundPoints;
 			}
 
 			globalState.gamePhase = 'results';
