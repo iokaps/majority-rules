@@ -3,7 +3,7 @@ import { kmClient } from '@/services/km-client';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
-import { useKmConfettiContext } from '@kokimoki/shared';
+import { useKmAnimatedValue, useKmConfettiContext } from '@kokimoki/shared';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -20,6 +20,13 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 		globalStore.proxy
 	);
 	const { triggerConfetti } = useKmConfettiContext();
+
+	// Animated points display
+	const { ref: pointsRef } = useKmAnimatedValue<HTMLSpanElement>(
+		Math.abs(pointsEarned),
+		0,
+		{ duration: 0.8 }
+	);
 
 	// Trigger confetti immediately when player wins
 	React.useEffect(() => {
@@ -95,15 +102,17 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 											{option}
 										</span>
 									</div>
-									<span className="text-sm text-slate-600">
+									<span className="animate-count-fade text-sm text-slate-600">
 										{voteCount} votes ({percentage.toFixed(0)}%)
 									</span>
 								</div>
 								<div className="h-3 w-full rounded-full bg-slate-200">
 									<div
 										className={cn(
-											'h-full rounded-full transition-all duration-500',
-											isWinner ? 'gradient-success' : 'gradient-danger'
+											'results-bar h-full rounded-full',
+											isWinner ? 'gradient-success' : 'gradient-danger',
+											index === 1 && 'results-bar-delay-1',
+											index === 2 && 'results-bar-delay-2'
 										)}
 										style={{ width: `${percentage}%` }}
 									/>
@@ -117,7 +126,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 			{/* Points Display */}
 			<div
 				className={cn(
-					'rounded-xl border-2 p-6 text-center',
+					'points-earned rounded-xl border-2 p-6 text-center',
 					pointsDisplay.bg,
 					pointsDisplay.color === 'text-success'
 						? 'border-green-300'
@@ -133,9 +142,18 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 							? 'Points Lost'
 							: 'No Points'}
 				</p>
-				<p className={cn('text-5xl font-bold', pointsDisplay.color)}>
+				<p
+					className={cn(
+						'text-5xl font-bold',
+						pointsEarned > 0
+							? 'points-positive'
+							: pointsEarned < 0
+								? 'points-negative'
+								: 'points-neutral'
+					)}
+				>
 					{pointsDisplay.sign}
-					{Math.abs(pointsEarned)}
+					<span ref={pointsRef}>0</span>
 				</p>
 			</div>
 

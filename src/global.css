@@ -132,7 +132,12 @@ body {
 }
 
 .vote-option-button {
-	@apply relative flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-slate-300 bg-white px-6 py-4 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-offset-2 focus:outline-none;
+	@apply relative flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-slate-300 bg-white px-6 py-4 font-semibold transition-all duration-200 hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-offset-2 focus:outline-none;
+}
+
+.vote-option-button:active:not(:disabled) {
+	transform: scale(0.98);
+	transition-duration: 100ms;
 }
 
 .vote-option-button.option-1 {
@@ -190,6 +195,12 @@ body {
 	animation: shimmer 2s ease-in-out infinite;
 }
 
+.vote-option-button.selected {
+	box-shadow:
+		0 10px 25px -5px rgba(0, 0, 0, 0.15),
+		0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
 .winner-option {
 	@apply border-success ring-success/50 bg-green-50 ring-2;
 }
@@ -240,6 +251,38 @@ body {
 
 .score-notification {
 	animation: pop-scale 0.3s ease-out;
+}
+
+.points-earned {
+	animation: pop-scale 0.4s ease-out;
+}
+
+.points-positive {
+	@apply text-success;
+	text-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.points-negative {
+	@apply text-danger;
+	text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+.points-neutral {
+	@apply text-slate-500;
+}
+
+.results-bar {
+	animation: bar-grow 500ms ease-out;
+}
+
+.results-bar-delay-1 {
+	animation-delay: 100ms;
+	animation-fill-mode: backwards;
+}
+
+.results-bar-delay-2 {
+	animation-delay: 200ms;
+	animation-fill-mode: backwards;
 }
 
 @keyframes pop-scale {
@@ -303,6 +346,77 @@ body {
 	100% {
 		background-position: 200% center;
 	}
+}
+
+@keyframes timer-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.05);
+		opacity: 0.9;
+	}
+}
+
+@keyframes float-up {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+}
+
+@keyframes glow-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+	}
+	50% {
+		box-shadow: 0 0 40px rgba(239, 68, 68, 0.7);
+	}
+}
+
+@keyframes bar-grow {
+	from {
+		width: 0%;
+	}
+}
+
+@keyframes count-fade {
+	from {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.animate-timer-pulse {
+	animation: timer-pulse 0.5s ease-in-out infinite;
+}
+
+.animate-float-up {
+	animation: float-up 1s ease-out forwards;
+}
+
+.timer-urgent-glow {
+	animation: glow-pulse 0.5s ease-in-out infinite;
+	border-radius: 9999px;
+}
+
+.animate-bar-grow {
+	animation: bar-grow 500ms ease-out forwards;
+}
+
+.animate-count-fade {
+	animation: count-fade 300ms ease-out;
 }
 
 .count-up-number {

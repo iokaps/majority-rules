@@ -1,11 +1,12 @@
-﻿import { config } from '@/config';
+﻿import { CircularTimer } from '@/components/circular-timer';
+import { ConfidenceSlider } from '@/components/confidence-slider';
+import { config } from '@/config';
 import { useServerTimer } from '@/hooks/useServerTime';
 import { kmClient } from '@/services/km-client';
 import { globalActions } from '@/state/actions/global-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
-import { KmTimeCountdown } from '@kokimoki/shared';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface VotingViewProps {
@@ -58,7 +59,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
 	const optionLetters = ['A', 'B', 'C'];
 	const timeRemaining = Math.max(0, votingEndTimestamp - serverTime);
-	const isTimeRunningOut = timeRemaining < 5000 && timeRemaining > 0;
+	const totalVotingTime = config.votingDurationSeconds * 1000;
 
 	return (
 		<div className="space-y-6">
@@ -69,19 +70,15 @@ export const VotingView: React.FC<VotingViewProps> = ({
 				</h2>
 			</div>
 
-			{/* Timer */}
+			{/* Circular Timer */}
 			{votingEndTimestamp > 0 && (
 				<div className="flex justify-center">
-					<div
-						className={cn(
-							'rounded-full px-8 py-4 text-3xl font-bold shadow-lg',
-							isTimeRunningOut
-								? 'gradient-danger animate-pulse text-white'
-								: 'gradient-blue text-white'
-						)}
-					>
-						<KmTimeCountdown ms={timeRemaining} />
-					</div>
+					<CircularTimer
+						ms={timeRemaining}
+						totalMs={totalVotingTime}
+						size={100}
+						strokeWidth={8}
+					/>
 				</div>
 			)}
 
@@ -111,33 +108,11 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
 			{/* Confidence Slider - only show during voting phase */}
 			{interactive && votingEndTimestamp > 0 && !submitted && (
-				<div
-					className={cn(
-						'space-y-2 rounded-lg p-3 transition-all',
-						confidence === 2 && 'ring-2 ring-orange-400 ring-offset-2'
-					)}
-				>
-					<label className="confidence-slider-label block">
-						{config.votingConfidenceLabel.replace(
-							'{n}',
-							confidence === 0 ? '🤔 0.5' : confidence === 1 ? '😐 1' : '😎 3'
-						)}
-					</label>
-					<input
-						type="range"
-						min="0"
-						max="2"
-						step="1"
-						value={confidence}
-						onChange={(e) => setConfidence(parseInt(e.target.value))}
-						className="confidence-slider"
-					/>
-					<div className="flex justify-between text-xs text-slate-600">
-						<span>{config.votingConfidenceMin}</span>
-						<span className="font-semibold">1x</span>
-						<span>{config.votingConfidenceMax}</span>
-					</div>
-				</div>
+				<ConfidenceSlider
+					value={confidence}
+					onChange={setConfidence}
+					disabled={submitted}
+				/>
 			)}
 
 			{/* Submit Button - only show during voting, interactive mode */}

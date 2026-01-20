@@ -1,3 +1,4 @@
+import { CircularTimer } from '@/components/circular-timer';
 import { withKmProviders } from '@/components/with-km-providers';
 import { config } from '@/config';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -12,7 +13,7 @@ import { cn } from '@/utils/cn';
 import { QuestionManagementView } from '@/views/question-management-view';
 import { VotingView } from '@/views/voting-view';
 import { useSnapshot } from '@kokimoki/app';
-import { KmTimeCountdown, useKmModal } from '@kokimoki/shared';
+import { useKmModal } from '@kokimoki/shared';
 import {
 	CirclePlay,
 	CircleStop,
@@ -284,19 +285,12 @@ const App: React.FC = () => {
 												</h2>
 											</div>
 											<div className="flex justify-center">
-												<div
-													className={cn(
-														'rounded-full px-8 py-4 text-3xl font-bold shadow-lg',
-														votingEndTimestamp - serverTime < 5000 &&
-															votingEndTimestamp - serverTime > 0
-															? 'gradient-danger animate-pulse text-white'
-															: 'gradient-blue text-white'
-													)}
-												>
-													<KmTimeCountdown
-														ms={Math.max(0, votingEndTimestamp - serverTime)}
-													/>
-												</div>
+												<CircularTimer
+													ms={Math.max(0, votingEndTimestamp - serverTime)}
+													totalMs={config.votingDurationSeconds * 1000}
+													size={120}
+													strokeWidth={10}
+												/>
 											</div>
 										</>
 									)}

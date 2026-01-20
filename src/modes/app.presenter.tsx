@@ -1,3 +1,4 @@
+import { CircularTimer } from '@/components/circular-timer';
 import { config } from '@/config';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useGlobalController } from '@/hooks/useGlobalController';
@@ -8,7 +9,7 @@ import { kmClient } from '@/services/km-client';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
-import { KmPodiumTable, KmQrCode, KmTimeCountdown } from '@kokimoki/shared';
+import { KmPodiumTable, KmQrCode } from '@kokimoki/shared';
 import * as React from 'react';
 
 const App: React.FC = () => {
@@ -55,7 +56,7 @@ const App: React.FC = () => {
 
 	// Timer
 	const timeRemaining = Math.max(0, votingEndTimestamp - serverTime);
-	const isTimeRunningOut = timeRemaining < 5000 && timeRemaining > 0;
+	const totalVotingTime = config.votingDurationSeconds * 1000;
 
 	const hasVoteResults =
 		gamePhase === 'results' && Object.keys(voteAggregation).length > 0;
@@ -102,16 +103,12 @@ const App: React.FC = () => {
 									</h1>
 									{gamePhase === 'voting' && (
 										<div className="flex justify-center">
-											<div
-												className={cn(
-													'rounded-full px-8 py-4 text-3xl font-bold shadow-lg',
-													isTimeRunningOut
-														? 'gradient-danger animate-pulse text-white'
-														: 'gradient-blue text-white'
-												)}
-											>
-												<KmTimeCountdown ms={timeRemaining} />
-											</div>
+											<CircularTimer
+												ms={timeRemaining}
+												totalMs={totalVotingTime}
+												size={140}
+												strokeWidth={10}
+											/>
 										</div>
 									)}
 								</div>
@@ -138,7 +135,7 @@ const App: React.FC = () => {
 														</span>
 														<span
 															className={cn(
-																'text-xl font-bold',
+																'animate-count-fade text-xl font-bold',
 																isWinner ? 'text-success' : 'text-danger'
 															)}
 														>
@@ -148,10 +145,12 @@ const App: React.FC = () => {
 													<div className="h-8 w-full rounded-lg bg-slate-200">
 														<div
 															className={cn(
-																'h-full rounded-lg transition-all duration-500',
+																'results-bar h-full rounded-lg',
 																isWinner
 																	? 'gradient-success'
-																	: 'gradient-danger'
+																	: 'gradient-danger',
+																index === 1 && 'results-bar-delay-1',
+																index === 2 && 'results-bar-delay-2'
 															)}
 															style={{ width: `${percentage}%` }}
 														/>
