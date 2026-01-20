@@ -7,6 +7,7 @@ import { globalActions } from '@/state/actions/global-actions';
 import { globalStore } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
+import { AlertTriangle } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 interface VotingViewProps {
@@ -25,6 +26,15 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
 	// Derive submitted state from votes - no setState in effects
 	const submitted = !!votes[kmClient.id];
+
+	// Compute warning state directly from time remaining
+	const timeRemaining = votingEndTimestamp - serverTime;
+	const showAutoSubmitWarning =
+		interactive &&
+		!submitted &&
+		selectedOption !== null &&
+		timeRemaining <= 5000 &&
+		timeRemaining > 0;
 
 	// Auto-submit on deadline
 	const handleSubmit = useCallback(async () => {
@@ -58,11 +68,23 @@ export const VotingView: React.FC<VotingViewProps> = ({
 	}
 
 	const optionLetters = ['A', 'B', 'C'];
-	const timeRemaining = Math.max(0, votingEndTimestamp - serverTime);
+	const displayTimeRemaining = Math.max(0, timeRemaining);
 	const totalVotingTime = config.votingDurationSeconds * 1000;
 
 	return (
-		<div className="space-y-6">
+		<div className="phase-enter space-y-6">
+			{/* Auto-submit Warning */}
+			{showAutoSubmitWarning && !submitted && (
+				<div className="animate-pulse rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-center">
+					<div className="flex items-center justify-center gap-2">
+						<AlertTriangle className="size-5 text-amber-600" />
+						<span className="font-semibold text-amber-800">
+							{config.votingAutoSubmitWarning}
+						</span>
+					</div>
+				</div>
+			)}
+
 			{/* Question */}
 			<div className="overlay-blue">
 				<h2 className="game-question-compact text-center">
@@ -74,7 +96,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 			{votingEndTimestamp > 0 && (
 				<div className="flex justify-center">
 					<CircularTimer
-						ms={timeRemaining}
+						ms={displayTimeRemaining}
 						totalMs={totalVotingTime}
 						size={100}
 						strokeWidth={8}
@@ -96,8 +118,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 							'vote-option-button',
 							`option-${index + 1}`,
 							selectedOption === index && 'selected',
-							!interactive && 'opacity-50',
-							interactive && !submitted && 'hover:animate-pulse'
+							!interactive && 'opacity-50'
 						)}
 					>
 						<span className="text-lg font-bold">{optionLetters[index]}</span>

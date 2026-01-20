@@ -43,7 +43,6 @@ players: 'Players Connected'
 online: 'Online'
 offline: 'Offline'
 startButton: 'Start Game'
-stopButton: 'Stop Game'
 
 loading: 'Loading...'
 
@@ -96,17 +95,11 @@ lobbyLoadingMessage: 'Loading player data...'
 # Host screen
 hostSelectQuestion: 'Select Next Question'
 hostStartRoundButton: 'Start Round'
-hostGenerateStartButton: 'Generate & Start Round'
-hostGeneratingButton: 'Generating...'
-hostDeleteAllButton: 'Delete All'
-hostDeleteAllConfirm: 'Are you sure you want to delete all {count} questions?'
 hostPlayedBadge: '✓ Played'
 
 # Game mechanics config
 maxRounds: 10
 votingDurationSeconds: 30
-baseScorePoints: 10
-maxOptionsPerQuestion: 3
 
 # AI and questions
 aiQuestionPrompt: 'Generate a fun party game question in JSON format with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
@@ -122,7 +115,6 @@ losersMessageMd: |
 
 # Host screen - game view
 hostRoundPlayersLabel: 'Round {roundNumber} • {activePlayers} Active Players'
-hostVotingProgress: '{votedPlayers} / {activePlayers} players voted'
 hostGameOverTitle: 'Game Over!'
 hostPlayersLabel: 'Players'
 hostVotedLabel: '✓ Voted'
@@ -137,9 +129,10 @@ presenterVoteBreakdownTitle: 'Vote Breakdown'
 presenterWaitingToStartMessage: 'Waiting for game to start...'
 presenterWaitingForRoundMessage: 'Waiting for next round...'
 presenterGameOverTitle: '🏆 Game Over!'
-presenterWinsWithPoints: '{name} wins with {score} points!'
 presenterLeaderboardTitle: 'Leaderboard'
 presenterPointsLabel: 'pts'
+presenterPlayersVotingLabel: 'players voting'
+presenterPlayersParticipated: '{count} players participated'
 
 # Player screen - game over
 playerGameOverTitle: '🏆 Game Over!'
@@ -152,7 +145,6 @@ questionManagerDescription: 'Generate AI questions or create custom ones for you
 aiGeneratorTitle: 'AI Question Generator'
 aiTopicsLabel: 'Topics or Themes (one per line)'
 aiTopicsPlaceholder: 'e.g., breakfast foods, movie genres, travel destinations'
-aiAddTopicButton: 'Add Another Topic'
 aiGeneratingProgress: 'Generating {progress} / {total} questions...'
 aiGenerateButton: 'Generate {count} Question{s}'
 aiGeneratingLabel: 'Generating...'
@@ -168,12 +160,11 @@ questionBankDeleteAllConfirm: 'Are you sure you want to delete all {count} quest
 questionBankEmpty: 'No questions yet. Generate or create some!'
 questionAiLabel: '🤖 AI'
 questionManualLabel: '✏️ Manual'
-questionEditButton: 'Edit'
-questionSaveButton: 'Save'
 questionSuggestedBy: 'Suggested by: {name}'
 
 # Voting view
 votingNoQuestionMessage: 'No question loaded'
+votingAutoSubmitWarning: 'Auto-submitting in 5 seconds!'
 votingConfidenceLabel: 'How confident? {n}x points'
 votingConfidenceMin: 'Not Sure'
 votingConfidenceMax: 'Very Sure'
@@ -181,7 +172,6 @@ votingSubmitButton: 'Submit Vote'
 votingSubmittedMessage: '✓ Vote submitted!'
 
 # Player topic submissions
-playerTopicsToggleButton: 'Toggle Player Topics'
 playerTopicsEnabledLabel: 'Player Topics: ON'
 playerTopicsDisabledLabel: 'Player Topics: OFF'
 playerSubmitTopicTitle: 'Suggest a Topic'
@@ -192,7 +182,6 @@ playerAlreadySubmittedMessage: 'You already submitted a topic'
 hostPlayerTopicsTitle: 'Player Suggested Topics'
 hostGenerateFromTopicButton: 'Generate Question'
 hostDeleteTopicButton: 'Delete'
-hostNoPlayerTopics: 'No player topics yet'
 aiTopicPrompt: 'Generate a fun party game question about: {topic}. Return JSON with exactly 3 options. The question should have no obvious correct answer and encourage debate. Return JSON with "question" (string) and "options" (array of strings) fields.'
 
 playerResultsWaitingMessage: 'Waiting for next round...'
@@ -203,16 +192,12 @@ hostInfoGameGoalTitle: '🎯 Game Goal'
 hostInfoGameGoalText: 'Match the majority! Players vote on subjective questions and earn points by voting with the most popular answer.'
 hostInfoConfidenceTitle: '🎚️ Confidence Slider'
 hostInfoConfidenceText: 'Players choose their confidence level:'
-hostInfoConfidenceLeft: 'Safe choice - half points if right, no penalty if wrong'
-hostInfoConfidenceMiddle: 'Normal - standard points/penalty'
-hostInfoConfidenceRight: 'Risky - triple points if right, triple penalty if wrong'
+hostInfoConfidenceLeft: 'Safe - +5 if right, no penalty if wrong'
+hostInfoConfidenceMiddle: 'Normal - +10 if right, -5 if wrong'
+hostInfoConfidenceRight: 'Risky - +30 if right, -15 if wrong'
 hostInfoScoringTitle: '📊 Scoring'
-hostInfoScoringWinning: 'Winning (Majority Vote):'
-hostInfoScoringFormula: 'Points = 10 × confidence × consensus bonus'
-hostInfoScoringConsensus: 'The consensus bonus is based on the margin between 1st and 2nd place. Bigger margin = bigger bonus! Maximum bonus is 2x when everyone votes the same.'
-hostInfoScoringLosing: 'Lose points equal to your confidence (except 0.5x = no penalty)'
 hostInfoTiesTitle: '🤝 Ties'
-hostInfoTiesText: 'When multiple answers tie for most votes, all tied voters are considered winners but receive half the normal points. In a perfect tie where all options get equal votes, the consensus bonus is 0, so everyone gets 0 points.'
+hostInfoTiesText: 'When multiple answers tie for most votes, all tied voters win with half the normal points.'
 hostInfoGameEndTitle: '🏁 Game End'
 hostInfoGameEndText: 'Game runs for {maxRounds} rounds or until you end it manually. Highest score wins!'
 hostInfoButtonLabel: 'How to Play'

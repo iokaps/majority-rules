@@ -136,19 +136,46 @@ const App: React.FC = () => {
 						<h3 className="mb-2 font-semibold text-slate-900">
 							{config.hostInfoScoringTitle}
 						</h3>
-						<p className="mb-2 text-slate-700">
-							<strong>{config.hostInfoScoringWinning}</strong>
-						</p>
-						<p className="mb-2 ml-4 text-slate-700">
-							{config.hostInfoScoringFormula}
-						</p>
-						<p className="mb-2 text-slate-700">
-							<strong>Consensus Bonus:</strong>{' '}
-							{config.hostInfoScoringConsensus}
-						</p>
-						<p className="mb-4 text-slate-700">
-							<strong>Losing (Minority Vote):</strong>{' '}
-							{config.hostInfoScoringLosing}
+						<div className="overflow-hidden rounded-lg border border-slate-200">
+							<table className="w-full text-sm">
+								<thead className="bg-slate-100">
+									<tr>
+										<th className="px-3 py-2 text-left font-semibold">
+											Confidence
+										</th>
+										<th className="px-3 py-2 text-center font-semibold text-green-700">
+											Win
+										</th>
+										<th className="px-3 py-2 text-center font-semibold text-red-700">
+											Lose
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr className="border-t border-slate-200">
+										<td className="px-3 py-2">🛡️ Safe</td>
+										<td className="px-3 py-2 text-center text-green-700">+5</td>
+										<td className="px-3 py-2 text-center text-slate-500">0</td>
+									</tr>
+									<tr className="border-t border-slate-200 bg-slate-50">
+										<td className="px-3 py-2">⚖️ Normal</td>
+										<td className="px-3 py-2 text-center text-green-700">
+											+10
+										</td>
+										<td className="px-3 py-2 text-center text-red-700">-5</td>
+									</tr>
+									<tr className="border-t border-slate-200">
+										<td className="px-3 py-2">🔥 Risky</td>
+										<td className="px-3 py-2 text-center text-green-700">
+											+30
+										</td>
+										<td className="px-3 py-2 text-center text-red-700">-15</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<p className="mt-2 text-sm text-slate-600">
+							Ties: All tied voters win with half points.
 						</p>
 					</div>
 

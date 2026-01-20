@@ -427,6 +427,22 @@ body {
 	animation: shake 0.5s ease-in-out;
 }
 
+/* Phase transitions */
+@keyframes phase-enter {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.phase-enter {
+	animation: phase-enter 300ms ease-out;
+}
+
 /* Mobile-responsive spacing adjustments */
 @media (max-width: 640px) {
 	.game-card {

@@ -58,19 +58,11 @@ export const schema = z.object({
 	// Host screen
 	hostSelectQuestion: z.string().default('Select Next Question'),
 	hostStartRoundButton: z.string().default('Start Round'),
-	hostGenerateStartButton: z.string().default('Generate & Start Round'),
-	hostGeneratingButton: z.string().default('Generating...'),
-	hostDeleteAllButton: z.string().default('Delete All'),
-	hostDeleteAllConfirm: z
-		.string()
-		.default('Are you sure you want to delete all {count} questions?'),
 	hostPlayedBadge: z.string().default('✓ Played'),
 
 	// Game mechanics config
 	maxRounds: z.number().default(10),
 	votingDurationSeconds: z.number().default(30),
-	baseScorePoints: z.number().default(10),
-	maxOptionsPerQuestion: z.number().default(3),
 
 	// AI and questions
 	aiQuestionPrompt: z
@@ -83,9 +75,6 @@ export const schema = z.object({
 	hostRoundPlayersLabel: z
 		.string()
 		.default('Round {roundNumber} • {activePlayers} Active Players'),
-	hostVotingProgress: z
-		.string()
-		.default('{votedPlayers} / {activePlayers} players voted'),
 	hostGameOverTitle: z.string().default('Game Over!'),
 	hostPlayersLabel: z.string().default('Players'),
 	hostVotedLabel: z.string().default('✓ Voted'),
@@ -104,17 +93,27 @@ export const schema = z.object({
 		.string()
 		.default('Waiting for next round...'),
 	presenterGameOverTitle: z.string().default('🏆 Game Over!'),
-	presenterWinsWithPoints: z
-		.string()
-		.default('{name} wins with {score} points!'),
 	presenterLeaderboardTitle: z.string().default('Leaderboard'),
 	presenterPointsLabel: z.string().default('pts'),
+	presenterPlayersVotingLabel: z.string().default('players voting'),
+	presenterPlayersParticipated: z
+		.string()
+		.default('{count} players participated'),
 
 	// Player screen - game over
 	playerGameOverTitle: z.string().default('🏆 Game Over!'),
 	playerFinalLeaderboardTitle: z.string().default('Final Leaderboard'),
 	playerPointsLabel: z.string().default('pts'),
 	playerResultsWaitingMessage: z.string().default('Waiting for next round...'),
+
+	// Voting view
+	votingNoQuestionMessage: z.string().default('No question loaded'),
+	votingAutoSubmitWarning: z.string().default('Auto-submitting in 5 seconds!'),
+	votingConfidenceLabel: z.string().default('How confident? {n}x points'),
+	votingConfidenceMin: z.string().default('Not Sure'),
+	votingConfidenceMax: z.string().default('Very Sure'),
+	votingSubmitButton: z.string().default('Submit Vote'),
+	votingSubmittedMessage: z.string().default('✓ Vote submitted!'),
 
 	// Question management
 	questionManagerTitle: z.string().default('Question Manager'),
@@ -126,7 +125,6 @@ export const schema = z.object({
 	aiTopicsPlaceholder: z
 		.string()
 		.default('e.g., breakfast foods, movie genres, travel destinations'),
-	aiAddTopicButton: z.string().default('Add Another Topic'),
 	aiGeneratingProgress: z
 		.string()
 		.default('Generating {progress} / {total} questions...'),
@@ -148,20 +146,9 @@ export const schema = z.object({
 		.default('No questions yet. Generate or create some!'),
 	questionAiLabel: z.string().default('🤖 AI'),
 	questionManualLabel: z.string().default('✏️ Manual'),
-	questionEditButton: z.string().default('Edit'),
-	questionSaveButton: z.string().default('Save'),
 	questionSuggestedBy: z.string().default('Suggested by: {name}'),
 
-	// Voting view
-	votingNoQuestionMessage: z.string().default('No question loaded'),
-	votingConfidenceLabel: z.string().default('How confident? {n}x points'),
-	votingConfidenceMin: z.string().default('Not Sure'),
-	votingConfidenceMax: z.string().default('Very Sure'),
-	votingSubmitButton: z.string().default('Submit Vote'),
-	votingSubmittedMessage: z.string().default('✓ Vote submitted!'),
-
 	// Player topic submissions
-	playerTopicsToggleButton: z.string().default('Toggle Player Topics'),
 	playerTopicsEnabledLabel: z.string().default('Player Topics: ON'),
 	playerTopicsDisabledLabel: z.string().default('Player Topics: OFF'),
 	playerSubmitTopicTitle: z.string().default('Suggest a Topic'),
@@ -174,7 +161,6 @@ export const schema = z.object({
 	hostPlayerTopicsTitle: z.string().default('Player Suggested Topics'),
 	hostGenerateFromTopicButton: z.string().default('Generate Question'),
 	hostDeleteTopicButton: z.string().default('Delete'),
-	hostNoPlayerTopics: z.string().default('No player topics yet'),
 	aiTopicPrompt: z
 		.string()
 		.default(
@@ -215,18 +201,6 @@ export const schema = z.object({
 		.string()
 		.default('Risky - triple points if right, triple penalty if wrong'),
 	hostInfoScoringTitle: z.string().default('📊 Scoring'),
-	hostInfoScoringWinning: z.string().default('Winning (Majority Vote):'),
-	hostInfoScoringFormula: z
-		.string()
-		.default('Points = 10 × confidence × consensus bonus'),
-	hostInfoScoringConsensus: z
-		.string()
-		.default(
-			'More agreement = more points! When everyone agrees, you get up to 2x bonus.'
-		),
-	hostInfoScoringLosing: z
-		.string()
-		.default('Lose points equal to your confidence (except 0.5x = no penalty)'),
 	hostInfoTiesTitle: z.string().default('🤝 Ties'),
 	hostInfoTiesText: z
 		.string()

@@ -16,7 +16,7 @@ interface ConfidenceSliderProps {
 const segments = [
 	{
 		value: 0,
-		multiplier: '0.5x',
+		pointsLabel: '+5 / 0',
 		label: 'Safe',
 		emoji: '🛡️',
 		color: 'bg-emerald-500',
@@ -24,11 +24,11 @@ const segments = [
 		activeColor: 'bg-emerald-600',
 		ringColor: 'ring-emerald-400',
 		textColor: 'text-emerald-700',
-		description: 'Half points, no penalty'
+		description: '+5 if right, no penalty'
 	},
 	{
 		value: 1,
-		multiplier: '1x',
+		pointsLabel: '+10 / -5',
 		label: 'Normal',
 		emoji: '⚖️',
 		color: 'bg-blue-500',
@@ -36,11 +36,11 @@ const segments = [
 		activeColor: 'bg-blue-600',
 		ringColor: 'ring-blue-400',
 		textColor: 'text-blue-700',
-		description: 'Standard points/penalty'
+		description: '+10 if right, -5 if wrong'
 	},
 	{
 		value: 2,
-		multiplier: '3x',
+		pointsLabel: '+30 / -15',
 		label: 'Risky',
 		emoji: '🔥',
 		color: 'bg-orange-500',
@@ -48,7 +48,7 @@ const segments = [
 		activeColor: 'bg-orange-600',
 		ringColor: 'ring-orange-400',
 		textColor: 'text-orange-700',
-		description: 'Triple points/penalty'
+		description: '+30 if right, -15 if wrong'
 	}
 ];
 
@@ -84,7 +84,7 @@ export const ConfidenceSlider: React.FC<ConfidenceSliderProps> = ({
 							selectedSegment.textColor
 						)}
 					>
-						{selectedSegment.multiplier} Points
+						{selectedSegment.label}: {selectedSegment.pointsLabel}
 					</span>
 				</div>
 				<p className="text-sm text-slate-600">{selectedSegment.description}</p>
@@ -128,7 +128,7 @@ export const ConfidenceSlider: React.FC<ConfidenceSliderProps> = ({
 						>
 							<div className="flex flex-col items-center gap-1">
 								<span className="text-lg">{segment.emoji}</span>
-								<span className="text-sm">{segment.multiplier}</span>
+								<span className="text-xs font-medium">{segment.label}</span>
 							</div>
 						</button>
 					);

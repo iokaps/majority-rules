@@ -79,19 +79,55 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 					const currentVote = votes[kmClient.id];
 					const isPlayerVote = currentVote?.optionIndex === index;
 
+					// Get confidence multiplier display
+					const getConfidenceLabel = () => {
+						if (!currentVote) return null;
+						const mult =
+							currentVote.confidence === 0
+								? '0.5'
+								: currentVote.confidence === 1
+									? '1'
+									: '3';
+						return `×${mult}`;
+					};
+
+					// Option-specific gradient colors
+					const getBarGradient = () => {
+						if (isWinner) {
+							// Winner gets bright version of option color
+							switch (index) {
+								case 0:
+									return 'bg-gradient-to-r from-blue-400 to-indigo-500';
+								case 1:
+									return 'bg-gradient-to-r from-green-400 to-emerald-500';
+								case 2:
+									return 'bg-gradient-to-r from-orange-400 to-amber-500';
+								default:
+									return 'gradient-success';
+							}
+						} else {
+							// Loser gets muted version
+							return 'bg-slate-300';
+						}
+					};
+
 					return (
 						<div
 							key={index}
 							className={cn(
 								'rounded-lg p-3 transition-all',
-								isPlayerVote && 'border-2 border-blue-400 bg-blue-50'
+								isPlayerVote && 'ring-2 ring-blue-400 ring-offset-2',
+								isPlayerVote && isWinner && 'bg-green-50',
+								isPlayerVote && !isWinner && 'bg-red-50'
 							)}
 						>
 							<div className="space-y-1">
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-2">
 										{isPlayerVote && (
-											<span className="text-lg font-bold text-blue-600">✓</span>
+											<span className="rounded bg-blue-100 px-2 py-0.5 text-sm font-bold text-blue-600">
+												You {getConfidenceLabel()}
+											</span>
 										)}
 										<span
 											className={cn(
@@ -100,6 +136,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 											)}
 										>
 											{option}
+											{isWinner && ' ✓'}
 										</span>
 									</div>
 									<span className="animate-count-fade text-sm text-slate-600">
@@ -110,7 +147,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 									<div
 										className={cn(
 											'results-bar h-full rounded-full',
-											isWinner ? 'gradient-success' : 'gradient-danger',
+											getBarGradient(),
 											index === 1 && 'results-bar-delay-1',
 											index === 2 && 'results-bar-delay-2'
 										)}

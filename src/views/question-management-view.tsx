@@ -4,6 +4,7 @@ import { globalActions } from '@/state/actions/global-actions';
 import { globalStore, type Question } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
+import { useKmModal } from '@kokimoki/shared';
 import { Plus, Trash2, Wand2 } from 'lucide-react';
 import * as React from 'react';
 
@@ -17,6 +18,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 	const { questionBank, aiGenerationStatus, playerTopics } = useSnapshot(
 		globalStore.proxy
 	);
+	const { openAlertDialog } = useKmModal();
 	const [showManualForm, setShowManualForm] = React.useState(false);
 	const [manualQuestion, setManualQuestion] = React.useState('');
 	const [manualOptions, setManualOptions] = React.useState(['', '', '']);
@@ -27,6 +29,16 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 	const [editOptions, setEditOptions] = React.useState<string[]>([]);
 	const [batchProgress, setBatchProgress] = React.useState(0);
 	const [totalBatchQuestions, setTotalBatchQuestions] = React.useState(0);
+
+	const showError = React.useCallback(
+		(message: string) => {
+			openAlertDialog({
+				title: '❌ AI Generation Error',
+				description: message
+			});
+		},
+		[openAlertDialog]
+	);
 
 	const generateAiQuestion = async (topic: string) => {
 		if (!topic.trim()) return;
@@ -78,7 +90,9 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 			}
 			return false;
 		} catch (error) {
-			console.error('Failed to generate question:', error);
+			const message =
+				error instanceof Error ? error.message : 'Failed to generate question';
+			showError(message);
 			return false;
 		}
 	};
@@ -104,7 +118,9 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 			setAiTopics(['']);
 			await globalActions.setAiGenerationStatus('ready');
 		} catch (error) {
-			console.error('Batch generation failed:', error);
+			const message =
+				error instanceof Error ? error.message : 'Batch generation failed';
+			showError(message);
 			await globalActions.setAiGenerationStatus('idle');
 		} finally {
 			setTotalBatchQuestions(0);

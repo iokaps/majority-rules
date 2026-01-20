@@ -139,7 +139,7 @@ const App: React.FC = () => {
 				{gamePhase === 'voting' && <VotingView interactive />}
 
 				{gamePhase === 'results' && (
-					<div className="w-full space-y-4">
+					<div className="phase-enter w-full space-y-4">
 						<ResultsView
 							playerWon={playerWon}
 							pointsEarned={roundPoints[kmClient.id] || 0}
@@ -153,7 +153,7 @@ const App: React.FC = () => {
 				)}
 
 				{gamePhase === 'game-over' && (
-					<div className="mx-auto w-full max-w-md space-y-4">
+					<div className="phase-enter mx-auto w-full max-w-md space-y-4">
 						<div className="overlay-purple text-center">
 							<h2 className="mb-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
 								{config.playerGameOverTitle}
@@ -171,7 +171,10 @@ const App: React.FC = () => {
 									entries={Object.entries(players)
 										.map(([clientId, p]) => ({
 											id: clientId,
-											name: p.name,
+											name:
+												clientId === kmClient.id
+													? `⭐ ${p.name} (You)`
+													: p.name,
 											points: p.score
 										}))
 										.sort((a, b) => b.points - a.points)}
@@ -196,30 +199,55 @@ const App: React.FC = () => {
 								{Object.entries(players).length > 3 && (
 									<div className="border-t border-green-200 pt-3">
 										{Object.entries(players)
-											.map(([, p]) => ({
+											.map(([clientId, p]) => ({
+												clientId,
 												name: p.name,
 												score: p.score
 											}))
 											.sort((a, b) => b.score - a.score)
 											.slice(3)
-											.map((p, idx) => (
-												<div
-													key={p.name}
-													className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2"
-												>
-													<div className="flex items-center gap-2">
-														<span className="text-sm font-bold text-slate-500">
-															{idx + 4}.
-														</span>
-														<span className="text-sm font-semibold text-slate-900">
-															{p.name}
+											.map((p, idx) => {
+												const isCurrentPlayer = p.clientId === kmClient.id;
+												return (
+													<div
+														key={p.clientId}
+														className={cn(
+															'flex items-center justify-between rounded-lg px-3 py-2',
+															isCurrentPlayer
+																? 'bg-blue-100 ring-2 ring-blue-400'
+																: 'bg-slate-50'
+														)}
+													>
+														<div className="flex items-center gap-2">
+															<span className="text-sm font-bold text-slate-500">
+																{idx + 4}.
+															</span>
+															<span
+																className={cn(
+																	'text-sm font-semibold',
+																	isCurrentPlayer
+																		? 'text-blue-700'
+																		: 'text-slate-900'
+																)}
+															>
+																{isCurrentPlayer
+																	? `⭐ ${p.name} (You)`
+																	: p.name}
+															</span>
+														</div>
+														<span
+															className={cn(
+																'text-sm font-bold',
+																isCurrentPlayer
+																	? 'text-blue-700'
+																	: 'text-slate-900'
+															)}
+														>
+															{p.score}
 														</span>
 													</div>
-													<span className="text-sm font-bold text-slate-900">
-														{p.score}
-													</span>
-												</div>
-											))}
+												);
+											})}
 									</div>
 								)}
 							</div>

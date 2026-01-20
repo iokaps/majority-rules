@@ -175,24 +175,14 @@ export const globalActions = {
 			// Check if there's a tie (multiple options with max votes)
 			const isTie = winningOptionIndices.length > 1;
 
-			// Calculate scores
-			const totalVotes = Object.keys(globalState.votes).length;
-			const secondMaxVotes =
-				maxVotes > 0
-					? Math.max(
-							...Object.values(aggregation).filter((count) => count < maxVotes),
-							0
-						)
-					: 0;
-			const votingMargin =
-				totalVotes > 0 ? ((maxVotes - secondMaxVotes) / totalVotes) * 100 : 0;
-
-			// Margin bonus formula: margin / 50, capped at 2x
-			// Higher margin (more consensus) = higher bonus (this is a majority game!)
-			const marginBonus = Math.min(votingMargin / 50, 2);
-
 			// Track round points for each player
 			globalState.roundPoints = {};
+
+			// Fixed tier scoring
+			// Confidence: 1=Normal, 0=Safe, 2=Risky
+			// Win:  Safe=+5,  Normal=+10, Risky=+30
+			// Lose: Safe=0,   Normal=-5,  Risky=-15
+			// Tie:  Half of win points
 
 			for (const [clientId, vote] of Object.entries(globalState.votes)) {
 				const player = globalState.players[clientId];
@@ -200,35 +190,41 @@ export const globalActions = {
 
 				const isWinner = winningOptionIndices.includes(vote.optionIndex);
 
-				// Map confidence slider: 1=middle(1x), 2=left(0.5x), 3=right(3x)
-				const confidenceMultiplier =
-					vote.confidence === 1 ? 1 : vote.confidence === 2 ? 0.5 : 3;
-
 				let roundPoints = 0;
 
 				if (isWinner) {
-					// Award points (half if tie)
-					roundPoints = Math.round(
-						config.baseScorePoints * confidenceMultiplier * marginBonus
-					);
+					// Fixed win points based on confidence
+					switch (vote.confidence) {
+						case 0: // Safe
+							roundPoints = 5;
+							break;
+						case 1: // Normal
+							roundPoints = 10;
+							break;
+						case 2: // Risky
+							roundPoints = 30;
+							break;
+					}
+					// Half points on tie
 					if (isTie) {
 						roundPoints = Math.round(roundPoints / 2);
 					}
-					player.score += roundPoints;
 				} else {
-					// Lose points based on confidence, with margin bonus (0.5x loses 0, 1x loses base points, 3x loses 3x points)
-					if (confidenceMultiplier === 0.5) {
-						// No penalty for 0.5x
-						roundPoints = 0;
-					} else {
-						roundPoints = -Math.round(
-							config.baseScorePoints * confidenceMultiplier * marginBonus
-						);
-						player.score += roundPoints;
+					// Fixed lose points based on confidence
+					switch (vote.confidence) {
+						case 0: // Safe - no penalty
+							roundPoints = 0;
+							break;
+						case 1: // Normal
+							roundPoints = -5;
+							break;
+						case 2: // Risky
+							roundPoints = -15;
+							break;
 					}
 				}
 
-				// Store round points for this player
+				player.score += roundPoints;
 				globalState.roundPoints[clientId] = roundPoints;
 			}
 
