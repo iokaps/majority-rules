@@ -81,8 +81,8 @@ export const schema = z.object({
 	hostWaitingLabel: z.string().default('Waiting...'),
 	hostRevealResultsButton: z.string().default('Reveal Results'),
 	hostNextRoundButton: z.string().default('Next Round'),
-	hostStopGameButton: z.string().default('Stop Game'),
-	hostEndGameButton: z.string().default('End Game'),
+	hostStopGameButton: z.string().default('Reset Game'),
+	hostEndGameButton: z.string().default('Show Results'),
 
 	// Presenter screen
 	presenterVoteBreakdownTitle: z.string().default('Vote Breakdown'),

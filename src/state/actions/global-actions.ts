@@ -331,8 +331,8 @@ export const globalActions = {
 		await kmClient.transact([globalStore], ([globalState]) => {
 			if (!topic.trim()) return;
 
-			// Prevent submitting if player already has a topic
-			if (globalState.playerTopics[kmClient.id]) return;
+			// Prevent submitting if player has ever submitted a topic
+			if (globalState.playerTopicsSubmittedBy[kmClient.id]) return;
 
 			globalState.playerTopics[kmClient.id] = {
 				topic: topic.trim(),
@@ -340,6 +340,7 @@ export const globalActions = {
 				submittedByName: playerName,
 				timestamp: kmClient.serverTimestamp()
 			};
+			globalState.playerTopicsSubmittedBy[kmClient.id] = true;
 		});
 	},
 

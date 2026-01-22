@@ -29,7 +29,7 @@ const App: React.FC = () => {
 		voteAggregation,
 		votes,
 		playerTopicsEnabled,
-		playerTopics,
+		playerTopicsSubmittedBy,
 		roundPoints
 	} = useSnapshot(globalStore.proxy);
 
@@ -101,7 +101,7 @@ const App: React.FC = () => {
 						{playerTopicsEnabled && (
 							<TopicSubmissionForm
 								playerName={name}
-								hasSubmitted={kmClient.id in playerTopics}
+								hasSubmitted={!!playerTopicsSubmittedBy[kmClient.id]}
 							/>
 						)}
 					</div>

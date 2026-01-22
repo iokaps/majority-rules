@@ -121,8 +121,8 @@ hostVotedLabel: '✓ Voted'
 hostWaitingLabel: 'Waiting...'
 hostRevealResultsButton: 'Reveal Results'
 hostNextRoundButton: 'Next Round'
-hostStopGameButton: 'Stop Game'
-hostEndGameButton: 'End Game'
+hostStopGameButton: 'Reset Game'
+hostEndGameButton: 'Show Results'
 
 # Presenter screen
 presenterVoteBreakdownTitle: 'Vote Breakdown'

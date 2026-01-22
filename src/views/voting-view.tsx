@@ -59,6 +59,16 @@ export const VotingView: React.FC<VotingViewProps> = ({
 		handleSubmit
 	]);
 
+	// Handle option selection and auto-submit
+	const handleOptionSelect = React.useCallback(
+		async (index: number) => {
+			if (!interactive || submitted) return;
+			setSelectedOption(index);
+			await globalActions.submitVote(index, confidence);
+		},
+		[interactive, submitted, confidence]
+	);
+
 	if (!currentQuestion) {
 		return (
 			<div className="text-center text-slate-600">
@@ -72,7 +82,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 	const totalVotingTime = config.votingDurationSeconds * 1000;
 
 	return (
-		<div className="phase-enter space-y-6">
+		<div className="phase-enter space-y-4">
 			{/* Auto-submit Warning */}
 			{showAutoSubmitWarning && !submitted && (
 				<div className="animate-pulse rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-center">
@@ -110,13 +120,10 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					<button
 						key={index}
 						type="button"
-						onClick={() =>
-							interactive && !submitted && setSelectedOption(index)
-						}
+						onClick={() => handleOptionSelect(index)}
 						disabled={!interactive || submitted}
 						className={cn(
 							'vote-option-button',
-							`option-${index + 1}`,
 							selectedOption === index && 'selected',
 							!interactive && 'opacity-50'
 						)}
@@ -134,18 +141,6 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					onChange={setConfidence}
 					disabled={submitted}
 				/>
-			)}
-
-			{/* Submit Button - only show during voting, interactive mode */}
-			{interactive && votingEndTimestamp > 0 && !submitted && (
-				<button
-					type="button"
-					onClick={handleSubmit}
-					disabled={selectedOption === null}
-					className="km-btn-primary w-full"
-				>
-					{config.votingSubmitButton}
-				</button>
 			)}
 
 			{/* Submitted confirmation */}

@@ -55,6 +55,7 @@ export interface GlobalState {
 			timestamp: number;
 		}
 	>;
+	playerTopicsSubmittedBy: Record<string, boolean>; // Track who has ever submitted (persists after topic used)
 }
 
 const initialState: GlobalState = {
@@ -78,7 +79,8 @@ const initialState: GlobalState = {
 
 	// Player topic submissions
 	playerTopicsEnabled: false,
-	playerTopics: {}
+	playerTopics: {},
+	playerTopicsSubmittedBy: {}
 };
 
 export const globalStore = kmClient.store<GlobalState>('global', initialState);

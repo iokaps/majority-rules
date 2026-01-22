@@ -208,6 +208,57 @@ const App: React.FC = () => {
 							)}
 						</p>
 					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							🎮 Host Controls
+						</h3>
+						<ul className="ml-4 space-y-2 text-slate-700">
+							<li>
+								<strong>Before Game:</strong> Create questions manually or
+								generate with AI. Enable &ldquo;Player Topics&rdquo; to let
+								players suggest themes.
+							</li>
+							<li>
+								<strong>Start Game:</strong> Begins the game and automatically
+								starts the first round.
+							</li>
+							<li>
+								<strong>During Rounds:</strong> Wait for voting timer or click
+								&ldquo;Reveal Results&rdquo; early. Then &ldquo;Next
+								Round&rdquo; to continue.
+							</li>
+							<li>
+								<strong>Show Results:</strong> End the game and display final
+								leaderboard to all players.
+							</li>
+							<li>
+								<strong>Reset Game:</strong> Abort current game and return to
+								question setup screen.
+							</li>
+						</ul>
+					</div>
+
+					<div>
+						<h3 className="mb-2 font-semibold text-slate-900">
+							⚙️ Host Settings
+						</h3>
+						<ul className="ml-4 space-y-2 text-slate-700">
+							<li>
+								<strong>Player Topics:</strong> When ON, players can suggest
+								themes in the lobby. You can generate questions from their
+								suggestions.
+							</li>
+							<li>
+								<strong>Toggle Presenter QR:</strong> Show/hide the QR code on
+								the presenter screen for players to join.
+							</li>
+							<li>
+								<strong>Player/Presenter Links:</strong> Open player or
+								presenter view in a new tab for testing or sharing.
+							</li>
+						</ul>
+					</div>
 				</div>
 			)
 		});
@@ -414,7 +465,10 @@ const App: React.FC = () => {
 								type="button"
 								className="km-btn-primary"
 								onClick={handleAdvanceRound}
-								disabled={buttonCooldown}
+								disabled={
+									buttonCooldown ||
+									(config.maxRounds > 0 && roundNumber >= config.maxRounds)
+								}
 							>
 								{config.hostNextRoundButton}
 							</button>
@@ -469,7 +523,17 @@ const App: React.FC = () => {
 	// Pregame - show question manager
 	return (
 		<HostPresenterLayout.Root>
-			<HostPresenterLayout.Header />
+			<HostPresenterLayout.Header>
+				<button
+					type="button"
+					onClick={handleShowInfo}
+					className="inline-flex items-center gap-2 rounded-lg bg-blue-100 px-3 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-200"
+					aria-label="Game information"
+				>
+					<Info className="size-4" />
+					{config.hostInfoButtonLabel}
+				</button>
+			</HostPresenterLayout.Header>
 
 			<HostPresenterLayout.Main>
 				<QuestionManagementView onQuestionAdded={setSelectedQuestionId} />
@@ -481,7 +545,7 @@ const App: React.FC = () => {
 						type="button"
 						className="km-btn-primary"
 						onClick={handleStartGame}
-						disabled={buttonCooldown}
+						disabled={buttonCooldown || questionBank.length === 0}
 					>
 						<CirclePlay className="size-5" />
 						{config.startButton}
