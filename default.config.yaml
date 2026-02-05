@@ -188,16 +188,52 @@ playerResultsWaitingMessage: 'Waiting for next round...'
 
 # How to Play modal (host info)
 hostInfoTitle: 'How to Play'
-hostInfoGameGoalTitle: '🎯 Game Goal'
-hostInfoGameGoalText: 'Match the majority! Players vote on subjective questions and earn points by voting with the most popular answer.'
-hostInfoConfidenceTitle: '🎚️ Confidence Slider'
-hostInfoConfidenceText: 'Players choose their confidence level:'
-hostInfoConfidenceLeft: 'Safe - +5 if right, no penalty if wrong'
-hostInfoConfidenceMiddle: 'Normal - +10 if right, -5 if wrong'
-hostInfoConfidenceRight: 'Risky - +30 if right, -15 if wrong'
-hostInfoScoringTitle: '📊 Scoring'
-hostInfoTiesTitle: '🤝 Ties'
-hostInfoTiesText: 'When multiple answers tie for most votes, all tied voters win with half the normal points.'
-hostInfoGameEndTitle: '🏁 Game End'
-hostInfoGameEndText: 'Game runs for {maxRounds} rounds or until you end it manually. Highest score wins!'
 hostInfoButtonLabel: 'How to Play'
+hostInfoContentMd: |
+  ## 🎯 Game Goal
+
+  Match the majority! Players vote on subjective questions and earn points by voting with the most popular answer.
+
+  ## 🎚️ Confidence Slider
+
+  Players choose their confidence level:
+
+  - **🛡️ Safe (Left)** — +5 if right, no penalty if wrong
+  - **⚖️ Normal (Middle)** — +10 if right, -5 if wrong
+  - **🔥 Risky (Right)** — +30 if right, -15 if wrong
+
+  ## 📊 Scoring
+
+  | Confidence | Win   | Lose  |
+  |------------|-------|-------|
+  | 🛡️ Safe   | +5    | 0     |
+  | ⚖️ Normal | +10   | -5    |
+  | 🔥 Risky  | +30   | -15   |
+
+  **Ties:** All tied voters win with half points.
+
+  ## 👀 Player Feedback
+
+  Players see a **countdown timer** during voting and **immediate visual feedback** of points earned/lost (+/- color coding) after each round.
+
+  ## 🤝 Ties
+
+  When multiple answers tie for most votes, all tied voters win with half the normal points.
+
+  ## 🏁 Game End
+
+  Game runs for the configured number of rounds or until you end it manually. Highest score wins!
+
+  ## 🎮 Host Controls
+
+  - **Before Game:** Create questions manually or generate with AI. Enable "Player Topics" to let players suggest themes.
+  - **Start Game:** Begins the game and automatically starts the first round.
+  - **During Rounds:** Wait for voting timer or click "Reveal Results" early. Then "Next Round" to continue.
+  - **Show Results:** End the game and display final leaderboard to all players.
+  - **Reset Game:** Abort current game and return to question setup screen.
+
+  ## ⚙️ Host Settings
+
+  - **Player Topics:** When ON, players can suggest themes in the lobby. You can generate questions from their suggestions.
+  - **Toggle Presenter QR:** Show/hide the QR code on the presenter screen for players to join.
+  - **Player/Presenter Links:** Open player or presenter view in a new tab for testing or sharing.

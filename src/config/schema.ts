@@ -181,39 +181,10 @@ export const schema = z.object({
 
 	// How to Play modal (host info)
 	hostInfoTitle: z.string().default('How to Play'),
-	hostInfoGameGoalTitle: z.string().default('🎯 Game Goal'),
-	hostInfoGameGoalText: z
+	hostInfoButtonLabel: z.string().default('How to Play'),
+	hostInfoContentMd: z
 		.string()
-		.default(
-			'Match the majority! Players vote on subjective questions and earn points by voting with the most popular answer.'
-		),
-	hostInfoConfidenceTitle: z.string().default('🎚️ Confidence Slider'),
-	hostInfoConfidenceText: z
-		.string()
-		.default('Players choose their confidence level:'),
-	hostInfoConfidenceLeft: z
-		.string()
-		.default('Safe choice - half points if right, no penalty if wrong'),
-	hostInfoConfidenceMiddle: z
-		.string()
-		.default('Normal - standard points/penalty'),
-	hostInfoConfidenceRight: z
-		.string()
-		.default('Risky - triple points if right, triple penalty if wrong'),
-	hostInfoScoringTitle: z.string().default('📊 Scoring'),
-	hostInfoTiesTitle: z.string().default('🤝 Ties'),
-	hostInfoTiesText: z
-		.string()
-		.default(
-			'When answers tie for most votes, all tied voters get half points.'
-		),
-	hostInfoGameEndTitle: z.string().default('🏁 Game End'),
-	hostInfoGameEndText: z
-		.string()
-		.default(
-			'Game runs for {maxRounds} rounds or until you end it manually. Highest score wins!'
-		),
-	hostInfoButtonLabel: z.string().default('How to Play')
+		.default('# How to Play\n\nGame instructions go here.')
 });
 
 export type Config = z.infer<typeof schema>;
