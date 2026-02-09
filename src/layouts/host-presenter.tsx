@@ -10,7 +10,7 @@ interface LayoutProps {
 const HostPresenterRoot: React.FC<LayoutProps> = ({ children, className }) => (
 	<div
 		className={cn(
-			'grid min-h-dvh grid-rows-[auto_1fr_auto] bg-slate-100',
+			'game-bg grid min-h-dvh grid-rows-[auto_1fr_auto]',
 			className
 		)}
 	>
@@ -24,7 +24,7 @@ const HostPresenterHeader: React.FC<LayoutProps> = ({
 }) => (
 	<header
 		className={cn(
-			'sticky top-0 z-10 bg-slate-50/95 shadow-xs backdrop-blur-xs',
+			'sticky top-0 z-10 border-b border-white/40 bg-white/60 shadow-lg shadow-slate-200/20 backdrop-blur-xl',
 			className
 		)}
 	>
@@ -49,7 +49,7 @@ const HostPresenterFooter: React.FC<LayoutProps> = ({
 }) => (
 	<footer
 		className={cn(
-			'sticky bottom-0 z-10 border-t border-slate-200 bg-slate-50/95 backdrop-blur-xs',
+			'sticky bottom-0 z-10 border-t border-white/40 bg-white/60 shadow-[0_-4px_16px_rgba(0,0,0,0.04)] backdrop-blur-xl',
 			className
 		)}
 	>

@@ -115,10 +115,13 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 						<div
 							key={index}
 							className={cn(
-								'rounded-lg p-3 transition-all',
-								isPlayerVote && 'ring-2 ring-blue-400 ring-offset-2',
-								isPlayerVote && isWinner && 'bg-green-50',
-								isPlayerVote && !isWinner && 'bg-red-50'
+								'animate-slide-up rounded-xl p-3 transition-all',
+								index === 0 && '',
+								index === 1 && 'animate-slide-up-delay-1',
+								index === 2 && 'animate-slide-up-delay-2',
+								isPlayerVote && 'ring-2 ring-indigo-400 ring-offset-2',
+								isPlayerVote && isWinner && 'bg-green-50/80',
+								isPlayerVote && !isWinner && 'bg-red-50/80'
 							)}
 						>
 							<div className="space-y-1">
@@ -143,7 +146,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 										{voteCount} votes ({percentage.toFixed(0)}%)
 									</span>
 								</div>
-								<div className="h-3 w-full rounded-full bg-slate-200">
+								<div className="h-4 w-full overflow-hidden rounded-full bg-slate-100 shadow-inner">
 									<div
 										className={cn(
 											'results-bar h-full rounded-full',
@@ -163,16 +166,16 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 			{/* Points Display */}
 			<div
 				className={cn(
-					'points-earned rounded-xl border-2 p-6 text-center',
+					'points-earned overflow-hidden rounded-2xl border-2 p-6 text-center shadow-lg',
 					pointsDisplay.bg,
 					pointsDisplay.color === 'text-success'
-						? 'border-green-300'
+						? 'border-green-300/60 shadow-green-100/50'
 						: pointsDisplay.color === 'text-danger'
-							? 'border-red-300'
-							: 'border-slate-300'
+							? 'border-red-300/60 shadow-red-100/50'
+							: 'border-slate-300/60'
 				)}
 			>
-				<p className="mb-2 text-sm font-medium text-slate-600">
+				<p className="mb-2 text-sm font-semibold tracking-wider text-slate-500 uppercase">
 					{pointsEarned > 0
 						? 'Points Earned'
 						: pointsEarned < 0
@@ -181,7 +184,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({
 				</p>
 				<p
 					className={cn(
-						'text-5xl font-bold',
+						'text-6xl font-black tabular-nums',
 						pointsEarned > 0
 							? 'points-positive'
 							: pointsEarned < 0

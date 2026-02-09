@@ -193,16 +193,20 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 
 	return (
 		<div className="space-y-6">
-			<div className="game-card">
-				<h1 className="game-question mb-2">{config.questionManagerTitle}</h1>
-				<p className="text-slate-600">{config.questionManagerDescription}</p>
+			<div className="glass-card">
+				<h1 className="game-question text-gradient-game mb-2">
+					{config.questionManagerTitle}
+				</h1>
+				<p className="text-slate-500">{config.questionManagerDescription}</p>
 			</div>
 
 			{/* AI Generation Section */}
-			<div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-6">
+			<div className="rounded-2xl border border-indigo-200/40 bg-gradient-to-br from-indigo-50/80 to-blue-50/60 p-6 shadow-lg backdrop-blur-sm">
 				<div className="mb-4 flex items-center gap-2">
-					<Wand2 className="size-5 text-blue-600" />
-					<h2 className="font-semibold text-blue-900">
+					<div className="flex size-8 items-center justify-center rounded-lg bg-indigo-500/10">
+						<Wand2 className="size-5 text-indigo-600" />
+					</div>
+					<h2 className="font-semibold text-indigo-900">
 						{config.aiGeneratorTitle}
 					</h2>
 				</div>
@@ -296,8 +300,8 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 
 			{/* Player Suggested Topics Section */}
 			{Object.keys(playerTopics).length > 0 && (
-				<div className="rounded-xl border-2 border-green-200 bg-green-50 p-6">
-					<h2 className="mb-4 font-semibold text-green-900">
+				<div className="rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 to-green-50/60 p-6 shadow-lg backdrop-blur-sm">
+					<h2 className="mb-4 font-semibold text-emerald-900">
 						{config.hostPlayerTopicsTitle} ({Object.keys(playerTopics).length})
 					</h2>
 
@@ -358,8 +362,8 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 			)}
 
 			{/* Manual Creation Section */}
-			<div className="rounded-xl border-2 border-purple-200 bg-purple-50 p-6">
-				<h2 className="mb-4 font-semibold text-purple-900">
+			<div className="rounded-2xl border border-violet-200/40 bg-gradient-to-br from-violet-50/80 to-purple-50/60 p-6 shadow-lg backdrop-blur-sm">
+				<h2 className="mb-4 font-semibold text-violet-900">
 					{config.customQuestionTitle}
 				</h2>
 
@@ -452,7 +456,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 				</div>
 
 				{questionBank.length === 0 ? (
-					<div className="rounded-xl border-2 border-slate-200 bg-slate-50 p-6 text-center text-slate-600">
+					<div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white/40 p-8 text-center text-slate-500 backdrop-blur-sm">
 						{config.questionBankEmpty}
 					</div>
 				) : (

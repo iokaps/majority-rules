@@ -65,15 +65,17 @@ const App: React.FC = () => {
 
 	return (
 		<>
-			<HostPresenterLayout.Root>
-				<HostPresenterLayout.Header>
+			<HostPresenterLayout.Root className="presenter-bg">
+				<HostPresenterLayout.Header className="border-b-white/10 bg-white/5 shadow-none backdrop-blur-xl">
 					{gamePhase !== 'game-over' && (
 						<button
 							type="button"
 							onClick={() => setShowQr(!showQr)}
 							className={cn(
-								'km-btn-secondary text-sm',
-								showQr && 'km-btn-primary'
+								'rounded-xl border px-4 py-2 text-sm font-semibold transition-all',
+								showQr
+									? 'border-indigo-400/50 bg-indigo-500/20 text-white'
+									: 'border-white/20 bg-white/10 text-white/80 hover:bg-white/20'
 							)}
 						>
 							{showQr ? 'Hide QR' : 'Show QR'}
@@ -84,20 +86,20 @@ const App: React.FC = () => {
 				<HostPresenterLayout.Main>
 					{/* Game Over - Full centered layout */}
 					{gamePhase === 'game-over' && (
-						<div className="phase-enter mx-auto w-full max-w-2xl space-y-6">
+						<div className="phase-enter mx-auto w-full max-w-2xl space-y-8">
 							{/* Winner Announcement */}
-							<div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-400 via-amber-400 to-orange-400 p-8 text-center shadow-2xl">
+							<div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-yellow-400 via-amber-400 to-orange-500 p-10 text-center shadow-[0_0_60px_rgba(245,158,11,0.3)]">
 								<div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3),transparent_50%)]" />
 								<div className="relative">
-									<div className="mb-2 text-6xl">🏆</div>
-									<h2 className="mb-2 text-4xl font-black text-white drop-shadow-lg">
+									<div className="mb-3 text-7xl">🏆</div>
+									<h2 className="mb-3 text-5xl font-black text-white drop-shadow-lg">
 										{config.presenterGameOverTitle}
 									</h2>
-									<div className="mt-4 inline-block rounded-xl bg-white/90 px-6 py-3 shadow-lg backdrop-blur-sm">
-										<p className="text-2xl font-bold text-slate-900">
+									<div className="mt-5 inline-block rounded-2xl bg-white/90 px-8 py-4 shadow-xl backdrop-blur-sm">
+										<p className="text-3xl font-black text-slate-900">
 											{allPlayers[0]?.name || 'Unknown'}
 										</p>
-										<p className="text-lg font-semibold text-amber-600">
+										<p className="text-gradient-gold text-xl font-bold">
 											{allPlayers[0]?.score?.toLocaleString() || 0}{' '}
 											{config.presenterPointsLabel}
 										</p>
@@ -106,8 +108,8 @@ const App: React.FC = () => {
 							</div>
 
 							{/* Full Leaderboard */}
-							<div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 shadow-xl">
-								<h3 className="mb-6 text-center text-xl font-bold text-slate-800">
+							<div className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl">
+								<h3 className="mb-6 text-center text-2xl font-bold text-white">
 									{config.presenterLeaderboardTitle}
 								</h3>
 
@@ -163,17 +165,15 @@ const App: React.FC = () => {
 										{allPlayers.slice(3).map((player, idx) => (
 											<div
 												key={player.clientId}
-												className="flex items-center justify-between rounded-xl bg-slate-100 px-4 py-3 transition-colors hover:bg-slate-200"
+												className="flex items-center justify-between rounded-xl bg-white/10 px-4 py-3 text-white/90 transition-colors hover:bg-white/15"
 											>
 												<div className="flex items-center gap-3">
-													<span className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-300 text-sm font-bold text-slate-700">
+													<span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-sm font-bold">
 														{idx + 4}
 													</span>
-													<span className="font-semibold text-slate-800">
-														{player.name}
-													</span>
+													<span className="font-semibold">{player.name}</span>
 												</div>
-												<span className="font-bold text-slate-700">
+												<span className="font-bold">
 													{player.score} {config.presenterPointsLabel}
 												</span>
 											</div>
@@ -182,7 +182,7 @@ const App: React.FC = () => {
 								)}
 
 								{/* Total Players */}
-								<div className="mt-6 text-center text-sm text-slate-500">
+								<div className="mt-6 text-center text-sm text-white/50">
 									{config.presenterPlayersParticipated.replace(
 										'{count}',
 										totalPlayers.toString()
@@ -200,13 +200,13 @@ const App: React.FC = () => {
 								{/* Waiting for game to start */}
 								{!started && (
 									<div className="flex flex-col items-center justify-center py-12">
-										<div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white px-12 py-10 text-center shadow-lg">
-											<div className="mb-4 text-5xl">🎮</div>
-											<p className="text-2xl font-bold text-slate-800">
+										<div className="overlay-presenter px-12 py-10 text-center">
+											<div className="mb-4 text-6xl">🎮</div>
+											<p className="text-3xl font-bold text-white">
 												{config.presenterWaitingToStartMessage}
 											</p>
 											{totalPlayers > 0 && (
-												<p className="mt-3 text-lg text-slate-600">
+												<p className="mt-3 text-lg text-white/60">
 													{totalPlayers} player{totalPlayers !== 1 ? 's' : ''}{' '}
 													connected
 												</p>
@@ -218,9 +218,9 @@ const App: React.FC = () => {
 								{/* Waiting for next round */}
 								{started && gamePhase === 'lobby' && (
 									<div className="flex flex-col items-center justify-center py-12">
-										<div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50 to-indigo-50 px-12 py-10 text-center shadow-lg">
-											<div className="mb-4 text-5xl">⏳</div>
-											<p className="text-2xl font-bold text-slate-800">
+										<div className="overlay-presenter px-12 py-10 text-center">
+											<div className="mb-4 text-6xl">⏳</div>
+											<p className="text-3xl font-bold text-white">
 												{config.presenterWaitingForRoundMessage}
 											</p>
 										</div>
@@ -231,8 +231,8 @@ const App: React.FC = () => {
 								{started &&
 									currentQuestion &&
 									(gamePhase === 'voting' || gamePhase === 'results') && (
-										<div className="overlay-purple">
-											<h1 className="game-question mb-4 text-center">
+										<div className="presenter-question-enter overlay-presenter">
+											<h1 className="game-question-presenter mb-4 text-center">
 												{currentQuestion.text}
 											</h1>
 											{gamePhase === 'voting' && (
@@ -240,21 +240,22 @@ const App: React.FC = () => {
 													<CircularTimer
 														ms={timeRemaining}
 														totalMs={totalVotingTime}
-														size={140}
-														strokeWidth={10}
+														size={160}
+														strokeWidth={12}
+														className="drop-shadow-[0_0_20px_rgba(99,102,241,0.3)]"
 													/>
 													{totalPlayers > 0 && (
-														<div className="flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 shadow-sm">
+														<div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2 shadow-lg backdrop-blur-sm">
 															<div className="flex items-center gap-1">
-																<span className="text-lg font-bold text-slate-900">
+																<span className="text-xl font-bold text-white">
 																	{votedCount}
 																</span>
-																<span className="text-slate-600">/</span>
-																<span className="text-lg font-bold text-slate-900">
+																<span className="text-white/50">/</span>
+																<span className="text-xl font-bold text-white">
 																	{totalPlayers}
 																</span>
 															</div>
-															<span className="text-sm text-slate-600">
+															<span className="text-sm text-white/60">
 																{config.presenterPlayersVotingLabel}
 															</span>
 														</div>
@@ -266,8 +267,8 @@ const App: React.FC = () => {
 
 								{/* Vote Breakdown Bar Chart */}
 								{started && currentQuestion && hasVoteResults && (
-									<div className="overlay-blue">
-										<h2 className="mb-4 text-xl font-semibold text-slate-900">
+									<div className="overlay-presenter">
+										<h2 className="mb-4 text-xl font-semibold text-white">
 											{config.presenterVoteBreakdownTitle}
 										</h2>
 										<div className="space-y-4">
@@ -291,7 +292,7 @@ const App: React.FC = () => {
 																return 'gradient-success';
 														}
 													} else {
-														return 'bg-slate-300';
+														return 'bg-white/20';
 													}
 												};
 
@@ -301,7 +302,9 @@ const App: React.FC = () => {
 															<span
 																className={cn(
 																	'text-lg font-semibold',
-																	isWinner ? 'text-success' : 'text-slate-900'
+																	isWinner
+																		? 'text-emerald-400'
+																		: 'text-white/80'
 																)}
 															>
 																{option}
@@ -310,16 +313,18 @@ const App: React.FC = () => {
 															<span
 																className={cn(
 																	'animate-count-fade text-xl font-bold',
-																	isWinner ? 'text-success' : 'text-slate-600'
+																	isWinner
+																		? 'text-emerald-400'
+																		: 'text-white/60'
 																)}
 															>
 																{voteCount} ({percentage.toFixed(0)}%)
 															</span>
 														</div>
-														<div className="h-8 w-full rounded-lg bg-slate-200">
+														<div className="h-8 w-full overflow-hidden rounded-lg bg-white/10">
 															<div
 																className={cn(
-																	'results-bar h-full rounded-lg',
+																	'results-bar h-full rounded-lg shadow-lg',
 																	getBarGradient(),
 																	index === 1 && 'results-bar-delay-1',
 																	index === 2 && 'results-bar-delay-2'
@@ -338,8 +343,8 @@ const App: React.FC = () => {
 							{/* Leaderboard Sidebar - Fixed position on right */}
 							{allPlayers.length > 0 && (
 								<div className="ml-6 hidden w-72 flex-shrink-0 xl:block">
-									<div className="overlay-green sticky top-24">
-										<h2 className="mb-4 text-lg font-semibold text-slate-900">
+									<div className="overlay-presenter sticky top-24">
+										<h2 className="mb-4 text-lg font-semibold text-white">
 											{config.presenterLeaderboardTitle} ({totalPlayers})
 										</h2>
 										<div className="space-y-3">
@@ -369,23 +374,19 @@ const App: React.FC = () => {
 
 											{/* Rest of Players */}
 											{allPlayers.length > 3 && (
-												<div className="border-t border-green-200 pt-3">
+												<div className="border-t border-white/10 pt-3">
 													{allPlayers.slice(3).map((p, idx) => (
 														<div
 															key={p.clientId}
-															className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm"
+															className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-white/80"
 														>
 															<div className="flex items-center gap-2">
-																<span className="font-bold text-slate-500">
+																<span className="font-bold text-white/50">
 																	{idx + 4}.
 																</span>
-																<span className="font-semibold text-slate-900">
-																	{p.name}
-																</span>
+																<span className="font-semibold">{p.name}</span>
 															</div>
-															<span className="font-bold text-slate-900">
-																{p.score}
-															</span>
+															<span className="font-bold">{p.score}</span>
 														</div>
 													))}
 												</div>
@@ -403,11 +404,11 @@ const App: React.FC = () => {
 							<button
 								type="button"
 								onClick={() => setShowQr(false)}
-								className="self-end rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-200"
+								className="self-end rounded-lg bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 backdrop-blur-sm hover:bg-white/20"
 							>
 								✕ Close
 							</button>
-							<div className="game-card rounded-2xl p-6 shadow-2xl">
+							<div className="rounded-2xl border border-white/20 bg-white p-6 shadow-2xl shadow-black/30">
 								<KmQrCode data={playerLink} size={200} />
 							</div>
 						</div>

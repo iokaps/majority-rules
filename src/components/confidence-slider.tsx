@@ -67,7 +67,7 @@ export const ConfidenceSlider: React.FC<ConfidenceSliderProps> = ({
 	return (
 		<div
 			className={cn(
-				'rounded-xl border-2 bg-gradient-to-br from-slate-50 to-slate-100 p-4 transition-all',
+				'rounded-2xl border-2 bg-white/70 p-4 shadow-lg backdrop-blur-md transition-all',
 				disabled ? 'opacity-50' : '',
 				selectedSegment.ringColor,
 				value === 2 && !disabled && 'ring-2 ring-offset-2',

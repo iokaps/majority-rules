@@ -23,6 +23,11 @@
 	--color-option-1: oklch(0.6 0.15 230);
 	--color-option-2: oklch(0.6 0.15 150);
 	--color-option-3: oklch(0.6 0.15 50);
+
+	/* Game accent colors */
+	--color-game-bg-from: #eef2ff;
+	--color-game-bg-to: #f0f9ff;
+	--color-game-accent: #6366f1;
 }
 
 /* Markdown styling with Tailwind Typography (prose) */
@@ -44,46 +49,121 @@ body {
 	@apply overscroll-none text-slate-900;
 }
 
+/* Animated mesh background for game layouts */
+.game-bg {
+	background: linear-gradient(
+		135deg,
+		var(--color-game-bg-from) 0%,
+		var(--color-game-bg-to) 50%,
+		#faf5ff 100%
+	);
+	position: relative;
+}
+
+.game-bg::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	background:
+		radial-gradient(
+			ellipse 80% 60% at 10% 20%,
+			rgba(99, 102, 241, 0.06) 0%,
+			transparent 60%
+		),
+		radial-gradient(
+			ellipse 60% 80% at 80% 80%,
+			rgba(59, 130, 246, 0.05) 0%,
+			transparent 60%
+		),
+		radial-gradient(
+			ellipse 50% 50% at 50% 50%,
+			rgba(168, 85, 247, 0.03) 0%,
+			transparent 60%
+		);
+	pointer-events: none;
+	z-index: 0;
+}
+
+.game-bg > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* Presenter large-screen background */
+.presenter-bg {
+	background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 40%, #312e81 100%);
+	position: relative;
+}
+
+.presenter-bg::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	background:
+		radial-gradient(
+			ellipse 80% 60% at 20% 10%,
+			rgba(99, 102, 241, 0.15) 0%,
+			transparent 50%
+		),
+		radial-gradient(
+			ellipse 60% 80% at 80% 90%,
+			rgba(59, 130, 246, 0.1) 0%,
+			transparent 50%
+		),
+		radial-gradient(
+			ellipse 40% 40% at 60% 40%,
+			rgba(168, 85, 247, 0.08) 0%,
+			transparent 50%
+		);
+	pointer-events: none;
+	z-index: 0;
+}
+
+.presenter-bg > * {
+	position: relative;
+	z-index: 1;
+}
+
 .km-input {
-	@apply w-full max-w-96 rounded-xl border border-slate-300 bg-slate-50 px-5 py-3 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50;
+	@apply w-full max-w-96 rounded-xl border border-slate-200 bg-white/80 px-5 py-3 shadow-sm backdrop-blur-sm transition-all focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none disabled:opacity-50;
 }
 
 .km-btn-primary,
 .km-btn-secondary,
 .km-btn-error,
 .km-btn-neutral {
-	@apply inline-flex items-center justify-center gap-3 rounded-xl px-5 py-3 font-medium transition-colors not-disabled:cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 disabled:opacity-50;
+	@apply inline-flex items-center justify-center gap-3 rounded-xl px-5 py-3 font-semibold shadow-sm transition-all duration-200 not-disabled:cursor-pointer disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500 disabled:opacity-50;
 }
 
 .km-btn-primary {
-	@apply not-disabled:bg-blue-500 not-disabled:text-white not-disabled:hover:bg-blue-600;
+	@apply not-disabled:bg-gradient-to-r not-disabled:from-indigo-500 not-disabled:to-blue-500 not-disabled:text-white not-disabled:shadow-indigo-200 not-disabled:hover:from-indigo-600 not-disabled:hover:to-blue-600 not-disabled:hover:shadow-md not-disabled:hover:shadow-indigo-300/50 not-disabled:active:scale-[0.98];
 }
 
 .km-btn-secondary {
-	@apply not-disabled:bg-blue-100 not-disabled:text-blue-950 not-disabled:hover:bg-blue-200;
+	@apply not-disabled:border not-disabled:border-indigo-200 not-disabled:bg-white/80 not-disabled:text-indigo-700 not-disabled:backdrop-blur-sm not-disabled:hover:border-indigo-300 not-disabled:hover:bg-indigo-50/90 not-disabled:hover:shadow-md not-disabled:active:scale-[0.98];
 }
 
 .km-btn-error {
-	@apply not-disabled:bg-red-500 not-disabled:text-white not-disabled:hover:bg-red-600;
+	@apply not-disabled:bg-gradient-to-r not-disabled:from-red-500 not-disabled:to-rose-500 not-disabled:text-white not-disabled:shadow-red-200 not-disabled:hover:from-red-600 not-disabled:hover:to-rose-600 not-disabled:hover:shadow-md not-disabled:hover:shadow-red-300/50 not-disabled:active:scale-[0.98];
 }
 
 .km-btn-neutral {
-	@apply not-disabled:bg-slate-600 not-disabled:text-white not-disabled:hover:bg-slate-700;
+	@apply not-disabled:bg-gradient-to-r not-disabled:from-slate-600 not-disabled:to-slate-700 not-disabled:text-white not-disabled:hover:from-slate-700 not-disabled:hover:to-slate-800 not-disabled:hover:shadow-md not-disabled:active:scale-[0.98];
 }
 
 /* Game-Specific Styles */
 
 .game-card {
-	@apply rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50 to-slate-50 p-6 shadow-md transition-all hover:shadow-lg;
+	@apply rounded-2xl border border-white/60 bg-white/70 p-6 shadow-lg shadow-slate-200/50 backdrop-blur-md transition-all hover:shadow-xl;
 }
 
 .game-card-compact {
-	@apply rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 to-slate-50 p-4 shadow-md transition-all hover:shadow-lg;
+	@apply rounded-xl border border-white/60 bg-white/70 p-4 shadow-lg shadow-slate-200/50 backdrop-blur-md transition-all hover:shadow-xl;
 }
 
 /* Gradient backgrounds */
 .gradient-blue {
-	background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+	background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
 }
 
 .gradient-green {
@@ -95,7 +175,7 @@ body {
 }
 
 .gradient-purple {
-	background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+	background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
 }
 
 .gradient-success {
@@ -106,42 +186,74 @@ body {
 	background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
-/* Overlay styles with subtle gradients and backdrop blur */
+/* Overlay styles with glass-morphism */
 .overlay-blue {
-	@apply rounded-xl border border-blue-200/50 bg-gradient-to-br from-blue-50/90 to-indigo-50/90 p-4 shadow-md backdrop-blur-sm;
+	@apply rounded-2xl border border-indigo-200/40 bg-gradient-to-br from-indigo-50/80 to-blue-50/80 p-5 shadow-lg shadow-indigo-100/30 backdrop-blur-md;
 }
 
 .overlay-green {
-	@apply rounded-xl border border-green-200/50 bg-gradient-to-br from-green-50/90 to-emerald-50/90 p-4 shadow-md backdrop-blur-sm;
+	@apply rounded-2xl border border-emerald-200/40 bg-gradient-to-br from-emerald-50/80 to-green-50/80 p-5 shadow-lg shadow-emerald-100/30 backdrop-blur-md;
 }
 
 .overlay-purple {
-	@apply rounded-xl border border-purple-200/50 bg-gradient-to-br from-purple-50/90 to-violet-50/90 p-4 shadow-md backdrop-blur-sm;
+	@apply rounded-2xl border border-violet-200/40 bg-gradient-to-br from-violet-50/80 to-purple-50/80 p-5 shadow-lg shadow-violet-100/30 backdrop-blur-md;
 }
 
 .overlay-amber {
-	@apply rounded-xl border border-amber-200/50 bg-gradient-to-br from-amber-50/90 to-orange-50/90 p-4 shadow-md backdrop-blur-sm;
+	@apply rounded-2xl border border-amber-200/40 bg-gradient-to-br from-amber-50/80 to-orange-50/80 p-5 shadow-lg shadow-amber-100/30 backdrop-blur-md;
+}
+
+/* Presenter overlay (dark-mode glass) */
+.overlay-presenter {
+	@apply rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl;
 }
 
 .game-question {
-	@apply text-3xl font-bold text-slate-900 sm:text-4xl;
+	@apply text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl;
 }
 
 .game-question-compact {
-	@apply text-2xl font-bold text-slate-900 sm:text-3xl;
+	@apply text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl;
 }
 
+/* Presenter question styling (white text on dark bg) */
+.game-question-presenter {
+	@apply text-4xl font-extrabold tracking-tight text-white sm:text-5xl;
+	text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Vote option buttons with color coding */
 .vote-option-button {
-	@apply relative flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-6 py-4 font-semibold text-slate-700 transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 hover:shadow-md focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:outline-none;
+	@apply relative flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border-2 bg-white/90 px-6 py-5 font-semibold shadow-md backdrop-blur-sm transition-all duration-200 hover:shadow-lg focus:ring-2 focus:ring-offset-2 focus:outline-none;
+}
+
+.vote-option-button[data-option='0'] {
+	@apply border-blue-200 text-blue-800 hover:border-blue-400 hover:bg-blue-50 focus:ring-blue-400;
+}
+
+.vote-option-button[data-option='1'] {
+	@apply border-emerald-200 text-emerald-800 hover:border-emerald-400 hover:bg-emerald-50 focus:ring-emerald-400;
+}
+
+.vote-option-button[data-option='2'] {
+	@apply border-orange-200 text-orange-800 hover:border-orange-400 hover:bg-orange-50 focus:ring-orange-400;
 }
 
 .vote-option-button:active:not(:disabled) {
-	transform: scale(0.98);
+	transform: scale(0.97);
 	transition-duration: 100ms;
 }
 
-.vote-option-button.selected {
-	@apply border-slate-900 bg-slate-100 text-slate-900 shadow-md ring-2 ring-slate-400;
+.vote-option-button.selected[data-option='0'] {
+	@apply border-blue-500 bg-blue-50 text-blue-900 shadow-lg ring-2 shadow-blue-200/50 ring-blue-300;
+}
+
+.vote-option-button.selected[data-option='1'] {
+	@apply border-emerald-500 bg-emerald-50 text-emerald-900 shadow-lg ring-2 shadow-emerald-200/50 ring-emerald-300;
+}
+
+.vote-option-button.selected[data-option='2'] {
+	@apply border-orange-500 bg-orange-50 text-orange-900 shadow-lg ring-2 shadow-orange-200/50 ring-orange-300;
 }
 
 .winner-option {
@@ -202,12 +314,16 @@ body {
 
 .points-positive {
 	@apply text-success;
-	text-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+	text-shadow:
+		0 0 30px rgba(34, 197, 94, 0.5),
+		0 0 60px rgba(34, 197, 94, 0.2);
 }
 
 .points-negative {
 	@apply text-danger;
-	text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+	text-shadow:
+		0 0 30px rgba(239, 68, 68, 0.5),
+		0 0 60px rgba(239, 68, 68, 0.2);
 }
 
 .points-neutral {
@@ -215,17 +331,44 @@ body {
 }
 
 .results-bar {
-	animation: bar-grow 500ms ease-out;
+	animation: bar-grow 600ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .results-bar-delay-1 {
-	animation-delay: 100ms;
+	animation-delay: 150ms;
 	animation-fill-mode: backwards;
 }
 
 .results-bar-delay-2 {
-	animation-delay: 200ms;
+	animation-delay: 300ms;
 	animation-fill-mode: backwards;
+}
+
+/* Round badge */
+.round-badge {
+	@apply inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 px-5 py-2 font-bold text-white shadow-md shadow-indigo-200/50;
+}
+
+/* Glass card for sections */
+.glass-card {
+	@apply rounded-2xl border border-white/50 bg-white/60 p-6 shadow-lg shadow-slate-200/30 backdrop-blur-lg;
+}
+
+/* Option letter badge */
+.option-letter {
+	@apply flex size-8 items-center justify-center rounded-lg text-sm font-black;
+}
+
+.option-letter[data-option='0'] {
+	@apply bg-blue-100 text-blue-700;
+}
+
+.option-letter[data-option='1'] {
+	@apply bg-emerald-100 text-emerald-700;
+}
+
+.option-letter[data-option='2'] {
+	@apply bg-orange-100 text-orange-700;
 }
 
 @keyframes pop-scale {
@@ -235,7 +378,7 @@ body {
 	}
 	50% {
 		opacity: 1;
-		transform: scale(1.2);
+		transform: scale(1.15);
 	}
 	100% {
 		opacity: 1;
@@ -272,13 +415,13 @@ body {
 	50%,
 	70%,
 	90% {
-		transform: translateX(-5px) rotate(-1deg);
+		transform: translateX(-4px) rotate(-0.5deg);
 	}
 	20%,
 	40%,
 	60%,
 	80% {
-		transform: translateX(5px) rotate(1deg);
+		transform: translateX(4px) rotate(0.5deg);
 	}
 }
 
@@ -341,6 +484,27 @@ body {
 	}
 }
 
+@keyframes slide-up-fade {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes gradient-shift {
+	0%,
+	100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+}
+
 .animate-timer-pulse {
 	animation: timer-pulse 0.5s ease-in-out infinite;
 }
@@ -370,11 +534,38 @@ body {
 	animation: shake 0.5s ease-in-out;
 }
 
+.animate-slide-up {
+	animation: slide-up-fade 400ms ease-out;
+}
+
+.animate-slide-up-delay-1 {
+	animation: slide-up-fade 400ms ease-out 100ms both;
+}
+
+.animate-slide-up-delay-2 {
+	animation: slide-up-fade 400ms ease-out 200ms both;
+}
+
+.animate-slide-up-delay-3 {
+	animation: slide-up-fade 400ms ease-out 300ms both;
+}
+
+/* Gradient text utility */
+.text-gradient-game {
+	@apply bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-600 bg-clip-text text-transparent;
+}
+
+.text-gradient-gold {
+	@apply bg-gradient-to-r from-yellow-500 via-amber-400 to-orange-500 bg-clip-text text-transparent;
+	background-size: 200% auto;
+	animation: gradient-shift 3s ease infinite;
+}
+
 /* Phase transitions */
 @keyframes phase-enter {
 	from {
 		opacity: 0;
-		transform: translateY(8px);
+		transform: translateY(12px);
 	}
 	to {
 		opacity: 1;
@@ -383,7 +574,23 @@ body {
 }
 
 .phase-enter {
-	animation: phase-enter 300ms ease-out;
+	animation: phase-enter 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Presenter specific animations */
+@keyframes presenter-question-enter {
+	from {
+		opacity: 0;
+		transform: scale(0.95) translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+.presenter-question-enter {
+	animation: presenter-question-enter 600ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Mobile-responsive spacing adjustments */
@@ -405,6 +612,6 @@ body {
 	}
 
 	.vote-option-button {
-		@apply px-4 py-3;
+		@apply px-4 py-4;
 	}
 }

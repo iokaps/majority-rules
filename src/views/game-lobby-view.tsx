@@ -32,33 +32,33 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 		}
 
 		return (
-			<div className="w-full space-y-4">
+			<div className="animate-slide-up w-full space-y-4">
 				<div className="overlay-blue">
-					<h2 className="mb-4 text-center text-xl font-bold text-slate-900">
+					<h2 className="text-gradient-game mb-4 text-center text-xl font-bold">
 						{config.lobbyCurrentStatus}
 					</h2>
 					<div className="space-y-3">
-						<div className="flex items-center justify-between">
-							<span className="font-semibold text-slate-700">
+						<div className="flex items-center justify-between rounded-xl bg-white/50 px-4 py-3">
+							<span className="font-semibold text-slate-600">
 								{config.lobbyRoundLabel}
 							</span>
-							<span className="text-xl font-bold text-blue-600">
+							<span className="text-xl font-black text-indigo-600">
 								{roundNumber}
 							</span>
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="font-semibold text-slate-700">
+						<div className="flex items-center justify-between rounded-xl bg-white/50 px-4 py-3">
+							<span className="font-semibold text-slate-600">
 								{config.lobbyYourScoreLabel}
 							</span>
-							<span className="text-xl font-bold text-slate-900">
+							<span className="text-xl font-black text-slate-900">
 								{currentPlayer.score} {config.lobbyPointsLabel}
 							</span>
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="font-semibold text-slate-700">
+						<div className="flex items-center justify-between rounded-xl bg-white/50 px-4 py-3">
+							<span className="font-semibold text-slate-600">
 								{config.lobbyActivePlayersLabel}
 							</span>
-							<span className="text-xl font-bold text-green-700">
+							<span className="text-xl font-black text-emerald-600">
 								{totalPlayers}
 							</span>
 						</div>
@@ -69,7 +69,7 @@ export const GameLobbyView: React.FC<GameLobbyViewProps> = ({
 					<p className="text-lg font-semibold text-slate-900">
 						{config.lobbyWaitingTitle}
 					</p>
-					<p className="mt-2 text-sm text-slate-700">
+					<p className="mt-2 text-sm text-slate-600">
 						{config.lobbyWaitingMessage}
 					</p>
 				</div>

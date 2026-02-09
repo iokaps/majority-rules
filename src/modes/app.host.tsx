@@ -121,7 +121,7 @@ const App: React.FC = () => {
 					<button
 						type="button"
 						onClick={handleShowInfo}
-						className="inline-flex items-center gap-2 rounded-lg bg-blue-100 px-3 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-200"
+						className="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white/80 px-3 py-2 text-sm font-semibold text-indigo-700 shadow-sm backdrop-blur-sm transition-all hover:bg-indigo-50 hover:shadow-md"
 						aria-label="Game information"
 					>
 						<Info className="size-4" />
@@ -135,9 +135,9 @@ const App: React.FC = () => {
 						</div>
 						{gamePhase === 'voting' && activePlayers > 0 && (
 							<div className="flex items-center gap-2">
-								<div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+								<div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 shadow-inner">
 									<div
-										className="gradient-success h-full transition-all duration-300"
+										className="gradient-success h-full rounded-full transition-all duration-300"
 										style={{
 											width: `${activePlayers > 0 ? (votedPlayers / activePlayers) * 100 : 0}%`
 										}}
@@ -248,7 +248,7 @@ const App: React.FC = () => {
 
 						{/* Players Panel - Right Side */}
 						{gamePhase !== 'game-over' && (
-							<div className="sticky top-24 h-fit rounded-xl border border-slate-200 bg-white p-3">
+							<div className="sticky top-24 h-fit rounded-2xl border border-white/50 bg-white/60 p-3 shadow-lg backdrop-blur-lg">
 								<h3 className="mb-3 text-sm font-semibold text-slate-900">
 									{config.hostPlayersLabel}
 								</h3>
@@ -256,7 +256,7 @@ const App: React.FC = () => {
 									{Object.values(players).map((player) => (
 										<div
 											key={player.name}
-											className="rounded-lg bg-slate-100 px-2 py-1 text-slate-900"
+											className="rounded-xl bg-white/70 px-2 py-1.5 text-slate-900 shadow-sm"
 										>
 											<div className="flex items-center justify-between gap-1">
 												<div className="flex-1 truncate">
@@ -375,7 +375,7 @@ const App: React.FC = () => {
 				<button
 					type="button"
 					onClick={handleShowInfo}
-					className="inline-flex items-center gap-2 rounded-lg bg-blue-100 px-3 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-200"
+					className="inline-flex items-center gap-2 rounded-xl border border-indigo-200 bg-white/80 px-3 py-2 text-sm font-semibold text-indigo-700 shadow-sm backdrop-blur-sm transition-all hover:bg-indigo-50 hover:shadow-md"
 					aria-label="Game information"
 				>
 					<Info className="size-4" />

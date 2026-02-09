@@ -85,14 +85,14 @@ const App: React.FC = () => {
 
 				<PlayerLayout.Main className="py-4">
 					<div className="w-full space-y-4">
-						<div className="overlay-blue text-center">
-							<h2 className="mb-3 text-xl font-bold text-slate-900">
+						<div className="overlay-blue animate-slide-up text-center">
+							<h2 className="text-gradient-game mb-3 text-2xl font-extrabold">
 								{config.preGameWelcome.replace('{name}', name)}
 							</h2>
-							<p className="mb-2 text-base text-slate-700">
+							<p className="mb-2 text-base font-medium text-slate-700">
 								{config.preGameWaitingMessage}
 							</p>
-							<p className="text-sm text-slate-600">
+							<p className="text-sm text-slate-500">
 								{config.preGameInstructions}
 							</p>
 						</div>
@@ -119,15 +119,10 @@ const App: React.FC = () => {
 		<PlayerLayout.Root>
 			<PlayerLayout.Header>
 				{currentQuestion && (
-					<div
-						className={cn(
-							'inline-flex items-center gap-2 rounded-lg px-4 py-2 font-bold',
-							'bg-blue-100 text-lg text-blue-700'
-						)}
-					>
+					<div className="round-badge">
 						Round {globalStore.proxy.roundNumber}
 						{config.maxRounds > 0 && (
-							<span className="text-sm font-medium text-blue-600">
+							<span className="text-sm font-medium text-white/80">
 								/ {config.maxRounds}
 							</span>
 						)}
@@ -154,10 +149,13 @@ const App: React.FC = () => {
 
 				{gamePhase === 'game-over' && (
 					<div className="phase-enter mx-auto w-full max-w-md space-y-4">
-						<div className="overlay-purple text-center">
-							<h2 className="mb-3 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-3xl font-bold text-transparent">
-								{config.playerGameOverTitle}
-							</h2>
+						<div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 p-6 text-center shadow-2xl">
+							<div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.15),transparent_50%)]" />
+							<div className="relative">
+								<h2 className="text-4xl font-black text-white drop-shadow-lg">
+									{config.playerGameOverTitle}
+								</h2>
+							</div>
 						</div>
 
 						{/* Leaderboard */}

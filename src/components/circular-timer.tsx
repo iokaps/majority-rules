@@ -45,17 +45,16 @@ export const CircularTimer: React.FC<CircularTimerProps> = ({
 
 	const colorState = getColorState();
 
-	// Color mappings
 	const colors = {
 		normal: {
 			stroke: 'url(#gradient-blue)',
-			text: 'text-blue-600',
-			glow: ''
+			text: 'text-indigo-600',
+			glow: 'drop-shadow-[0_0_8px_rgba(99,102,241,0.3)]'
 		},
 		warning: {
 			stroke: 'url(#gradient-yellow)',
 			text: 'text-amber-600',
-			glow: ''
+			glow: 'drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]'
 		},
 		urgent: {
 			stroke: 'url(#gradient-red)',
@@ -96,8 +95,8 @@ export const CircularTimer: React.FC<CircularTimerProps> = ({
 				{/* Gradient definitions */}
 				<defs>
 					<linearGradient id="gradient-blue" x1="0%" y1="0%" x2="100%" y2="0%">
-						<stop offset="0%" stopColor="#3b82f6" />
-						<stop offset="100%" stopColor="#6366f1" />
+						<stop offset="0%" stopColor="#6366f1" />
+						<stop offset="100%" stopColor="#3b82f6" />
 					</linearGradient>
 					<linearGradient
 						id="gradient-yellow"

@@ -85,7 +85,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 		<div className="phase-enter space-y-4">
 			{/* Auto-submit Warning */}
 			{showAutoSubmitWarning && !submitted && (
-				<div className="animate-pulse rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-center">
+				<div className="animate-pulse rounded-2xl border-2 border-amber-400/60 bg-gradient-to-r from-amber-50 to-orange-50 px-4 py-3 text-center shadow-lg shadow-amber-100/30">
 					<div className="flex items-center justify-center gap-2">
 						<AlertTriangle className="size-5 text-amber-600" />
 						<span className="font-semibold text-amber-800">
@@ -120,6 +120,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					<button
 						key={index}
 						type="button"
+						data-option={index}
 						onClick={() => handleOptionSelect(index)}
 						disabled={!interactive || submitted}
 						className={cn(
@@ -128,8 +129,10 @@ export const VotingView: React.FC<VotingViewProps> = ({
 							!interactive && 'opacity-50'
 						)}
 					>
-						<span className="text-lg font-bold">{optionLetters[index]}</span>
-						<span>{option}</span>
+						<span className="option-letter" data-option={index}>
+							{optionLetters[index]}
+						</span>
+						<span className="text-base">{option}</span>
 					</button>
 				))}
 			</div>
@@ -145,7 +148,7 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
 			{/* Submitted confirmation */}
 			{submitted && interactive && (
-				<div className="rounded-xl bg-green-100 px-4 py-3 text-center font-semibold text-green-700">
+				<div className="animate-slide-up rounded-2xl border border-emerald-200/40 bg-gradient-to-r from-emerald-50/80 to-green-50/80 px-4 py-3 text-center font-semibold text-green-700 shadow-lg shadow-emerald-100/30 backdrop-blur-md">
 					{config.votingSubmittedMessage}
 				</div>
 			)}

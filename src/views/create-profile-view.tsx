@@ -31,9 +31,10 @@ export const CreateProfileView: React.FC<Props> = () => {
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-96 space-y-8">
-			<div className="overlay-blue">
-				<article className="prose prose-sm max-w-none text-center">
+		<div className="animate-slide-up mx-auto w-full max-w-96 space-y-8">
+			<div className="overlay-blue text-center">
+				<div className="mb-4 text-5xl">🎯</div>
+				<article className="prose prose-sm max-w-none">
 					<Markdown>{config.createProfileMd}</Markdown>
 				</article>
 			</div>
@@ -46,7 +47,7 @@ export const CreateProfileView: React.FC<Props> = () => {
 					disabled={isLoading}
 					autoFocus
 					maxLength={50}
-					className="km-input"
+					className="km-input text-center text-lg"
 				/>
 
 				<button
