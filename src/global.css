@@ -272,14 +272,6 @@ body {
 	animation: pulse-fade 0.5s ease-in-out infinite;
 }
 
-.confidence-slider {
-	@apply w-full;
-}
-
-.confidence-slider-label {
-	@apply text-sm font-medium text-slate-600;
-}
-
 .timer-badge {
 	@apply rounded-full bg-slate-100 px-4 py-2 font-bold text-slate-900;
 }

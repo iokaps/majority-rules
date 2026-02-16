@@ -114,6 +114,15 @@ export const VotingView: React.FC<VotingViewProps> = ({
 				</div>
 			)}
 
+			{/* Confidence Control - compact pills above options */}
+			{interactive && votingEndTimestamp > 0 && !submitted && (
+				<ConfidenceSlider
+					value={confidence}
+					onChange={setConfidence}
+					disabled={submitted}
+				/>
+			)}
+
 			{/* Options */}
 			<div className="space-y-3">
 				{currentQuestion.options.map((option, index) => (
@@ -136,15 +145,6 @@ export const VotingView: React.FC<VotingViewProps> = ({
 					</button>
 				))}
 			</div>
-
-			{/* Confidence Slider - only show during voting phase */}
-			{interactive && votingEndTimestamp > 0 && !submitted && (
-				<ConfidenceSlider
-					value={confidence}
-					onChange={setConfidence}
-					disabled={submitted}
-				/>
-			)}
 
 			{/* Submitted confirmation */}
 			{submitted && interactive && (

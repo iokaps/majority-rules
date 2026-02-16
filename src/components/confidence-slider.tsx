@@ -3,11 +3,11 @@ import { cn } from '@/utils/cn';
 import * as React from 'react';
 
 interface ConfidenceSliderProps {
-	/** Current confidence value: 0 = 0.5x, 1 = 1x, 2 = 3x */
+	/** Current confidence value: 0 = Safe, 1 = Normal, 2 = Risky */
 	value: number;
 	/** Callback when value changes */
 	onChange: (value: number) => void;
-	/** Disable the slider */
+	/** Disable the control */
 	disabled?: boolean;
 	/** Additional CSS classes */
 	className?: string;
@@ -16,45 +16,36 @@ interface ConfidenceSliderProps {
 const segments = [
 	{
 		value: 0,
-		pointsLabel: '+5 / 0',
 		label: 'Safe',
 		emoji: '🛡️',
-		color: 'bg-emerald-500',
-		hoverColor: 'hover:bg-emerald-400',
-		activeColor: 'bg-emerald-600',
-		ringColor: 'ring-emerald-400',
-		textColor: 'text-emerald-700',
-		description: '+5 if right, no penalty'
+		description: '+5 if right, no penalty',
+		bg: 'bg-emerald-500',
+		hover: 'hover:bg-emerald-100',
+		text: 'text-emerald-700'
 	},
 	{
 		value: 1,
-		pointsLabel: '+10 / -5',
 		label: 'Normal',
 		emoji: '⚖️',
-		color: 'bg-blue-500',
-		hoverColor: 'hover:bg-blue-400',
-		activeColor: 'bg-blue-600',
-		ringColor: 'ring-blue-400',
-		textColor: 'text-blue-700',
-		description: '+10 if right, -5 if wrong'
+		description: '+10 if right, -5 if wrong',
+		bg: 'bg-blue-500',
+		hover: 'hover:bg-blue-100',
+		text: 'text-blue-700'
 	},
 	{
 		value: 2,
-		pointsLabel: '+30 / -15',
 		label: 'Risky',
 		emoji: '🔥',
-		color: 'bg-orange-500',
-		hoverColor: 'hover:bg-orange-400',
-		activeColor: 'bg-orange-600',
-		ringColor: 'ring-orange-400',
-		textColor: 'text-orange-700',
-		description: '+30 if right, -15 if wrong'
+		description: '+30 if right, -15 if wrong',
+		bg: 'bg-orange-500',
+		hover: 'hover:bg-orange-100',
+		text: 'text-orange-700'
 	}
 ];
 
 /**
- * Custom confidence slider with three distinct zones for voting confidence.
- * Replaces the native range input with a visually distinct segmented control.
+ * Compact confidence segmented control for voting.
+ * Displays three pill-style buttons: Safe, Normal, Risky.
  */
 export const ConfidenceSlider: React.FC<ConfidenceSliderProps> = ({
 	value,
@@ -65,36 +56,11 @@ export const ConfidenceSlider: React.FC<ConfidenceSliderProps> = ({
 	const selectedSegment = segments[value] || segments[1];
 
 	return (
-		<div
-			className={cn(
-				'rounded-2xl border-2 bg-white/70 p-4 shadow-lg backdrop-blur-md transition-all',
-				disabled ? 'opacity-50' : '',
-				selectedSegment.ringColor,
-				value === 2 && !disabled && 'ring-2 ring-offset-2',
-				className
-			)}
-		>
-			{/* Header with current selection */}
-			<div className="mb-4 text-center">
-				<div className="mb-1 flex items-center justify-center gap-2">
-					<span className="text-2xl">{selectedSegment.emoji}</span>
-					<span
-						className={cn(
-							'text-xl font-bold transition-colors',
-							selectedSegment.textColor
-						)}
-					>
-						{selectedSegment.label}: {selectedSegment.pointsLabel}
-					</span>
-				</div>
-				<p className="text-sm text-slate-600">{selectedSegment.description}</p>
-			</div>
-
-			{/* Segmented Control */}
+		<div className={cn('flex flex-col items-center gap-1', className)}>
 			<div
-				className="flex gap-2"
 				role="radiogroup"
 				aria-label={config.votingConfidenceLabel.replace('{n}', '')}
+				className="inline-flex gap-1.5 rounded-full bg-white/60 p-1 shadow-sm backdrop-blur-sm"
 			>
 				{segments.map((segment) => {
 					const isSelected = value === segment.value;
@@ -107,39 +73,33 @@ export const ConfidenceSlider: React.FC<ConfidenceSliderProps> = ({
 							onClick={() => !disabled && onChange(segment.value)}
 							disabled={disabled}
 							className={cn(
-								'flex-1 rounded-lg py-3 font-semibold transition-all duration-200',
-								'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-								segment.ringColor,
+								'rounded-full px-3 py-1.5 text-xs font-semibold transition-all duration-150',
+								'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-1',
 								isSelected
-									? cn(
-											segment.color,
-											'scale-105 text-white shadow-lg',
-											'ring-2 ring-offset-1',
-											segment.ringColor
-										)
+									? cn(segment.bg, 'text-white shadow-md')
 									: cn(
-											'bg-white text-slate-700 shadow-sm',
-											!disabled && segment.hoverColor,
-											!disabled && 'hover:text-white hover:shadow-md'
+											'text-slate-500',
+											!disabled && segment.hover,
+											!disabled && `hover:${segment.text}`
 										),
-								!disabled && !isSelected && 'active:scale-95',
-								disabled && 'cursor-not-allowed'
+								disabled && 'cursor-not-allowed opacity-50'
 							)}
 						>
-							<div className="flex flex-col items-center gap-1">
-								<span className="text-lg">{segment.emoji}</span>
-								<span className="text-xs font-medium">{segment.label}</span>
-							</div>
+							<span>
+								{segment.emoji} {segment.label}
+							</span>
 						</button>
 					);
 				})}
 			</div>
-
-			{/* Labels */}
-			<div className="mt-3 flex justify-between text-xs text-slate-500">
-				<span>{config.votingConfidenceMin}</span>
-				<span>{config.votingConfidenceMax}</span>
-			</div>
+			<p
+				className={cn(
+					'text-xs font-medium transition-colors duration-150',
+					selectedSegment.text
+				)}
+			>
+				{selectedSegment.emoji} {selectedSegment.description}
+			</p>
 		</div>
 	);
 };
