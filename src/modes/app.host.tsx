@@ -3,6 +3,7 @@ import { withKmProviders } from '@/components/with-km-providers';
 import { config } from '@/config';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useGlobalController } from '@/hooks/useGlobalController';
+import { useRemoveLoadingOverlay } from '@/hooks/useRemoveLoadingOverlay';
 import { useServerTimer } from '@/hooks/useServerTime';
 import { generateLink } from '@/kit/generate-link';
 import { HostPresenterLayout } from '@/layouts/host-presenter';
@@ -24,6 +25,7 @@ import * as React from 'react';
 import Markdown from 'react-markdown';
 
 const App: React.FC = () => {
+	useRemoveLoadingOverlay();
 	useGlobalController();
 	const { title } = config;
 	const {
