@@ -1,4 +1,4 @@
-import { z } from '@kokimoki/kit';
+import { z } from 'zod/v4';
 
 export const schema = z.object({
 	// translations

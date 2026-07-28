@@ -4,6 +4,7 @@ import { withKmProviders } from '@/components/with-km-providers';
 import { config } from '@/config';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useGlobalController } from '@/hooks/useGlobalController';
+import { useRemoveLoadingOverlay } from '@/hooks/useRemoveLoadingOverlay';
 import { PlayerLayout } from '@/layouts/player';
 import { kmClient } from '@/services/km-client';
 import { globalActions } from '@/state/actions/global-actions';
@@ -19,6 +20,7 @@ import { KmPodiumTable, useKmConfettiContext } from '@kokimoki/shared';
 import * as React from 'react';
 
 const App: React.FC = () => {
+	useRemoveLoadingOverlay();
 	const { title } = config;
 	const { name } = useSnapshot(playerStore.proxy);
 	const {

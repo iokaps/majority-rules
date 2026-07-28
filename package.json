@@ -1,7 +1,7 @@
 {
   "name": "majority-rules",
   "private": true,
-  "version": "0.2.7",
+  "version": "0.2.9",
   "type": "module",
   "description": "",
   "scripts": {
@@ -18,10 +18,11 @@
     "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-markdown": "^10.1.0"
+    "react-markdown": "^10.1.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@kokimoki/kit": "^1.6.7",
+    "@kokimoki/kit": "^1.8.3",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.0.3",

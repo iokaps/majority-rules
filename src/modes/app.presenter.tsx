@@ -2,6 +2,7 @@ import { CircularTimer } from '@/components/circular-timer';
 import { config } from '@/config';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useGlobalController } from '@/hooks/useGlobalController';
+import { useRemoveLoadingOverlay } from '@/hooks/useRemoveLoadingOverlay';
 import { useServerTimer } from '@/hooks/useServerTime';
 import { generateLink } from '@/kit/generate-link';
 import { HostPresenterLayout } from '@/layouts/host-presenter';
@@ -13,6 +14,7 @@ import { KmPodiumTable, KmQrCode } from '@kokimoki/shared';
 import * as React from 'react';
 
 const App: React.FC = () => {
+	useRemoveLoadingOverlay();
 	const { title } = config;
 	const {
 		started,
