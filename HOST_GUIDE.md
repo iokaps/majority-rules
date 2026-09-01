@@ -22,23 +22,38 @@ Anyone running a group activity! Teachers, team leaders, event organizers, party
 
 ---
 
+## How to Play
+
+1. **Share the QR code.** Players scan, pick a name, they are in.
+2. **Set the questions.** Write your own, aim them at the room, or let AI generate a set.
+3. **Put the board on the big screen.** The room watches the split land together.
+4. **Pick the pace.** Fast is a warm-up. Slower, with a new room, it is an icebreaker.
+5. **Start playing.** Rounds run about 30 seconds, and it gets better the bigger the room.
+
+---
+
 ## How to Run It for Host
 
 ### Step 1: Get Your Links
+
 When you access the host screen, you'll see two links:
+
 - **Player Link** - Share this with players to join the game
 - **Presenter Link** - Display on a projector/screen for everyone to watch
 
 ### Step 2: Set Up Questions (Before Game Starts)
+
 You have two options:
 
 **Option A: AI-Generated Questions**
+
 1. Click "Question Manager"
 2. Enter topics or themes (e.g., "breakfast foods," "movie genres")
 3. Click "Generate" to create AI questions
 4. Review and edit if needed
 
 **Option B: Custom Questions**
+
 1. Click "Question Manager"
 2. Click "New Custom Question"
 3. Type your question and 2-3 answer options
@@ -47,12 +62,15 @@ You have two options:
 You can mix both types—create your own and generate AI questions.
 
 ### Step 3: Start the Game
+
 1. Share the **Player Link** with your group (email, QR code, or verbal)
 2. Wait for players to join and enter their names
 3. Click **"Start Game"** when ready
 
 ### Step 4: Run Each Round
+
 For each question:
+
 1. Select a question from your bank (or it auto-selects)
 2. Players have **30 seconds** to vote and set their confidence
    - Left (0.5x): Safe—earn points if right, no penalty if wrong
@@ -63,7 +81,9 @@ For each question:
 5. Click **"Next Round"** to continue or **"Show Results"** to end game
 
 ### Step 5: End Game
+
 When done:
+
 - Click **"Show Results"** on host screen
 - Final leaderboard appears on player and presenter screens
 - Scores are locked
@@ -74,11 +94,11 @@ When done:
 
 Players earn points by matching the majority choice:
 
-| Confidence | Win | Loss |
-|---|---|---|
-| Safe (0.5x) | +5 | 0 (protected) |
-| Normal (1x) | +10 | -5 |
-| Risky (3x) | +30 | -15 |
+| Confidence  | Win | Loss          |
+| ----------- | --- | ------------- |
+| Safe (0.5x) | +5  | 0 (protected) |
+| Normal (1x) | +10 | -5            |
+| Risky (3x)  | +30 | -15           |
 
 If multiple options tie for most votes, players who picked any tied option win.
 
@@ -87,14 +107,17 @@ If multiple options tie for most votes, players who picked any tied option win.
 ## Key Configuration Settings
 
 **Number of Rounds** (default: 10)
+
 - Set how many questions are played before game ends
 - Or let the host manually end anytime
 
 **Voting Duration** (default: 30 seconds)
+
 - How long players have to vote each round
 - Can't be changed mid-game (only in settings before running)
 
 **Custom Messages** (optional)
+
 - Customize welcome text, lobby messages, button labels
 - Personalize the experience for your group
 
@@ -114,15 +137,18 @@ If multiple options tie for most votes, players who picked any tied option win.
 ## Troubleshooting
 
 **"Players can't join"**
+
 - Check they have the correct link
 - Ensure internet connection is stable
 - Try refreshing the page
 
 **"Game is slow/laggy"**
+
 - Reduce the voting time if network is weak
 - Ensure presenter screen isn't too demanding for the device
 
 **"Players didn't vote in time"**
+
 - They auto-submit with their last selection at 0 seconds
 - No selection = no points for that round
 
@@ -131,4 +157,3 @@ If multiple options tie for most votes, players who picked any tied option win.
 ## Questions or Issues?
 
 Refer to this guide or ask the hosting platform's support team for technical help.
-

@@ -2,6 +2,14 @@
 
 A Kokimoki concept.
 
+## How to Play
+
+1. **Share the QR code.** Players scan, pick a name, they are in.
+2. **Set the questions.** Write your own, aim them at the room, or let AI generate a set.
+3. **Put the board on the big screen.** The room watches the split land together.
+4. **Pick the pace.** Fast is a warm-up. Slower, with a new room, it is an icebreaker.
+5. **Start playing.** Rounds run about 30 seconds, and it gets better the bigger the room.
+
 ## Getting Started
 
 ### Prerequisites
@@ -46,6 +54,7 @@ kokimoki upload
 **Important:** Before uploading again, you must update the version in `package.json`. You can do this:
 
 1. Using the npm version command:
+
    ```bash
    npm version patch  # for bug fixes
    npm version minor  # for new features

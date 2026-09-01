@@ -4,6 +4,14 @@
 
 **Majority Rules** is a psychological social game where the goal isn't to be "right," but to be "common." Players predict how the majority will vote on subjective questions and accumulate points by matching the majority vote. Players compete over multiple rounds to achieve the highest score. Only voting results revealed at deadline.
 
+### How to Play
+
+1. **Share the QR code.** Players scan, pick a name, they are in.
+2. **Set the questions.** Write your own, aim them at the room, or let AI generate a set.
+3. **Put the board on the big screen.** The room watches the split land together.
+4. **Pick the pace.** Fast is a warm-up. Slower, with a new room, it is an icebreaker.
+5. **Start playing.** Rounds run about 30 seconds, and it gets better the bigger the room.
+
 ## Core Game Mechanics
 
 ### 1. Game Flow

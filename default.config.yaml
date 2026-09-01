@@ -42,6 +42,16 @@ menuHelpMd: |
 
   ---
 
+  ## 🚀 How to Play
+
+  1. **Share the QR code.** Players scan, pick a name, they are in.
+  2. **Set the questions.** Write your own, aim them at the room, or let AI generate a set.
+  3. **Put the board on the big screen.** The room watches the split land together.
+  4. **Pick the pace.** Fast is a warm-up. Slower, with a new room, it is an icebreaker.
+  5. **Start playing.** Rounds run about 30 seconds, and it gets better the bigger the room.
+
+  ---
+
   ## 🎯 How the Game Works
 
   1. **Read the Question**  
@@ -217,9 +227,19 @@ playerResultsWaitingMessage: 'Waiting for next round...'
 hostInfoTitle: 'How to Play'
 hostInfoButtonLabel: 'How to Play'
 hostInfoContentMd: |
-  # 🎮 Host Guide & Game Rules
+  # 🎮 How to Play
 
   **Majority Rules** is a fast-paced psychological party game where players score points by predicting the majority vote.
+
+  ---
+
+  ## 🚀 How to Play
+
+  1. **Share the QR code.** Players scan, pick a name, they are in.
+  2. **Set the questions.** Write your own, aim them at the room, or let AI generate a set.
+  3. **Put the board on the big screen.** The room watches the split land together.
+  4. **Pick the pace.** Fast is a warm-up. Slower, with a new room, it is an icebreaker.
+  5. **Start playing.** Rounds run about 30 seconds, and it gets better the bigger the room.
 
   ---
 
