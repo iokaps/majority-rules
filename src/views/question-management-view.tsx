@@ -5,7 +5,7 @@ import { globalStore, type Question } from '@/state/stores/global-store';
 import { cn } from '@/utils/cn';
 import { useSnapshot } from '@kokimoki/app';
 import { useKmModal } from '@kokimoki/shared';
-import { Plus, Trash2, Wand2 } from 'lucide-react';
+import { Check, Edit3, HelpCircle, Plus, Trash2, Wand2, X } from 'lucide-react';
 import * as React from 'react';
 
 interface QuestionManagementViewProps {
@@ -153,7 +153,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 
 		const newQuestion: Question = {
 			id: `q-${Date.now()}`,
-			text: manualQuestion,
+			text: manualQuestion.trim(),
 			options: validOptions,
 			isAiGenerated: false
 		};
@@ -177,7 +177,7 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 			const validOptions = editOptions.filter((o) => o.trim());
 			if (validOptions.length >= 2) {
 				await globalActions.updateQuestion(editingId, {
-					text: editQuestion,
+					text: editQuestion.trim(),
 					options: validOptions
 				});
 				setEditingId(null);
@@ -224,13 +224,13 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 										value={topic}
 										onChange={(e) => updateTopic(index, e.target.value)}
 										placeholder={config.aiTopicsPlaceholder}
-										className="km-input flex-1"
+										className="km-input-full flex-1"
 									/>
 									{aiTopics.length > 1 && (
 										<button
 											type="button"
 											onClick={() => removeTopicInput(index)}
-											className="km-btn-error"
+											className="km-btn-error px-3"
 										>
 											<Trash2 className="size-5" />
 										</button>
@@ -377,34 +377,89 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 						{config.customQuestionNewButton}
 					</button>
 				) : (
-					<div className="space-y-3">
-						<input
-							type="text"
-							value={manualQuestion}
-							onChange={(e) => setManualQuestion(e.target.value)}
-							placeholder={config.customQuestionPlaceholder}
-							className="km-input"
-						/>
-
-						{manualOptions.map((option, index) => (
-							<input
-								key={index}
-								type="text"
-								value={option}
-								onChange={(e) => {
-									const newOptions = [...manualOptions];
-									newOptions[index] = e.target.value;
-									setManualOptions(newOptions);
-								}}
-								placeholder={config.customOptionPlaceholder.replace(
-									'{n}',
-									(index + 1).toString()
-								)}
-								className="km-input"
+					<div className="space-y-4 rounded-xl border border-violet-200/60 bg-white/70 p-4 shadow-sm backdrop-blur-sm">
+						{/* Question Prompt Section */}
+						<div className="space-y-1.5">
+							<div className="flex items-center gap-1.5">
+								<HelpCircle className="size-4 text-indigo-600" />
+								<label className="text-xs font-bold tracking-wider text-slate-800 uppercase">
+									{config.customQuestionPromptLabel}
+								</label>
+							</div>
+							<textarea
+								rows={3}
+								value={manualQuestion}
+								onChange={(e) => setManualQuestion(e.target.value)}
+								placeholder={config.customQuestionPlaceholder}
+								className="km-textarea w-full resize-y text-base leading-relaxed font-semibold"
 							/>
-						))}
+						</div>
 
-						<div className="flex gap-2">
+						{/* Answer Options Section */}
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<label className="text-xs font-bold tracking-wider text-slate-700 uppercase">
+									{config.customOptionsLabel}
+								</label>
+								{manualOptions.length < 4 && (
+									<button
+										type="button"
+										onClick={() => setManualOptions([...manualOptions, ''])}
+										className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+									>
+										<Plus className="size-3.5" />
+										Add Option
+									</button>
+								)}
+							</div>
+							<div className="space-y-2">
+								{manualOptions.map((option, index) => (
+									<div key={index} className="flex items-center gap-2">
+										<span
+											className={cn(
+												'flex size-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold shadow-sm',
+												index === 0 && 'bg-indigo-600 text-white',
+												index === 1 && 'bg-emerald-600 text-white',
+												index === 2 && 'bg-amber-600 text-white',
+												index === 3 && 'bg-purple-600 text-white'
+											)}
+										>
+											{String.fromCharCode(65 + index)}
+										</span>
+										<input
+											type="text"
+											value={option}
+											onChange={(e) => {
+												const newOptions = [...manualOptions];
+												newOptions[index] = e.target.value;
+												setManualOptions(newOptions);
+											}}
+											placeholder={config.customOptionPlaceholder.replace(
+												'{n}',
+												String.fromCharCode(65 + index)
+											)}
+											className="km-input-full flex-1"
+										/>
+										{manualOptions.length > 2 && (
+											<button
+												type="button"
+												onClick={() =>
+													setManualOptions(
+														manualOptions.filter((_, i) => i !== index)
+													)
+												}
+												className="km-btn-error p-2.5"
+												title="Remove option"
+											>
+												<Trash2 className="size-4" />
+											</button>
+										)}
+									</div>
+								))}
+							</div>
+						</div>
+
+						<div className="flex gap-2 pt-2">
 							<button
 								type="button"
 								onClick={addManualQuestion}
@@ -472,59 +527,162 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 								)}
 							>
 								{editingId === question.id ? (
-									<div className="space-y-3">
-										<input
-											type="text"
-											value={editQuestion}
-											onChange={(e) => setEditQuestion(e.target.value)}
-											className="km-input"
-										/>
-										{editOptions.map((option, index) => (
-											<input
-												key={index}
-												type="text"
-												value={option}
-												onChange={(e) => {
-													const newOptions = [...editOptions];
-													newOptions[index] = e.target.value;
-													setEditOptions(newOptions);
-												}}
-												className="km-input"
+									<div className="space-y-4 rounded-xl border-2 border-indigo-300/80 bg-white/95 p-5 shadow-md">
+										<div className="flex items-center justify-between border-b border-slate-100 pb-2">
+											<div className="flex items-center gap-2">
+												<Edit3 className="size-4 text-indigo-600" />
+												<h3 className="text-sm font-bold text-indigo-950">
+													{config.editQuestionTitle}
+												</h3>
+											</div>
+											<span
+												className={cn(
+													'rounded-full px-2.5 py-0.5 text-xs font-semibold',
+													question.isAiGenerated
+														? 'bg-blue-100 text-blue-700'
+														: 'bg-purple-100 text-purple-700'
+												)}
+											>
+												{question.isAiGenerated
+													? config.questionAiLabel
+													: config.questionManualLabel}
+											</span>
+										</div>
+
+										{/* Question Box */}
+										<div className="space-y-1.5">
+											<div className="flex items-center gap-1.5">
+												<HelpCircle className="size-4 text-indigo-600" />
+												<label className="text-xs font-bold tracking-wider text-indigo-950 uppercase">
+													{config.editQuestionLabel}
+												</label>
+											</div>
+											<textarea
+												rows={3}
+												value={editQuestion}
+												onChange={(e) => setEditQuestion(e.target.value)}
+												className="km-textarea w-full resize-y text-base leading-relaxed font-semibold"
+												placeholder="Enter question text..."
 											/>
-										))}
-										<div className="flex gap-2">
+										</div>
+
+										{/* Answer Options Box */}
+										<div className="space-y-2">
+											<div className="flex items-center justify-between">
+												<label className="text-xs font-bold tracking-wider text-slate-700 uppercase">
+													{config.editOptionsLabel}
+												</label>
+												{editOptions.length < 4 && (
+													<button
+														type="button"
+														onClick={() => setEditOptions([...editOptions, ''])}
+														className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800"
+													>
+														<Plus className="size-3.5" />
+														Add Option
+													</button>
+												)}
+											</div>
+											<div className="space-y-2">
+												{editOptions.map((option, index) => (
+													<div key={index} className="flex items-center gap-2">
+														<span
+															className={cn(
+																'flex size-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold shadow-sm',
+																index === 0 && 'bg-indigo-600 text-white',
+																index === 1 && 'bg-emerald-600 text-white',
+																index === 2 && 'bg-amber-600 text-white',
+																index === 3 && 'bg-purple-600 text-white'
+															)}
+														>
+															{String.fromCharCode(65 + index)}
+														</span>
+														<input
+															type="text"
+															value={option}
+															onChange={(e) => {
+																const newOptions = [...editOptions];
+																newOptions[index] = e.target.value;
+																setEditOptions(newOptions);
+															}}
+															placeholder={`Option ${String.fromCharCode(65 + index)}`}
+															className="km-input-full flex-1"
+														/>
+														{editOptions.length > 2 && (
+															<button
+																type="button"
+																onClick={() =>
+																	setEditOptions(
+																		editOptions.filter((_, i) => i !== index)
+																	)
+																}
+																className="km-btn-error p-2.5"
+																title="Remove option"
+															>
+																<Trash2 className="size-4" />
+															</button>
+														)}
+													</div>
+												))}
+											</div>
+										</div>
+
+										{/* Action Buttons */}
+										<div className="flex gap-2 pt-2">
 											<button
+												type="button"
 												onClick={saveEdit}
 												className="km-btn-primary flex-1"
 											>
-												Save
+												<Check className="size-4" />
+												{config.editSaveButton}
 											</button>
 											<button
+												type="button"
 												onClick={() => setEditingId(null)}
 												className="km-btn-secondary flex-1"
 											>
-												Cancel
+												<X className="size-4" />
+												{config.editCancelButton}
 											</button>
 										</div>
 									</div>
 								) : (
 									<>
-										<div className="mb-3 flex items-start justify-between">
-											<div className="flex-1">
-												<p className="font-semibold text-slate-900">
+										<div className="mb-3 flex items-start justify-between gap-3">
+											<div className="min-w-0 flex-1">
+												<p className="text-base leading-snug font-bold break-words text-slate-900">
 													{question.text}
 												</p>
-												<div className="mt-2 space-y-1">
+												<div className="mt-3 space-y-1.5">
 													{question.options.map((option, index) => (
-														<p key={index} className="text-sm text-slate-600">
-															{String.fromCharCode(65 + index)}: {option}
-														</p>
+														<div
+															key={index}
+															className="flex items-center gap-2 text-sm text-slate-700"
+														>
+															<span
+																className={cn(
+																	'flex size-5 shrink-0 items-center justify-center rounded text-xs font-bold',
+																	index === 0 &&
+																		'bg-indigo-100 text-indigo-700',
+																	index === 1 &&
+																		'bg-emerald-100 text-emerald-700',
+																	index === 2 && 'bg-amber-100 text-amber-700',
+																	index === 3 && 'bg-purple-100 text-purple-700'
+																)}
+															>
+																{String.fromCharCode(65 + index)}
+															</span>
+															<span className="font-medium break-words">
+																{option}
+															</span>
+														</div>
 													))}
 												</div>
 											</div>
 											<span
 												className={cn(
-													'ml-3 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap',
+													'ml-3 shrink-0 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap',
 													question.isAiGenerated
 														? 'bg-blue-200 text-blue-700'
 														: 'bg-purple-200 text-purple-700'
@@ -536,18 +694,19 @@ export const QuestionManagementView: React.FC<QuestionManagementViewProps> = ({
 											</span>
 										</div>
 
-										<div className="flex gap-2">
+										<div className="flex gap-2 pt-1">
 											<button
 												type="button"
 												onClick={() => startEditing(question)}
 												className="km-btn-secondary flex-1 text-sm"
 											>
-												Edit
+												<Edit3 className="size-4" />
+												{config.editButtonLabel}
 											</button>
 											<button
 												type="button"
 												onClick={() => deleteQuestion(question.id)}
-												className="km-btn-error"
+												className="km-btn-error px-4"
 											>
 												<Trash2 className="size-4" />
 											</button>

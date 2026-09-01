@@ -4,40 +4,29 @@
 title: 'Host Starter'
 
 gameLobbyMd: |
-  # Game Lobby
+  # 👑 Majority Rules
 
-  This is a sample markdown to demonstrate various markdown features.
-
-  ## Starting soon
-
-  Game is starting soon. **Get ready!**
-
-  ## Rules
-
-  1. Wait for the host to start the game.
-  2. Follow the instructions on the presenter screen.
-  3. Open [Games for Crowds](https://gamesforcrowds.com) for more info.
-
-  ## What people say
-
-  > **This game is awesome!** - Player 1
-
-  > **I had a good time playing this.** - Player 2
-
-  > **Always looking forward to the next round!**  - Player 3
+  Predict the crowd. Match the majority. Climb the leaderboard!
 
   ---
 
-  ## Sample Code
+  ## 🎯 Quick Rules
 
-  ```
-  // Code block
-  console.log('Hello, world!');
-  ```
+  1. **Vote with the Crowd** — Points are awarded for picking the most popular answer in the room.
+  2. **Set Your Confidence** — Choose Safe (+5/0), Normal (+10/-5), or Risky (+30/-15) to manage risk.
+  3. **Beat the Clock** — Lock in your vote before the 30-second countdown expires.
 
-  ## Sample Image
+  ---
 
-  ![Logo](/logo.svg)
+  ## 🏆 Scoring Summary
+
+  | Confidence | When Majority Wins | When in Minority |
+  | :--- | :--- | :--- |
+  | **🛡️ Safe** | **+5 points** | **0 points** |
+  | **⚖️ Normal** | **+10 points** | **-5 points** |
+  | **🔥 Risky** | **+30 points** | **-15 points** |
+
+  *Tied majorities share the win at half points!*
 
 players: 'Players Connected'
 online: 'Online'
@@ -47,19 +36,49 @@ startButton: 'Start Game'
 loading: 'Loading...'
 
 menuHelpMd: |
-  # Help
+  # 👑 Majority Rules — How to Play
 
-  This is the help section. Here you can find information about how to play the game and get assistance if needed.
+  The goal is not to give the "right" answer—it's to pick what the **majority of the room** will choose!
 
-  ## How to Play
+  ---
 
-  1. Join the game using the provided link or QR code.
-  2. Follow the instructions on your screen.
-  3. Interact with other players as required by the game.
+  ## 🎯 How the Game Works
 
-  ## Getting Assistance
+  1. **Read the Question**  
+     Each round presents a subjective question with 2 to 3 choices. There are no right or wrong factual answers—only popular ones!
 
-  If you encounter any issues, please contact the host or refer to the FAQ section on our website.
+  2. **Pick Your Choice & Set Your Confidence**  
+     Choose an option and adjust the **Confidence Slider** before the 30-second timer runs out.
+
+  3. **Reveal & Score**  
+     When voting ends, all choices are revealed at once. If your option received the most votes, you win points!
+
+  ---
+
+  ## 🎚️ Confidence Slider & Scoring
+
+  Adjust your slider to balance risk and reward:
+
+  | Confidence Level | Multiplier | Points if Majority (Win) | Points if Minority (Lose) |
+  | :--- | :--- | :--- | :--- |
+  | **🛡️ Safe (Left)** | 0.5x | **+5 pts** | **0 pts** *(no penalty!)* |
+  | **⚖️ Normal (Center)** | 1.0x | **+10 pts** | **-5 pts** |
+  | **🔥 Risky (Right)** | 3.0x | **+30 pts** | **-15 pts** |
+
+  ---
+
+  ## 🤝 Tie Handling
+
+  If multiple choices tie for the highest vote count, **all players who voted for any of the tied choices win**, receiving half the normal win points (rounded).
+
+  ---
+
+  ## 💡 Pro Tips
+
+  - **Think like the crowd**: Don't vote for your personal favorite if you know the room loves something else!
+  - **Play it Safe early**: Use **Safe (0.5x)** when opinions are split to protect your score from negative penalties.
+  - **Go Risky on slam dunks**: If you're confident the whole room will agree, switch to **Risky (3x)** for a huge +30 point boost!
+  - **Suggest Topics**: If enabled by the host, submit fun topics in the lobby for the host to turn into live questions.
 
 createProfileMd: |
   # Welcome!
@@ -150,10 +169,18 @@ aiGenerateButton: 'Generate {count} Question{s}'
 aiGeneratingLabel: 'Generating...'
 customQuestionTitle: 'Create Custom Question'
 customQuestionNewButton: 'New Custom Question'
+customQuestionPromptLabel: 'Question Prompt:'
+customOptionsLabel: 'Answer Options:'
 customQuestionPlaceholder: 'Question text...'
 customOptionPlaceholder: 'Option {n}'
 customAddButton: 'Add Question'
 customCancelButton: 'Cancel'
+editQuestionTitle: 'Edit Question'
+editQuestionLabel: 'Question Prompt:'
+editOptionsLabel: 'Answer Options:'
+editSaveButton: 'Save Changes'
+editCancelButton: 'Cancel'
+editButtonLabel: 'Edit'
 questionBankTitle: 'Question Bank ({count})'
 questionBankDeleteAll: 'Delete All'
 questionBankDeleteAllConfirm: 'Are you sure you want to delete all {count} questions?'
@@ -190,50 +217,34 @@ playerResultsWaitingMessage: 'Waiting for next round...'
 hostInfoTitle: 'How to Play'
 hostInfoButtonLabel: 'How to Play'
 hostInfoContentMd: |
-  ## 🎯 Game Goal
+  # 🎮 Host Guide & Game Rules
 
-  Match the majority! Players vote on subjective questions and earn points by voting with the most popular answer.
+  **Majority Rules** is a fast-paced psychological party game where players score points by predicting the majority vote.
 
-  ## 🎚️ Confidence Slider
+  ---
 
-  Players choose their confidence level:
+  ## 🕹️ Game Flow & Host Controls
 
-  - **🛡️ Safe (Left)** — +5 if right, no penalty if wrong
-  - **⚖️ Normal (Middle)** — +10 if right, -5 if wrong
-  - **🔥 Risky (Right)** — +30 if right, -15 if wrong
+  - **Pregame Setup:** Use the **Question Manager** to generate AI questions or create custom questions. Toggle **Player Topics** to let players suggest themes.
+  - **Start Game:** Begins the game and moves to the first round.
+  - **During Rounds:** Select a question and click **Start Round**. Players get 30 seconds to vote. Click **Reveal Results** to end early or wait for timeout.
+  - **Advance Rounds:** Review the results and scores, then click **Next Round**.
+  - **End Game:** Click **End Game** at any time to reveal the final winner podium on all screens.
 
-  ## 📊 Scoring
+  ---
 
-  | Confidence | Win   | Lose  |
-  |------------|-------|-------|
-  | 🛡️ Safe   | +5    | 0     |
-  | ⚖️ Normal | +10   | -5    |
-  | 🔥 Risky  | +30   | -15   |
+  ## 📊 Scoring Reference
 
-  **Ties:** All tied voters win with half points.
+  | Confidence Level | Win (Majority) | Loss (Minority) |
+  | :--- | :--- | :--- |
+  | **🛡️ Safe (0.5x)** | **+5 points** | **0 points** (no penalty) |
+  | **⚖️ Normal (1x)** | **+10 points** | **-5 points** |
+  | **🔥 Risky (3x)** | **+30 points** | **-15 points** |
 
-  ## 👀 Player Feedback
+  ---
 
-  Players see a **countdown timer** during voting and **immediate visual feedback** of points earned/lost (+/- color coding) after each round.
+  ## 🤝 Special Rules
 
-  ## 🤝 Ties
-
-  When multiple answers tie for most votes, all tied voters win with half the normal points.
-
-  ## 🏁 Game End
-
-  Game runs for the configured number of rounds or until you end it manually. Highest score wins!
-
-  ## 🎮 Host Controls
-
-  - **Before Game:** Create questions manually or generate with AI. Enable "Player Topics" to let players suggest themes.
-  - **Start Game:** Begins the game and automatically starts the first round.
-  - **During Rounds:** Wait for voting timer or click "Reveal Results" early. Then "Next Round" to continue.
-  - **Show Results:** End the game and display final leaderboard to all players.
-  - **Reset Game:** Abort current game and return to question setup screen.
-
-  ## ⚙️ Host Settings
-
-  - **Player Topics:** When ON, players can suggest themes in the lobby. You can generate questions from their suggestions.
-  - **Toggle Presenter QR:** Show/hide the QR code on the presenter screen for players to join.
-  - **Player/Presenter Links:** Open player or presenter view in a new tab for testing or sharing.
+  - **Ties:** If two or more options tie with the highest vote count, all voters for those options win with half points (+3, +5, +15).
+  - **Auto-Submit:** If a player selected an option but didn't submit before the 30-second timer expires, their vote is automatically submitted with 1x Normal confidence.
+  - **Player Topics:** When enabled, players can submit custom topic ideas from their waiting screen. You can turn their ideas into AI questions with one click!

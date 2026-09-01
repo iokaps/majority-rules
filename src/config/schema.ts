@@ -7,7 +7,7 @@ export const schema = z.object({
 	gameLobbyMd: z
 		.string()
 		.default(
-			'# Waiting for game to start...\nThe game will start once the host presses the start button.'
+			'# Majority Rules\n\nPredict the crowd. Match the majority. Climb the leaderboard!'
 		),
 
 	players: z.string().default('Players'),
@@ -18,7 +18,9 @@ export const schema = z.object({
 
 	menuHelpMd: z
 		.string()
-		.default('# Help\nInstructions on how to play the game.'),
+		.default(
+			'# Majority Rules — How to Play\n\nPick what the majority will choose and set your confidence level!'
+		),
 
 	createProfileMd: z.string().default('# Create your player profile'),
 	playerNamePlaceholder: z.string().default('Your name...'),
@@ -132,10 +134,18 @@ export const schema = z.object({
 	aiGeneratingLabel: z.string().default('Generating...'),
 	customQuestionTitle: z.string().default('Create Custom Question'),
 	customQuestionNewButton: z.string().default('New Custom Question'),
+	customQuestionPromptLabel: z.string().default('Question Prompt:'),
+	customOptionsLabel: z.string().default('Answer Options:'),
 	customQuestionPlaceholder: z.string().default('Question text...'),
 	customOptionPlaceholder: z.string().default('Option {n}'),
 	customAddButton: z.string().default('Add Question'),
 	customCancelButton: z.string().default('Cancel'),
+	editQuestionTitle: z.string().default('Edit Question'),
+	editQuestionLabel: z.string().default('Question Prompt:'),
+	editOptionsLabel: z.string().default('Answer Options:'),
+	editSaveButton: z.string().default('Save Changes'),
+	editCancelButton: z.string().default('Cancel'),
+	editButtonLabel: z.string().default('Edit'),
 	questionBankTitle: z.string().default('Question Bank ({count})'),
 	questionBankDeleteAll: z.string().default('Delete All'),
 	questionBankDeleteAllConfirm: z
@@ -184,7 +194,9 @@ export const schema = z.object({
 	hostInfoButtonLabel: z.string().default('How to Play'),
 	hostInfoContentMd: z
 		.string()
-		.default('# How to Play\n\nGame instructions go here.')
+		.default(
+			'# Host Guide\n\nManage questions, start rounds, and guide players through the game.'
+		)
 });
 
 export type Config = z.infer<typeof schema>;

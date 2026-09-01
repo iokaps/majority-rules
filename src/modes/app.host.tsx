@@ -185,11 +185,11 @@ const App: React.FC = () => {
 												)}
 											>
 												<div className="flex items-start justify-between gap-2">
-													<div className="flex-1">
-														<p className="text-sm font-semibold text-slate-900">
+													<div className="min-w-0 flex-1">
+														<p className="text-sm font-semibold break-words text-slate-900">
 															{q.text}
 														</p>
-														<p className="text-xs text-slate-600">
+														<p className="mt-1 text-xs break-words text-slate-600">
 															{q.options.join(' • ')}
 														</p>
 													</div>

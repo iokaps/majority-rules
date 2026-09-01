@@ -128,6 +128,14 @@ body {
 	@apply w-full max-w-96 rounded-xl border border-slate-200 bg-white/80 px-5 py-3 shadow-sm backdrop-blur-sm transition-all focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none disabled:opacity-50;
 }
 
+.km-input-full {
+	@apply w-full rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-slate-800 shadow-sm backdrop-blur-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none disabled:opacity-50;
+}
+
+.km-textarea {
+	@apply w-full rounded-xl border-2 border-indigo-200/80 bg-white/95 p-4 font-medium text-slate-900 shadow-sm backdrop-blur-sm transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none disabled:opacity-50;
+}
+
 .km-btn-primary,
 .km-btn-secondary,
 .km-btn-error,
